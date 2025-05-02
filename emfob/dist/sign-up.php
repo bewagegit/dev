@@ -1,6 +1,13 @@
 <?php
-include "backend/config.php";
-include "backend/user_auth.php" ?>
+include_once("backend/config.php");
+include "backend/user_auth.php";
+include_once("backend/db_functions.php");
+include_once("backend/common_functions.php");
+
+
+$userTypes = getAllUserTypes();
+
+ ?>
 <!doctype html>
 <html lang="en">
 
@@ -21,28 +28,6 @@ include "backend/user_auth.php" ?>
     <link href="assets/css/icons.min.css" rel="stylesheet" />
     <!-- App Css-->
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" />
-
-    <script>
-        // Function to show/hide form fields based on user type
-        function showFormFields(userType) {
-            // Hide all sections first
-            document.querySelectorAll('.form-section').forEach(function (section) {
-                section.style.display = 'none';
-            });
-
-            // Show the selected user type's section
-            if (userType === 'candidate') {
-                document.getElementById('candidate').style.display = 'block';
-            } else if (userType === 'employer') {
-                document.getElementById('employer').style.display = 'block';
-            } else if (userType === 'freelancer') {
-                document.getElementById('freelancer').style.display = 'block';
-            } else if (userType === 'consultancy') {
-                document.getElementById('consultancy').style.display = 'block';
-            }
-        }
-
-    </script>
 
 </head>
 
@@ -91,10 +76,9 @@ include "backend/user_auth.php" ?>
                                                                 style="background-color: #f8f9fa; color: #6e68c9;"
                                                                 onchange="showFormFields(this.value)">
                                                                 <option value="" disabled selected>Select</option>
-                                                                <option value="candidate">Candidate</option>
-                                                                <option value="employer">Employer</option>
-                                                                <option value="freelancer">Freelancer</option>
-                                                                <option value="consultancy">Consultancy</option>
+                                                                <?php foreach($userTypes as $key => $val){ ?>
+																	 <option value="<?php echo $val['users_types_id'] ?>"><?php echo $val['users_types_name'] ?></option>
+																<?php } ?>
                                                             </select>
                                                         </div>
 
@@ -221,7 +205,7 @@ include "backend/user_auth.php" ?>
                                                         </div>
 
                                                         <div class="text-center">
-                                                            <button type="submit"
+                                                            <button type="submit" onclick="validatePassword()"
                                                                 class="btn btn-white btn-hover w-100">Sign Up</button>
                                                         </div>
                                                     </form>
@@ -294,37 +278,7 @@ include "backend/user_auth.php" ?>
 
         <!-- Switcher Js -->
         <script src="assets/js/pages/switcher.init.js"></script>
-        <script>
-            // Validate the password and confirm password fields
-            function validatePassword() {
-                const password = document.getElementById('passwordInput');
-                const confirmPassword = document.getElementById('confirmPasswordInput');
-
-                if (password.value !== confirmPassword.value) {
-                    confirmPassword.setCustomValidity('Passwords do not match');
-                    confirmPassword.classList.add('is-invalid');
-                } else {
-                    confirmPassword.setCustomValidity('');
-                    confirmPassword.classList.remove('is-invalid');
-                }
-            }
-
-            // Custom validation for phone number input
-            document.getElementById('phoneNumberInput').addEventListener('input', function () {
-                if (this.validity.patternMismatch) {
-                    this.setCustomValidity('Please enter valid phone number ');
-                    this.classList.add('is-invalid');
-                } else {
-                    this.setCustomValidity('');
-                    this.classList.remove('is-invalid');
-                }
-            });
-
-            // Additional listener to validate passwords on input
-            document.getElementById('confirmPasswordInput').addEventListener('input', function () {
-                validatePassword();
-            });
-        </script>
+        <script src="js/signup_validation.js"></script>
 
 </body>
 

@@ -1,9 +1,14 @@
 <?php
+
+include_once("constants.php");
+
 // Database configuration
-$host = 'localhost';
-$dbname = 'job_portal';
-$username = 'root'; // Replace with your MySQL username
-$password = ''; // Replace with your MySQL password
+$host = HOSTNAME;
+$dbname = DBNAME;
+$username = USERNAME; // Replace with your MySQL username
+$password = PASSWORD; // Replace with your MySQL password
+
+global $pdo;
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

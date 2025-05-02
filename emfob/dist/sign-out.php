@@ -1,5 +1,10 @@
 <?php
-session_destroy();
+//session_destroy();
+setcookie ("userType",'');
+setcookie ("email",'');
+setcookie ("passwordhash",'');
+
+
 unset($_COOKIE["email"]);
 unset($_COOKIE["passwordhash"]);
 unset($_COOKIE["userType"]);

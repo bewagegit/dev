@@ -1,5 +1,38 @@
 <?php
-include "backend/user_auth.php";
+include_once("backend/user_auth.php");
+include_once("backend/db_functions.php");
+include_once("backend/common_functions.php");
+$title = 'Sign In | Emfob';
+
+$userTypes = getAllUserTypes();
+
+if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
+	isset($_COOKIE['passwordhash']) && $_COOKIE['passwordhash'] != '' &&
+	isset($_COOKIE['userType']) && $_COOKIE['userType'] != ''){
+	
+	$email = $_COOKIE['email'];
+	$userType = $_COOKIE['userType'];
+	$cookiePassword = $_COOKIE['passwordhash'];
+	
+	$stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? or phone_number = ?) AND user_type = ?");
+	$stmt->execute([$email, $email, $userType]); // Verify email and user type
+	$user = $stmt->fetch();
+	
+	$hashpassword = $user['email'];
+	$key = PASSWORDHASHKEY;
+	$hash = hash_hmac('sha256', $hashpassword, $key);
+	
+	if ($user) {
+		if ($cookiePassword == $hash ) {
+			// Login successful
+			$_SESSION['user_id'] = $user['user_id'];
+			$_SESSION['email'] = $email;
+			$_SESSION['user_type'] = $userType;
+			header('Location: general_dashboard.php');
+		}
+	}
+}
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -8,7 +41,7 @@ include "backend/user_auth.php";
 
 
     <meta charset="utf-8" />
-    <title>Sign In | Emfob</title>
+    <title><?php echo $title; ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content=" " />
     <meta name="keywords" content="" />
@@ -96,17 +129,15 @@ include "backend/user_auth.php";
                                                                     class="form-select" required>
                                                                     <option value="" disabled selected>Select User Type
                                                                     </option>
-                                                                    <option value="candidate">Candidate</option>
-                                                                    <option value="employer">Company</option>
-                                                                    <option value="consultancy">Consultancy</option>
-                                                                    <option value="freelancer">Freelancer</option>
-
+																	<?php foreach($userTypes as $key => $val){ ?>
+																	 <option value="<?php echo $val['users_types_id'] ?>"><?php echo $val['users_types_name'] ?></option>
+																	<?php } ?>
                                                                 </select>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="email" class="form-label">Email / Phone
                                                                     Number <span class="text-danger">*</span></label>
-                                                                <input name="email" type="email" class="form-control"
+                                                                <input name="email" type="text" class="form-control"
                                                                     id="email" placeholder="Enter Email / Phone number"
                                                                     required>
                                                             </div>
@@ -130,7 +161,7 @@ include "backend/user_auth.php";
                                                             <div
                                                                 class="d-flex justify-content-between align-items-center mb-3">
                                                                 <div class="form-check">
-                                                                    <input class="form-check-input" type="checkbox"
+                                                                    <input class="form-check-input" name="rememberMe" type="checkbox"
                                                                         id="rememberMe">
                                                                     <label class="form-check-label"
                                                                         for="rememberMe">Remember me</label>
