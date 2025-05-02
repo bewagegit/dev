@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Upload</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Upload Your Resume</h2>
+    <form id="resumeForm" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="resumeFile">Upload Resume (PDF or DOCX):</label>
+            <input type="file" class="form-control-file" id="resumeFile" name="resumeFile" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Upload and Parse</button>
+    </form>
+    <div class="mt-4">
+        <h4>Extracted Information</h4>
+        <form id="autoFillForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="text" class="form-control" id="phone" name="phone">
+            </div>
+            <div class="form-group">
+                <label for="experience">Experience</label>
+                <textarea class="form-control" id="experience" name="experience"></textarea>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $('#resumeForm').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        
+        $.ajax({
+            url: 'parse_resume.php',  // Same directory as index.html in dist
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                try {
+                    const data = JSON.parse(response);
+                    $('#name').val(data.name);
+                    $('#email').val(data.email);
+                    $('#phone').val(data.phone);
+                    $('#experience').val(data.experience);
+                } catch (e) {
+                    console.error("Response error:", response); // Logs response for debugging
+                    alert("Error processing resume. Please check the file format and try again.");
+                }
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>
