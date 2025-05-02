@@ -1,0 +1,56 @@
+/* Add animation styles */
+.fade-in {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.3s ease-in-out;
+}
+
+.fade-in.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.btn-active {
+    background-color: #766df4;
+    /* Desired color */
+    color: #fff;
+    /* Text color */
+    border-color: #766df4;
+    /* Border color */
+}
+
+.btn-inactive {
+    background-color: #f8f9fa;
+    /* Light background for inactive button */
+    color: #766df4;
+    /* Text color matching the active button */
+    border-color: #766df4;
+    /* Border color */
+}
+
+/* Hover states */
+.btn-active:hover {
+    background-color: #766df4;
+    /* Darker shade of the color for hover */
+    border-color: #766df4;
+    /* Darker shade of the color for hover */
+}
+
+.btn-inactive:hover {
+    background-color: #766df4;
+    /* Slightly darker background for inactive button on hover */
+    border-color: #766df4;
+    /* Border color remains the same */
+}
+.form-check-input {
+    margin-top: 0.3rem;
+}
+
+input[type="email"], input[type="password"] {
+    font-size: 14px;
+}
+
+#togglePassword {
+    border-radius: 0px;
+}
+
