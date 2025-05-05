@@ -44,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				
                 // Redirect based on user type
                 switch ($user['user_type']) {
-                    case 'candidate':
+                    case '1':
                         header('Location: candidate_dashboard.php');
                         break;
-                    case 'employer':
+                    case '2':
                         header('Location: company_dashboard.php');
                         break;
                     case 'admin':

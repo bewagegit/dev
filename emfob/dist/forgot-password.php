@@ -1,13 +1,39 @@
 <?php
-//session_destroy();
-setcookie ("userType",'');
-setcookie ("email",'');
-setcookie ("passwordhash",'');
+include_once("backend/config.php");
+include_once("backend/constants.php");
+include_once("backend/db_functions.php");
+include_once("backend/common_functions.php");
+$title = 'Forgot / Reset Password | Emfob';
 
+$output = "";
 
-unset($_COOKIE["email"]);
-unset($_COOKIE["passwordhash"]);
-unset($_COOKIE["userType"]);
+extract($_POST);
+if(isset($submit)){
+	$result = db_select('user_id,email,phone_number,user_type',USERS,'email = :email ',array('email' => $email)  );
+
+	//send mail to user
+	if(count($result)){
+		//send reset password link to the customer email address
+		$row = $result[0];
+		$username = explode("@",$row['email']);
+		$message = '<html>
+					<head>
+					  <title>Reset Password - Bewage</title>
+					</head>
+					<body>
+					  <h1>Hi, '.ucfirst($username[0]).',</h1>
+					  <p>Please click the below reset password link</p>
+					</body>
+					</html>';
+		//echo $message;
+		//sendMail($row['email'],"Reset Password - Bewage",$message);
+		
+		$output = "<p style='color:white'><b>Reset Password Link will be sent to your email address</b></p>";
+	}
+	else{
+		$output = "<p style='color:red'><b>Invalid Email or Email address not available</b></p>";
+	}
+}
 ?>
 
 
@@ -18,7 +44,7 @@ unset($_COOKIE["userType"]);
         
         
         <meta charset="utf-8" />
-        <title>Sign Out | Emfob</title>
+        <title><?php echo $title; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content=" " />
         <meta name="keywords" content="" />
@@ -61,13 +87,13 @@ unset($_COOKIE["userType"]);
 
                 <div class="page-content">
 
-                    <!-- START SIGN-OUT -->
+                    <!-- START RESET-PASSWORD -->
                     <section class="bg-auth">
                         <div class="container">
                             <div class="row justify-content-center">
                                 <div class="col-xl-10 col-lg-12">
                                     <div class="card auth-box">
-                                        <div class="row">
+                                        <div class="row g-0">
                                             <div class="col-lg-6 text-center">
                                                 <div class="card-body p-4">
                                                     <a href="index.html">
@@ -75,21 +101,31 @@ unset($_COOKIE["userType"]);
                                                         <img src="assets/images/logo-dark.png" style="width:20%" alt="" class="logo-dark">
                                                     </a>
                                                     <div class="mt-5">
-                                                        <img src="assets/images/auth/sign-in.png" alt="" class="img-fluid">
+                                                        <img src="assets/images/auth/reset-password.png" alt="" class="img-fluid">
                                                     </div>
                                                 </div>
                                             </div><!--end col-->
                                             <div class="col-lg-6">
-                                                <div class="auth-content card-body p-5 text-white">
-                                                    <div class="w-100">
-                                                        <div class="text-center mb-4">
-                                                            <h5>You are Logged Out</h5>
-                                                            <p class="text-white-70">Thank you for using Emfob</p> 
+                                                <div class="auth-content card-body p-5 h-100 text-white">
+                                                    <div class="text-center mb-4">
+                                                        <h5>Forgot Password</h5>
+                                                        <p class="text-white-50">Reset your password with Emfob.</p>
+                                                    </div>
+                                                    <form class="auth-form text-white" method="post">
+                                                        <div class="alert alert-warning text-center mb-4" role="alert">  Enter your Email and instructions will be sent to you!  </div>
+                                                        <div class="mb-4">
+                                                            <label class="form-label" for="email">Email address</label>
+                                                            <input type="email" class="form-control" name="email" id="email" required
+                                                                placeholder="Enter email address">
                                                         </div>
-                                                        <a href="sign-in.php" class="btn btn-white btn-hover w-100">Sign In</a>
-                                                        <div class="mt-3 text-center">
-                                                            <p class="mb-0">Don't have an account ? <a href="sign-up.php" class="fw-medium text-white text-decoration-underline"> Sign Up </a></p>
+                                                        <div class="mt-3">
+                                                            <button type="submit" name="submit" class="btn btn-white w-100">Send Request</button>
+															<?php echo $output; ?>
                                                         </div>
+                                                    </form><!-- end form -->
+                
+                                                    <div class="mt-5 text-center text-white-50">
+                                                        <p>Remembered It ? <a href="sign-in.php" class="fw-medium text-white text-decoration-underline"> Go to Login </a></p>
                                                     </div>
                                                 </div>
                                             </div><!--end col-->
@@ -99,11 +135,11 @@ unset($_COOKIE["userType"]);
                             </div><!--end row-->
                         </div><!--end container-->
                     </section>
-                    <!-- END SIGN-OUT -->
+                    <!-- END RESET-PASSWORD -->
                     
                 </div>
                 <!-- End Page-content -->
-                
+
             </div>
             <!-- end main content-->
 

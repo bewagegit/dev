@@ -12,6 +12,9 @@ define("PASSWORD","");
 //Password Hash key
 define("PASSWORDHASHKEY","bewage@123");
 
+//From email address
+define("EMAILADDRESS","fromemailbewage@gmail.com");
+
 //Table Details
 define("CANDIDATES","candidates");
 define("CANDIDATES_PROFILES","candidate_profiles");

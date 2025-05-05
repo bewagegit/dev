@@ -87,15 +87,15 @@ $userTypes = getAllUserTypes();
                                                             <label for="email" class="form-label">Email</label>
                                                             <input type="email" class="form-control" id="email"
                                                                 name="email" placeholder="Enter your email" required>
+																<div class="invalid-feedback" id="emailInputError"></div>
                                                         </div>
 
                                                         <div class="mb-3">
                                                             <label for="phone" class="form-label">Phone Number</label>
-                                                            <input type="tel" class="form-control" required id="phone"
-                                                                name="phone" pattern="[6-9]{1}[0-9]{9}"
+                                                            <input type="tel" class="form-control" required id="phoneNumberInput"
+                                                                name="phoneNumberInput" pattern="[6-9]{1}[0-9]{9}"
                                                                 placeholder="Enter your 10 digit phone number">
-                                                            <div class="invalid-feedback">Please enter a valid phone
-                                                                number</div>
+                                                            <div class="invalid-feedback" id="confirmPasswordInputError"></div>
                                                         </div>
 
                                                         <div class="mb-3">
@@ -111,7 +111,7 @@ $userTypes = getAllUserTypes();
                                                             <input type="password" class="form-control" required
                                                                 id="confirmPassword" name="confirmPassword"
                                                                 placeholder="Confirm your password">
-                                                            <div class="invalid-feedback">Passwords do not match.</div>
+                                                            <div class="invalid-feedback" id="confirmPasswordError">Passwords do not match.</div>
                                                         </div>
 
                                                         <!-- User Type Specific Fields -->
@@ -201,11 +201,12 @@ $userTypes = getAllUserTypes();
                                                                     agree to the <a href="javascript:void(0)"
                                                                         class="text-white text-decoration-underline">Terms
                                                                         and Conditions</a></label>
+																<div id="termsAndConditionsTxt"></div>
                                                             </div>
                                                         </div>
 
                                                         <div class="text-center">
-                                                            <button type="submit" onclick="validatePassword()"
+                                                            <button type="submit" onclick="return chkValidateForm()"
                                                                 class="btn btn-white btn-hover w-100">Sign Up</button>
                                                         </div>
                                                     </form>

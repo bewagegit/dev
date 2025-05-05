@@ -6,6 +6,8 @@ $title = 'Sign In | Emfob';
 
 $userTypes = getAllUserTypes();
 
+$message = '';
+
 if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
 	isset($_COOKIE['passwordhash']) && $_COOKIE['passwordhash'] != '' &&
 	isset($_COOKIE['userType']) && $_COOKIE['userType'] != ''){
@@ -31,6 +33,10 @@ if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
 			header('Location: general_dashboard.php');
 		}
 	}
+}
+
+if(isset($_REQUEST['success']) ){
+	$message = "Password updated successfully";
 }
 
 ?>
@@ -112,6 +118,7 @@ if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
                                                     <div class="text-center mb-4">
                                                         <h5>Welcome Back !</h5>
                                                         <p class="text-white-70">Sign in to continue to Emfob.</p>
+														<p style="color:red"><?php echo $message; ?></p>
                                                     </div>
                                                     <!-- Form-->
 
@@ -166,7 +173,7 @@ if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
                                                                     <label class="form-check-label"
                                                                         for="rememberMe">Remember me</label>
                                                                 </div>
-                                                                <a href="#" class="text-decoration-none">Forgot
+                                                                <a href="<?php echo BASE_URL; ?>forgot-password.php" class="text-decoration-none">Forgot
                                                                     password?</a>
                                                             </div>
 

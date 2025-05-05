@@ -1,13 +1,38 @@
 <?php
-//session_destroy();
-setcookie ("userType",'');
-setcookie ("email",'');
-setcookie ("passwordhash",'');
+include_once("backend/config.php");
+include_once("backend/constants.php");
+include_once("backend/db_functions.php");
+include_once("backend/common_functions.php");
+$title = 'Reset Password | Emfob';
+
+$output = "";
 
 
-unset($_COOKIE["email"]);
-unset($_COOKIE["passwordhash"]);
-unset($_COOKIE["userType"]);
+// Usage
+//$data = $_REQUEST['token']; // Must be 32 bytes for AES-256
+$data = $_REQUEST['token']; // Must be 32 bytes for AES-256
+$key = PASSWORDHASHKEY;
+
+if($data == ''){
+	echo "The link is invalid";
+	exit;
+}
+
+//$encrypted = encrypt($data, $key);
+$decryptedEmail = decrypt($data, $key);
+
+extract($_POST);
+if(isset($submit)){
+	$key = PASSWORDHASHKEY;
+	$hash = hash_hmac('sha256', $data, $key);
+	if($password != '' && $confim_password != '' && $decryptedEmail){
+		$qry = "UPDATE ".USERS." set password = ? where email= ? LIMIT 1 ";
+		$hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+		$data = array($hashedPassword,$decryptedEmail);
+		db_update($qry,$data);
+		header('Location: sign-in.php?success=updatepasswd');
+	}
+}
 ?>
 
 
@@ -18,7 +43,7 @@ unset($_COOKIE["userType"]);
         
         
         <meta charset="utf-8" />
-        <title>Sign Out | Emfob</title>
+        <title><?php echo $title; ?></title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content=" " />
         <meta name="keywords" content="" />
@@ -61,13 +86,13 @@ unset($_COOKIE["userType"]);
 
                 <div class="page-content">
 
-                    <!-- START SIGN-OUT -->
+                    <!-- START RESET-PASSWORD -->
                     <section class="bg-auth">
                         <div class="container">
                             <div class="row justify-content-center">
                                 <div class="col-xl-10 col-lg-12">
                                     <div class="card auth-box">
-                                        <div class="row">
+                                        <div class="row g-0">
                                             <div class="col-lg-6 text-center">
                                                 <div class="card-body p-4">
                                                     <a href="index.html">
@@ -75,21 +100,37 @@ unset($_COOKIE["userType"]);
                                                         <img src="assets/images/logo-dark.png" style="width:20%" alt="" class="logo-dark">
                                                     </a>
                                                     <div class="mt-5">
-                                                        <img src="assets/images/auth/sign-in.png" alt="" class="img-fluid">
+                                                        <img src="assets/images/auth/reset-password.png" alt="" class="img-fluid">
                                                     </div>
                                                 </div>
                                             </div><!--end col-->
                                             <div class="col-lg-6">
-                                                <div class="auth-content card-body p-5 text-white">
-                                                    <div class="w-100">
-                                                        <div class="text-center mb-4">
-                                                            <h5>You are Logged Out</h5>
-                                                            <p class="text-white-70">Thank you for using Emfob</p> 
+                                                <div class="auth-content card-body p-5 h-100 text-white">
+                                                    <div class="text-center mb-4">
+                                                        <h5>Reset Password</h5>
+                                                        <p class="text-white-50">Reset your password with Emfob.</p>
+                                                    </div>
+                                                    <form class="auth-form text-white" method="post">
+                                                      
+                                                        <div class="mb-4">
+                                                            <label class="form-label" for="email">Password</label>
+                                                            <input type="password" class="form-control" name="password" id="password" required
+                                                                placeholder="Enter Password">
                                                         </div>
-                                                        <a href="sign-in.php" class="btn btn-white btn-hover w-100">Sign In</a>
-                                                        <div class="mt-3 text-center">
-                                                            <p class="mb-0">Don't have an account ? <a href="sign-up.php" class="fw-medium text-white text-decoration-underline"> Sign Up </a></p>
+														<div class="mb-4">
+                                                            <label class="form-label" for="email">Confirm Password</label>  
+															<input type="password" class="form-control" name="confim_password" id="confim_password" required
+                                                                placeholder="Confirm Password">
+																<div id="confirmPasswordChk"></div>
                                                         </div>
+                                                        <div class="mt-3">
+                                                            <button type="submit" name="submit" onclick="return submitForm()" class="btn btn-white w-100">Update Password</button>
+															<?php echo $output; ?>
+                                                        </div>
+                                                    </form><!-- end form -->
+                
+                                                    <div class="mt-5 text-center text-white-50">
+                                                        <p>Remembered It ? <a href="sign-in.php" class="fw-medium text-white text-decoration-underline"> Go to Login </a></p>
                                                     </div>
                                                 </div>
                                             </div><!--end col-->
@@ -99,11 +140,11 @@ unset($_COOKIE["userType"]);
                             </div><!--end row-->
                         </div><!--end container-->
                     </section>
-                    <!-- END SIGN-OUT -->
+                    <!-- END RESET-PASSWORD -->
                     
                 </div>
                 <!-- End Page-content -->
-                
+
             </div>
             <!-- end main content-->
 
@@ -156,6 +197,19 @@ unset($_COOKIE["userType"]);
 
         <!-- Switcher Js -->
         <script src="assets/js/pages/switcher.init.js"></script>
+		<script>
+		function submitForm(){
+			var password = document.getElementById('password').value;
+			var confim_password = document.getElementById('confim_password').value;
+			document.getElementById('confirmPasswordChk').innerHTML = '';
+			if(password != confim_password){
+				document.getElementById('confirmPasswordChk').style = 'color:red';
+				document.getElementById('confirmPasswordChk').innerHTML = 'Passwords do not match';
+				return false;
+			}
+			return true;
+		}
+		</script>
 
     </body>
 </html>
