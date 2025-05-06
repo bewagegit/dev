@@ -72,7 +72,7 @@ $userTypes = getAllUserTypes();
                                                         <!-- Select User Type -->
                                                         <div class="mb-3">
                                                             <label for="userType" class="form-label">I am a</label>
-                                                            <select id="userType" class="form-control" name="userType"
+                                                            <select id="userType" required class="form-control" name="userType"
                                                                 style="background-color: #f8f9fa; color: #6e68c9;"
                                                                 onchange="showFormFields(this.value)">
                                                                 <option value="" disabled selected>Select</option>
@@ -86,16 +86,16 @@ $userTypes = getAllUserTypes();
                                                         <div class="mb-3">
                                                             <label for="email" class="form-label">Email</label>
                                                             <input type="email" class="form-control" id="email"
-                                                                name="email" placeholder="Enter your email" required>
-																<div class="invalid-feedback" id="emailInputError"></div>
+                                                                name="email" placeholder="Enter your email" required />
+																<div class="invalid-feedback" style="color:red" id="emailInputError"></div>
                                                         </div>
 
                                                         <div class="mb-3">
                                                             <label for="phone" class="form-label">Phone Number</label>
                                                             <input type="tel" class="form-control" required id="phoneNumberInput"
-                                                                name="phoneNumberInput" pattern="[6-9]{1}[0-9]{9}"
-                                                                placeholder="Enter your 10 digit phone number">
-                                                            <div class="invalid-feedback" id="confirmPasswordInputError"></div>
+                                                                name="phoneNumberInput" pattern="[0-9]{10}"
+                                                                placeholder="Enter your 10 digit phone number" />
+																<div class="invalid-feedback" style="color:red" id="phoneNoError"></div>
                                                         </div>
 
                                                         <div class="mb-3">
@@ -120,7 +120,7 @@ $userTypes = getAllUserTypes();
                                                             <div class="mb-3">
                                                                 <label for="candidateNameInput"
                                                                     class="form-label">Candidate Name</label>
-                                                                <input type="text" class="form-control"
+                                                                <input type="text" class="form-control companyname"
                                                                     id="candidateNameInput" name="candidate_name"
                                                                     placeholder="Enter your name" >
                                                             </div>
@@ -144,16 +144,17 @@ $userTypes = getAllUserTypes();
                                                             <div class="mb-3">
                                                                 <label for="companyName" class="form-label">Company
                                                                     Name</label>
-                                                                <input type="text" class="form-control" id="companyName"
-                                                                    name="company_name"
+                                                                <input type="text" class="form-control companyname" id="companyName"
+                                                                    name="company_name" 
                                                                     placeholder="Enter your company name">
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="companyWebsite" class="form-label">Company
                                                                     Website</label>
-                                                                <input type="text" class="form-control"
+                                                                <input type="text" class="form-control company_website"
                                                                     id="companyWebsite" name="company_website"
                                                                     placeholder="Enter your company website">
+																	<div class="invalid-feedback" style="color:red" id="cmpyWebsiteErr">Please enter valid company website</div>
                                                             </div>
                                                         </div>
 
@@ -162,7 +163,7 @@ $userTypes = getAllUserTypes();
                                                             <div class="mb-3">
                                                                 <label for="freelancerNameInput" class="form-label">Your
                                                                     Full Name</label>
-                                                                <input type="text" class="form-control"
+                                                                <input type="text" class="form-control companyname"
                                                                     id="freelancerNameInput" name="freelancer_name"
                                                                     placeholder="Enter your name">
                                                             </div>
@@ -172,6 +173,7 @@ $userTypes = getAllUserTypes();
                                                                 <input type="text" class="form-control"
                                                                     id="portfolioLink" name="portfolio_link"
                                                                     placeholder="Enter your Portfolio Link">
+																<div class="invalid-feedback" style="color:red" id="portfolioWebsiteErr">Please enter portfolio link</div>
                                                             </div>
                                                         </div>
 
@@ -180,16 +182,17 @@ $userTypes = getAllUserTypes();
                                                             <div class="mb-3">
                                                                 <label for="consultancyName"
                                                                     class="form-label">Consultancy Name</label>
-                                                                <input type="text" class="form-control"
+                                                                <input type="text" class="form-control companyname" 
                                                                     id="consultancyName" name="consultancy_name"
                                                                     placeholder="Enter consultancy name">
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="consultancyWebsite"
                                                                     class="form-label">Website Link</label>
-                                                                <input type="text" class="form-control"
+                                                                <input type="text" class="form-control consultancy_website" 
                                                                     id="consultancyWebsite" name="consultancy_website"
                                                                     placeholder="Enter your website URL">
+																<div class="invalid-feedback" style="color:red" id="consultancyWebsiteErr">Please enter valid consultancy website</div>
                                                             </div>
                                                         </div>
 
@@ -198,7 +201,7 @@ $userTypes = getAllUserTypes();
                                                                 <input class="form-check-input" type="checkbox"
                                                                     id="flexCheckDefault">
                                                                 <label class="form-check-label" for="flexCheckDefault">I
-                                                                    agree to the <a href="javascript:void(0)"
+                                                                    agree to the <a href="terms_conditions.php"
                                                                         class="text-white text-decoration-underline">Terms
                                                                         and Conditions</a></label>
 																<div id="termsAndConditionsTxt"></div>
@@ -279,7 +282,13 @@ $userTypes = getAllUserTypes();
 
         <!-- Switcher Js -->
         <script src="assets/js/pages/switcher.init.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script>
+			const emailRegisteredAPI = "<?php echo BASE_URL ?>api/chkEmailAlreadyRegisterd.php";
+			const phoneRegisteredAPI = "<?php echo BASE_URL ?>api/chkPhoneAlreadyRegisterd.php";
+		</script>
         <script src="js/signup_validation.js"></script>
+		
 
 </body>
 

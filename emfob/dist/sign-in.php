@@ -39,6 +39,10 @@ if(isset($_REQUEST['success']) ){
 	$message = "Password updated successfully";
 }
 
+if(isset($_REQUEST['signup']) ){
+	$message = "Registration completed successfully";
+}
+
 ?>
 <!doctype html>
 <html lang="en">

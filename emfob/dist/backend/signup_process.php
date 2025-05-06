@@ -1,11 +1,14 @@
 <?php
 include "config.php"; // Include your database connection file
+include_once("../backend/constants.php");
+include_once("../backend/db_functions.php");
+include_once("../backend/common_functions.php");
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve and sanitize the posted form data
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $phone = filter_var($_POST['phone'], FILTER_SANITIZE_STRING);
+    $phone = filter_var($_POST['phoneNumberInput'], FILTER_SANITIZE_STRING);
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirmPassword'];
     $userType = $_POST['userType'];
@@ -21,6 +24,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Passwords do not match!";
         exit();
     }
+
+	// Check the phone number is already exist
+	$result = db_select("phone_number",USERS," phone_number= ? ",array($phone));
+	if(count($result) >= 1){
+		echo "Phone number is already exist !";
+        exit();
+	}
+
+	// Check the email is already exist
+	$result = db_select("email",USERS," email= ? ",array($email));
+	if(count($result) >= 1){
+		echo "Email address is already exist !";
+        exit();
+	}
 
     // Hash the password for secure storage
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
@@ -113,6 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdo->rollBack();
         // Log and display the error message
         error_log("Error: " . $e->getMessage());
+		print_r($e);
         echo "An error occurred during the registration process.";
     }
 }

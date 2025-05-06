@@ -21,6 +21,11 @@ if($data == ''){
 //$encrypted = encrypt($data, $key);
 $decryptedEmail = decrypt($data, $key);
 
+if($decryptedEmail == ''){
+	echo "The link is invalid";
+	exit;
+}
+
 extract($_POST);
 if(isset($submit)){
 	$key = PASSWORDHASHKEY;

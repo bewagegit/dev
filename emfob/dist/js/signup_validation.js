@@ -95,3 +95,94 @@ function validateEmail() {
   }
   
 }
+
+$(document).ready(function(){
+	$("#email").blur(function(){
+		chkEmailAlreadyRegistered($(this).val());
+	});
+	$("#phoneNumberInput").blur(function(){
+		chkPhoneAlreadyRegisterd($(this).val());
+	});
+	
+	
+	$('.companyname').on('keypress', function (e) {
+		var char = String.fromCharCode(e.which);
+		if (!/^[a-zA-Z\s]$/.test(char)) {
+		  e.preventDefault();
+		}
+	});
+	
+	$('#portfolioLink').on('input', function () {
+		const url = $(this).val();
+		const isValid = /^(https?:\/\/)?([\w\-]+\.)+[\w]{2,}(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/.test(url);
+
+		if (!isValid && url !== "") {
+		  $('#portfolioWebsiteErr').show();
+		} else {
+		  $('#portfolioWebsiteErr').hide();
+		}
+	});
+	
+	$('.company_website').on('input', function () {
+		const url = $(this).val();
+		const isValid = /^(https?:\/\/)?([\w\-]+\.)+[\w]{2,}(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/.test(url);
+
+		if (!isValid && url !== "") {
+		  $('#cmpyWebsiteErr').show();
+		} else {
+		  $('#cmpyWebsiteErr').hide();
+		}
+	});
+	  
+	$('.consultancy_website').on('input', function () {
+		const url = $(this).val();
+		const isValid = /^(https?:\/\/)?([\w\-]+\.)+[\w]{2,}(\/[\w\-._~:\/?#[\]@!$&'()*+,;=]*)?$/.test(url);
+
+		if (!isValid && url !== "") {
+		  $('#consultancyWebsiteErr').show();
+		} else {
+		  $('#consultancyWebsiteErr').hide();
+		}
+	});
+	
+});
+
+//check email is already registered
+function chkEmailAlreadyRegistered(emailAddress){
+	$("#emailInputError").html("");
+	$.ajax({
+		url: emailRegisteredAPI + "?email=" + emailAddress,
+		method: 'GET',
+		success: function(data) {
+			console.log(data.result);
+			if(data.result == 1){
+				$("#emailInputError").show();
+				$("#emailInputError").css('color','red');
+				$("#emailInputError").html("Email address already exist");
+			}
+		},
+		error: function(err) {
+			console.error('Error:', err);
+		}
+	});
+}
+
+//check phone number is already registered
+function chkPhoneAlreadyRegisterd(phoneNumber){
+	$("#phoneNoError").html("");
+	$.ajax({
+		url: phoneRegisteredAPI + "?phone=" + phoneNumber,
+		method: 'GET',
+		success: function(data) {
+			console.log(data.result);
+			if(data.result == 1){
+				$("#phoneNoError").show();
+				$("#phoneNoError").css('color','red');
+				$("#phoneNoError").html("Phone number already exist");
+			}
+		},
+		error: function(err) {
+			console.error('Error:', err);
+		}
+	});
+}
