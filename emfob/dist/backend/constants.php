@@ -2,6 +2,7 @@
 
 //URL Details
 define("BASE_URL","http://localhost/emfob/dist/");
+define("BASE_URL_ADMIN","http://localhost/emfob-admin/dist/");
 
 //Database Details
 define("HOSTNAME","localhost");
@@ -35,5 +36,14 @@ define("QUIZ_ANSWERS","quiz_answers");
 define("QUIZ_ATTEMPTS","quiz_attempts");
 define("USERS","users");
 define("USERS_TYPES","users_types");
+
+define("GENDER","gender");
+define("NATIONALITY","nationality");
+define("COMMUNICATION_METHOD","communication_method");
+define("MARITAL_STATUS","marital_status");
+
+
+//start the session variable 
+@session_start();
 
 ?>

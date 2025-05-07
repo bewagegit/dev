@@ -7,6 +7,13 @@ function getAllUserTypes(){
 	return $userTypes;
 }
 
+//get All Gender, nationality, communication_method, marital_status
+function getAllSelection($selectionTable){
+	//Get All selection id , name
+	$result = db_select('id,name',$selectionTable);
+	return $result;
+}
+
 //send mail to the users
 function sendMail($to,$subject,$message,$headers=''){
 	
