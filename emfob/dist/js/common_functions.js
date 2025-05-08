@@ -76,3 +76,36 @@ function isValidEmail(email) {
 	const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	return pattern.test(email);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const tagContainer = document.getElementById("tag-container");
+  const tagInput = document.getElementById("languagesSpoken");
+
+  tagInput.addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const tagText = tagInput.value.trim();
+      if (tagText !== "") {
+        addTag(tagText);
+        tagInput.value = "";
+      }
+    }
+  });
+
+  tagContainer.addEventListener("click", function (e) {
+    if (e.target.classList.contains("remove-tag")) {
+      const tag = e.target.parentElement;
+      tagContainer.removeChild(tag);
+    }
+  });
+
+  function addTag(text) {
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.innerHTML = `
+      ${text}
+      <span class="remove-tag">&times;</span>
+    `;
+    tagContainer.insertBefore(tag, tagInput);
+  }
+});

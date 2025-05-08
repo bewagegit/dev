@@ -69,7 +69,7 @@ try {
         :willingness_to_relocate, :expected_joining_date, :additional_preferences,
         :cover_letter, :portfolio_url
     )";
-
+	
     $stmt = $pdo->prepare($sql);
     
     // Bind parameters

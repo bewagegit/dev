@@ -41,7 +41,11 @@ define("GENDER","gender");
 define("NATIONALITY","nationality");
 define("COMMUNICATION_METHOD","communication_method");
 define("MARITAL_STATUS","marital_status");
-
+define("WORK_EXPERIENCE","work_experience");
+define("NOTICE_PERIOD","notice_period");
+define("EMPLOYMENT_TYPE","employment_type");
+define("HIGHEST_QUALIFICATION","highest_qualification");
+define("PREFERRED_EMPLOYMENT_TYPE","preferred_employment_type");
 
 //start the session variable 
 @session_start();
