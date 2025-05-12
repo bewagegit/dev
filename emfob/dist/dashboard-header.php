@@ -379,8 +379,8 @@
                                                 </div>
                                             </div>
                                             <div class="rich-list-content">
-                                                <h3 class="rich-list-title text-white">Charlie Stone</h3>
-                                                <span class="rich-list-subtitle text-white">admin@codubucks.in</span>
+                                                <h3 class="rich-list-title text-white"><?php echo explode("@",$userDetails['email'])[0]; ?></h3>
+                                                <span class="rich-list-subtitle text-white"><?php echo $userDetails['email']; ?></span>
                                             </div>
                                             <div class="rich-list-append"><span
                                                     class="badge badge-label-light fs-6">6+</span></div>
@@ -431,16 +431,93 @@
             </div>
         </header>
         <!-- End topbar -->
-
-        <!-- ========== Left Sidebar Start ========== -->
-        <div class="sidebar-left">
-
+		
+		<!-- ========== Left Sidebar Start from DB ========== -->
+		
+		<?php
+		//get all top level menus  parent id is null
+		$menuDetails = db_select('*',MENU_ITEMS,'parent_id IS NULL AND is_active = 1 ');
+		?>
+		<div class="sidebar-left">
             <div data-simplebar class="h-100">
-
                 <!--- Sidebar-menu -->
                 <div id="sidebar-menu">
                     <!-- Left Menu Start -->
                     <ul class="left-menu list-unstyled" id="side-menu">
+					<?php foreach($menuDetails as $val){ ?>
+						<?php 
+						$link = '<li class="menu-title">';
+						if($val['url'] !=  ''){
+							$link .= '<a href="'.$val['url'].'" class="">';
+						}
+						if($val['classname'] !=  ''){
+							$link .= '<i class="fas '.$val['classname'].'"></i>';
+						}
+						if($val['title'] !=  ''){
+							$link .= '<span>'.$val['title'].'</span>';
+						}
+						if($val['url'] !=  ''){
+							$link .= '</a>';
+						}
+						$link .= '</li>';
+						echo $link;
+						
+						//2nd level menus
+						$secondLevelMenus = db_select('*',MENU_ITEMS,'parent_id = ? AND is_active = 1 ',array($val['id']));
+						if(count($secondLevelMenus)){
+							foreach($secondLevelMenus as $sVal){
+								$thirdMenus = '';
+								$thirdMenus = getThirdLevelMenus($sVal['id']); 
+								$link1 = '<li>';
+								if($sVal['url'] != '')
+									$link1 .= '<a href="'.$sVal['url'].'" class="'.(($thirdMenus != '')? 'has-arrow':'').'">';
+								else
+									$link1 .= '<a href="javascript: void(0);" class="'.(($thirdMenus != '')? 'has-arrow':'').'">';
+								if($sVal['classname'] != '' ){
+									$link1 .= '<i class="fa '.$sVal['classname'].'"></i>';
+								}
+								$link1 .= '<span>'.$sVal['title'].'</span></a>'.$thirdMenus.'</li>';
+								echo $link1;
+							}
+						}
+						
+						?>  
+					<?php }
+					function getThirdLevelMenus($id){
+						$link2 = '';
+						//3nd level menus
+						$thirdLevelMenus = db_select('*',MENU_ITEMS,'parent_id = ? AND is_active = 1 ',array($id));
+						if(count($thirdLevelMenus)){
+							$link2 = '<ul class="sub-menu" aria-expanded="false">';
+							foreach($thirdLevelMenus as $tVal){
+								$link2  .= '<li>';
+								$link2 .= '<a href="'.( ($tVal['url'])? $tVal['url']:'javascript:void(); ') .'"><i class="mdi mdi-checkbox-blank-circle align-middle"></i>'.$tVal['title'].'</a>';
+								$link2 .= '</li>';
+							}
+							$link2 .= '</ul>';
+						}
+						return $link2;
+					}
+					?>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		<!-- ========== Left Sidebar ends from DB ========== -->
+
+        <!-- ========== Left Sidebar Start ========== -->
+		
+		
+		
+        <!-- <div class="sidebar-left">
+
+            <div data-simplebar class="h-100">
+
+                <!--- Sidebar-menu -->
+                <!-- <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <!--<ul class="left-menu list-unstyled" id="side-menu1">
                         <li>
                             <a href="index.php" class="">
                                 <i class="fas fa-desktop"></i>
@@ -456,7 +533,7 @@
                                 <span>Profile & Resume</span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="profile.php"><i
+                                <li><a href="candidate_dashboard.php"><i
                                             class="mdi mdi-checkbox-blank-circle align-middle"></i>Edit Profile</a></li>
                                 <li><a href="ui-alerts.php"><i class="mdi mdi-checkbox-blank-circle align-middle"></i>
                                         Resume Builder</a></li>
@@ -590,8 +667,8 @@
                 </div>
 
                 <!-- Sidebar -->
-            </div>
+            <!--</div>
 
-        </div>
+        <!-- </div> -->
 
         <!-- Left Sidebar End -->

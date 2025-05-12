@@ -46,6 +46,10 @@ define("NOTICE_PERIOD","notice_period");
 define("EMPLOYMENT_TYPE","employment_type");
 define("HIGHEST_QUALIFICATION","highest_qualification");
 define("PREFERRED_EMPLOYMENT_TYPE","preferred_employment_type");
+define("EXPERIENCE_LEVEL","experience_level");
+define("CATEGORIES","job_categories");
+
+define("MENU_ITEMS","menu_items");
 
 //start the session variable 
 @session_start();

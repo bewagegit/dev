@@ -14,6 +14,13 @@ function getAllSelection($selectionTable){
 	return $result;
 }
 
+//get All user details
+function getUserDetails($col, $selectionTable,$where,$whereArray){
+	//Get All details
+	$result = db_select($col,$selectionTable,$where,$whereArray);
+	return $result;
+}
+
 //send mail to the users
 function sendMail($to,$subject,$message,$headers=''){
 	

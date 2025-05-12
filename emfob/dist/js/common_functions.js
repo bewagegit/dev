@@ -81,31 +81,60 @@ document.addEventListener("DOMContentLoaded", () => {
   const tagContainer = document.getElementById("tag-container");
   const tagInput = document.getElementById("languagesSpoken");
 
+  let tagArray = [];
+	
   tagInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const tagText = tagInput.value.trim();
-      if (tagText !== "") {
-        addTag(tagText);
-        tagInput.value = "";
-      }
-    }
+		if (e.key === "Enter") {
+		  e.preventDefault();
+		  const tagText = tagInput.value.trim();
+		  if (tagText !== "") {
+			//languages already exist check
+			let chkTagAlredy = tagArray.indexOf(tagText);
+			if (chkTagAlredy !== -1) {
+				return;
+			}
+			addTag(tagText);
+			tagInput.value = "";
+			addElementArray(tagText);
+		  }
+		}
   });
 
   tagContainer.addEventListener("click", function (e) {
-    if (e.target.classList.contains("remove-tag")) {
-      const tag = e.target.parentElement;
-      tagContainer.removeChild(tag);
-    }
+		if (e.target.classList.contains("remove-tag")) {
+			const tag = e.target.parentElement;
+			tagContainer.removeChild(tag);
+			removeElementArray(tag.getAttribute('data-value'));
+		}
   });
 
   function addTag(text) {
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.innerHTML = `
-      ${text}
-      <span class="remove-tag">&times;</span>
-    `;
-    tagContainer.insertBefore(tag, tagInput);
+		const tag = document.createElement("span");
+		tag.className = "tag";
+		tag.setAttribute("data-value", text);
+		tag.innerHTML = `
+			${text}
+			<span class="remove-tag">&times;</span>
+		`;
+		tagContainer.insertBefore(tag, tagInput);
   }
+  
+  function addElementArray(tagText){
+		tagArray.push(tagText);
+		setValueHiddenTags();
+  }
+  
+  function removeElementArray(dataVal){
+		let index = tagArray.indexOf(dataVal);
+		if (index !== -1) {
+			tagArray.splice(index, 1); // removes data
+		}
+		setValueHiddenTags();
+  }
+  
+  function setValueHiddenTags(){
+		document.getElementById('hidden_tags').value = tagArray;
+  }
+  
+  
 });

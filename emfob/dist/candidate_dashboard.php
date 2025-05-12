@@ -3,13 +3,19 @@ include_once("backend/config.php");
 include_once("backend/constants.php");
 include_once("backend/db_functions.php");
 include_once("backend/common_functions.php");
+include_once("backend/page_authcheck.php");
 $title = 'Dashboard | Emfob';
-
-include_once("dashboard-header.php");
 
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
+$userDetailsResult = getUserDetails('user_id,email,phone_number',USERS,'user_id = ?',array($_SESSION['user_id']));
+foreach($userDetailsResult as $val){
+	$userDetails= $val;
+}
+
+include_once("dashboard-header.php");
 
 //page 1 form
 $gender = getAllSelection(GENDER);
@@ -67,11 +73,11 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 	  border: 1px solid #ccc;
 	  padding: 5px;
 	  border-radius: 5px;
-	  max-width: 400px;
+	  max-width: auto;
 	}
 
 	.tag {
-	  background-color: #e0e0e0;
+	  background-color: #b4c2e1;
 	  padding: 5px 10px;
 	  margin: 2px;
 	  border-radius: 3px;
@@ -90,6 +96,23 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 	  outline: none;
 	  flex-grow: 1;
 	  min-width: 120px;
+	}
+	
+	.suggestions-box {
+	  border: 1px solid #ccc;
+	  max-width: 300px;
+	  position: absolute;
+	  background: white;
+	  z-index: 1000;
+	}
+
+	.suggestion {
+	  padding: 8px;
+	  cursor: pointer;
+	}
+
+	.suggestion:hover {
+	  background-color: #f0f0f0;
 	}
 </style>
 
@@ -145,17 +168,17 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
                                                 <div class="d-flex align-items-center">
                                                     <div class="step-number">Step 2</div>
                                                     <div class="step-label">
-                                                        <strong>Professional Details</strong><br>
-                                                        <small>Your work experience</small>
+                                                        <strong>Education & Certifications</strong><br>
+                                                        <small>Your qualifications</small>
                                                     </div>
                                                 </div>
                                             </li>
-                                            <li class="list-group-item" id="step-3" data-step="2">
+											<li class="list-group-item" id="step-3" data-step="2">
                                                 <div class="d-flex align-items-center">
                                                     <div class="step-number">Step 3</div>
                                                     <div class="step-label">
-                                                        <strong>Education & Certifications</strong><br>
-                                                        <small>Your qualifications</small>
+                                                        <strong>Professional Details</strong><br>
+                                                        <small>Your work experience</small>
                                                     </div>
                                                 </div>
                                             </li>
@@ -218,17 +241,15 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 												<div class="row mb-3">
 													<div class="col-md-6">
 														<label for="contactNumber" class="form-label">Contact
-															Number <span style='color:red'>*</span>:</label>
-														<input type="tel" class="form-control" id="contactNumber" maxlength=15
-															placeholder="Enter Your Contact Number" required>
-														<div class="error" id="contactNumberErr"></div>
+															Number :</label>
+															<br/>
+															<?php echo $userDetails['phone_number'] ?>	
 													</div>
 													<div class="col-md-6">
 														<label for="emailAddress" class="form-label">Email
-															Address <span style='color:red'>*</span>:</label>
-														<input type="email" class="form-control" id="emailAddress"
-															placeholder="Enter Your Email Address" required>
-														<div class="error" id="emailAddressErr"></div>
+															Address :</label>
+															<br/>
+															<?php echo $userDetails['email'] ?>
 													</div>
 												</div>
 												<div class="row mb-3">
@@ -296,12 +317,13 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 												<div class="row mb-3">
 													<div class="col-md-12">
 														<label for="languagesSpoken" class="form-label">Languages
-															Spoken <span style='color:red'>*</span>:</label>
+															Spoken (Type language press enter) <span style='color:red'>*</span>:</label>
 														<div id="tag-container">	
 															<input type="text" class="form-control" id="languagesSpoken"
 																placeholder="Enter Languages Spoken">
 														</div>
-														 <input type="hidden" name="tags" id="hidden-tags">
+														<div id="suggestions" class="suggestions-box"></div>
+														<input type="hidden" name="tags" id="hidden_tags">
 														<div class="error" id="languagesSpokenErr"></div>
 													</div>
 												</div>
@@ -330,10 +352,133 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 														id="nextStep1">Next</button>
 												</div>
 											</div>
-
-
-                                            <!-- Step 2: Professional Details -->
+											
+											
+											
+											
+											<!-- Step 2: Education & Certifications -->
 												<div class="form-step" id="form-step-2" style="display: none;">
+													<!-- Educational Qualifications -->
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="highestQualification" class="form-label">Highest
+																Qualification <span style='color:red'>*</span>:</label>
+															<select class="form-control" id="highestQualification">
+																<option value="" disabled selected>Select Qualification
+																</option>
+																<?php foreach($highest_qualification as $val){ ?>
+																	<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+																<?php } ?>
+															</select>
+															<div class="error" id="highestQualificationErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="fieldOfStudy" class="form-label">Field of
+																Study <span style='color:red'>*</span>:</label>
+															<input type="text" class="form-control" id="fieldOfStudy"
+																placeholder="Enter Field of Study (e.g., Computer Science)">
+															<div class="error" id="fieldOfStudyErr"></div>
+														</div>
+													</div>
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="institution"
+																class="form-label">Institution/University Name <span style='color:red'>*</span>:</label>
+															<input type="text" class="form-control" id="institution"
+																placeholder="Enter Institution Name">
+															<div class="error" id="institutionErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="graduationYear" class="form-label">Year of
+																Graduation <span style='color:red'>*</span>:</label>
+															<input type="date" class="form-control" id="graduationYear">
+															<div class="error" id="graduationYearErr"></div>
+														</div>
+													</div>
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="degreeDetails" class="form-label">Degree
+																Details <span style='color:red'>*</span>:</label>
+															<textarea class="form-control" id="degreeDetails" rows="3"
+																placeholder="Additional degree information (e.g., major, honors)"></textarea>
+															<div class="error" id="degreeDetailsErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="gradePercentage"
+																class="form-label">Grade/Percentage <span style='color:red'>*</span>:</label>
+															<input type="text" class="form-control" id="gradePercentage"
+																placeholder="Enter Grade or Percentage">
+															<div class="error" id="gradePercentageErr"></div>
+														</div>
+													</div>
+
+													<!-- Certifications -->
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="certification" class="form-label">Certification
+																Title <span style='color:red'>*</span>:</label>
+															<input type="text" class="form-control" id="certification"
+																placeholder="Enter Certification Title">
+															<div class="error" id="certificationErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="issuingOrganization" class="form-label">Issuing
+																Organization <span style='color:red'>*</span>:</label>
+															<input type="text" class="form-control" id="issuingOrganization"
+																placeholder="Enter Organization Name">
+															<div class="error" id="issuingOrganizationErr"></div>
+														</div>
+													</div>
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="certificationDate" class="form-label">Completion
+																Date <span style='color:red'>*</span>:</label>
+															<input type="date" class="form-control" id="certificationDate">
+															<div class="error" id="certificationDateErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="certificationLink" class="form-label">Certificate
+																Link <span style='color:red'>*</span>:</label>
+															<input type="url" class="form-control" id="certificationLink"
+																placeholder="Enter the link to your certificate (if available)">
+															<div class="error" id="certificationLinkErr"></div>
+														</div>
+													</div>
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="uploadCertificate" class="form-label">Upload
+																Certification <span style='color:red'>*</span>:</label>
+															<input type="file" class="form-control" id="uploadCertificate">
+															<div class="error" id="uploadCertificateErr"></div>
+														</div>
+													</div>
+
+													<!-- Additional Information -->
+													<div class="row mb-3">
+														<div class="col-md-12">
+															<label for="academicAchievements" class="form-label">Academic
+																Achievements <span style='color:red'>*</span>:</label>
+															<textarea class="form-control" id="academicAchievements"
+																rows="3"
+																placeholder="Mention any academic awards, scholarships, or honors received."></textarea>
+															<div class="error" id="academicAchievementsErr"></div>
+														</div>
+													</div>
+
+													<!-- Navigation Buttons -->
+													<div class="d-flex justify-content-between">
+														<button type="button" class="btn btn-secondary"
+															id="prevStep2">Previous</button>
+														<button type="button" class="btn btn-primary"
+															id="nextStep2">Next</button>
+													</div>
+												</div>
+                                            <!-- #region -->
+											
+
+
+                                            <!-- Step 3: Professional Details -->
+												<div class="form-step" id="form-step-3" style="display: none;">
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="jobTitle" class="form-label">Current Job
@@ -456,132 +601,15 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													</div>
 													<div class="d-flex justify-content-between">
 														<button type="button" class="btn btn-secondary"
-															id="prevStep2">Previous</button>
-														<button type="button" class="btn btn-primary"
-															id="nextStep2">Next</button>
-													</div>
-												</div>
-											
-
-
-                                            <!-- Step 3: Education & Certifications -->
-												<div class="form-step" id="form-step-3" style="display: none;">
-													<!-- Educational Qualifications -->
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="highestQualification" class="form-label">Highest
-																Qualification <span style='color:red'>*</span>:</label>
-															<select class="form-control" id="highestQualification">
-																<option value="" disabled selected>Select Qualification
-																</option>
-																<?php foreach($highest_qualification as $val){ ?>
-																	<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
-																<?php } ?>
-															</select>
-															<div class="error" id="highestQualificationErr"></div>
-														</div>
-														<div class="col-md-6">
-															<label for="fieldOfStudy" class="form-label">Field of
-																Study <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="fieldOfStudy"
-																placeholder="Enter Field of Study (e.g., Computer Science)">
-															<div class="error" id="fieldOfStudyErr"></div>
-														</div>
-													</div>
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="institution"
-																class="form-label">Institution/University Name <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="institution"
-																placeholder="Enter Institution Name">
-															<div class="error" id="institutionErr"></div>
-														</div>
-														<div class="col-md-6">
-															<label for="graduationYear" class="form-label">Year of
-																Graduation <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="graduationYear">
-															<div class="error" id="graduationYearErr"></div>
-														</div>
-													</div>
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="degreeDetails" class="form-label">Degree
-																Details <span style='color:red'>*</span>:</label>
-															<textarea class="form-control" id="degreeDetails" rows="3"
-																placeholder="Additional degree information (e.g., major, honors)"></textarea>
-															<div class="error" id="degreeDetailsErr"></div>
-														</div>
-														<div class="col-md-6">
-															<label for="gradePercentage"
-																class="form-label">Grade/Percentage <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="gradePercentage"
-																placeholder="Enter Grade or Percentage">
-															<div class="error" id="gradePercentageErr"></div>
-														</div>
-													</div>
-
-													<!-- Certifications -->
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="certification" class="form-label">Certification
-																Title <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="certification"
-																placeholder="Enter Certification Title">
-															<div class="error" id="certificationErr"></div>
-														</div>
-														<div class="col-md-6">
-															<label for="issuingOrganization" class="form-label">Issuing
-																Organization <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="issuingOrganization"
-																placeholder="Enter Organization Name">
-															<div class="error" id="issuingOrganizationErr"></div>
-														</div>
-													</div>
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="certificationDate" class="form-label">Completion
-																Date <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="certificationDate">
-															<div class="error" id="certificationDateErr"></div>
-														</div>
-														<div class="col-md-6">
-															<label for="certificationLink" class="form-label">Certificate
-																Link <span style='color:red'>*</span>:</label>
-															<input type="url" class="form-control" id="certificationLink"
-																placeholder="Enter the link to your certificate (if available)">
-															<div class="error" id="certificationLinkErr"></div>
-														</div>
-													</div>
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="uploadCertificate" class="form-label">Upload
-																Certification <span style='color:red'>*</span>:</label>
-															<input type="file" class="form-control" id="uploadCertificate">
-															<div class="error" id="uploadCertificateErr"></div>
-														</div>
-													</div>
-
-													<!-- Additional Information -->
-													<div class="row mb-3">
-														<div class="col-md-12">
-															<label for="academicAchievements" class="form-label">Academic
-																Achievements <span style='color:red'>*</span>:</label>
-															<textarea class="form-control" id="academicAchievements"
-																rows="3"
-																placeholder="Mention any academic awards, scholarships, or honors received."></textarea>
-															<div class="error" id="academicAchievementsErr"></div>
-														</div>
-													</div>
-
-													<!-- Navigation Buttons -->
-													<div class="d-flex justify-content-between">
-														<button type="button" class="btn btn-secondary"
 															id="prevStep3">Previous</button>
 														<button type="button" class="btn btn-primary"
 															id="nextStep3">Next</button>
 													</div>
 												</div>
-                                            <!-- #region -->
+											
+
+
+                                            
 
 
                                             <!-- Step 4: Resume & Preferences -->
@@ -891,7 +919,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
             formData.append('preferred_comm_method', document.getElementById('preferredCommMethod').value);
             formData.append('emergency_contact_name', document.getElementById('emergencyContact').value);
             formData.append('emergency_contact_number', document.getElementById('emergencyContactNumber').value);
-            formData.append('languages_spoken', document.getElementById('languagesSpoken').value);
+            //formData.append('languages_spoken', document.getElementById('languagesSpoken').value);
             formData.append('hobbies_interests', document.getElementById('hobbiesInterests').value);
 
             // Handle file uploads
@@ -976,23 +1004,30 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 						"gender":"Gender",
 						"dob" : "Date of Birth",
 						"nationality" : "Nationality",
-						"contactNumber" : "Contact Number",
-						"emailAddress" : "Email Address",
 						"address" : "Address",
 						"maritalStatus" : "Marital Status",
 						"preferredCommMethod" : "Preferred Communication Method",
 						"emergencyContact" : "Emergency Contact Name",
 						"emergencyContactNumber" : "Emergency Contact Number",
-						"languagesSpoken" : "Languages Spoken",
+						//"languagesSpoken" : "Languages Spoken",
 						"hobbiesInterests" : "Hobbies & Interests",
 						"profilePicture" : "Profile Picture"
 						};
 						
 		clearHtmlError(array1);
+		
+		document.getElementById('languagesSpokenErr').innerHTML = '';
+		var hiddenTags = document.getElementById('hidden_tags').value;
+		console.log(hiddenTags);
+		if(hiddenTags == ''){
+			document.getElementById('languagesSpokenErr').innerHTML = 'Please enter Languages Spoken';
+		}
+		
+		
 		chkValidInput(array1,0);
 		
 		//is valid number
-		const array2 = { "contactNumber" : "Contact Number",
+		const array2 = { //"contactNumber" : "Contact Number",
 						"emergencyContactNumber" : "Emergency Contact Number"};
 		chkValidInput(array2,1);
 		
@@ -1003,8 +1038,8 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		chkValidInput(array3,2);
 		
 		//is valid email address
-		const array4 = { "emailAddress" : "Email Address"};		
-		chkValidInput(array4,3);
+		//const array4 = { "emailAddress" : "Email Address"};		
+		//chkValidInput(array4,3);
 		
 		
 		var validation = 0;
@@ -1017,8 +1052,40 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		return validation;
 	}
 	
+	
+	
 	//validation for page 2 form
 	function page2Validation(){
+		const array1 = {"highestQualification":"Highest Qualification",
+						"fieldOfStudy":"Field of Study",
+						"institution" : "Institution",
+						"graduationYear" : "Graduation Year",
+						"degreeDetails" : "Degree Details",
+						"gradePercentage" : "Grade Percentage",
+						"certification" : "Certification",
+						"issuingOrganization" : "Issuing Organization",
+						"certificationDate" : "Certification Date",
+						"certificationLink" : "Certification Link",
+						"uploadCertificate" : "Upload Certificate",
+						"academicAchievements" : "Academic Achievements"
+						};
+		clearHtmlError(array1);
+		chkValidInput(array1,0);
+		
+		var validation = 0;
+		$('.error').each(function(index, element) {
+			if(element.innerHTML != ''){
+				validation = 1;
+			}
+		});
+		
+		return validation;
+	}
+	
+	
+	
+	//validation for page 2 form
+	function page3Validation(){
 		const array1 = {"jobTitle":"Job Title",
 						"companyName":"Company Name",
 						"totalExperience" : "Total experience",
@@ -1063,33 +1130,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		return validation;
 	}
 	
-	//validation for page 3 form
-	function page3Validation(){
-		const array1 = {"highestQualification":"Highest Qualification",
-						"fieldOfStudy":"Field of Study",
-						"institution" : "Institution",
-						"graduationYear" : "Graduation Year",
-						"degreeDetails" : "Degree Details",
-						"gradePercentage" : "Grade Percentage",
-						"certification" : "Certification",
-						"issuingOrganization" : "Issuing Organization",
-						"certificationDate" : "Certification Date",
-						"certificationLink" : "Certification Link",
-						"uploadCertificate" : "Upload Certificate",
-						"academicAchievements" : "Academic Achievements"
-						};
-		clearHtmlError(array1);
-		chkValidInput(array1,0);
-		
-		var validation = 0;
-		$('.error').each(function(index, element) {
-			if(element.innerHTML != ''){
-				validation = 1;
-			}
-		});
-		
-		return validation;
-	}
+	
 	
 	///validation for page 4 form
 	function page4Validation(){
@@ -1141,8 +1182,8 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		formData.append('gender', document.getElementById('gender').value);
 		formData.append('date_of_birth', document.getElementById('dob').value);
 		formData.append('nationality', document.getElementById('nationality').value);
-		formData.append('contact_number', document.getElementById('contactNumber').value);
-		formData.append('email_address', document.getElementById('emailAddress').value);
+		//formData.append('contact_number', document.getElementById('contactNumber').value);
+		//formData.append('email_address', document.getElementById('emailAddress').value);
 		formData.append('residential_address', document.getElementById('address').value);
 		formData.append('linkedin_url', document.getElementById('linkedin').value);
 		formData.append('github_url', document.getElementById('github').value);
@@ -1151,7 +1192,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		formData.append('preferred_comm_method', document.getElementById('preferredCommMethod').value);
 		formData.append('emergency_contact_name', document.getElementById('emergencyContact').value);
 		formData.append('emergency_contact_number', document.getElementById('emergencyContactNumber').value);
-		formData.append('languages_spoken', document.getElementById('languagesSpoken').value);
+		//formData.append('languages_spoken', document.getElementById('languagesSpoken').value);
 		formData.append('hobbies_interests', document.getElementById('hobbiesInterests').value);
 
 		// Handle file uploads
