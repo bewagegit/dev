@@ -5,6 +5,7 @@ include_once("backend/db_functions.php");
 include_once("backend/common_functions.php");
 include_once("backend/page_authcheck.php");
 $title = 'Dashboard | Emfob';
+
 ?>
 <!doctype html>
 <?php
@@ -86,7 +87,7 @@ include_once("dashboard-header.php"); ?>
                             <p>Share your referral link and earn rewards when your friends join!</p>
 
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" value="https://example.com/referral?code=123456"
+                                <input type="text" class="form-control" value="https://example.com/referral?code=<?php echo "EMFOB_".$_SESSION['user_id']; ?>"
                                     id="referralLink" readonly>
                                 <button class="btn btn-outline-primary" onclick="copyReferral()">Copy Link</button>
                             </div>

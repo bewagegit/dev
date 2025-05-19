@@ -197,7 +197,7 @@ $title = 'Job Search | Emfob'; ?>
                                                     <option value="">All</option>
                                                     <option value="20000-40000">20,000 - 40,000</option>
                                                     <option value="40000-60000">40,000 - 60,000</option>
-                                                    <option value="60000+">60,000+</option>
+                                                    <option value="60000-above">60,000+</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -210,7 +210,7 @@ $title = 'Job Search | Emfob'; ?>
                                                 </select>
                                             </div>
                                             <button type="button" class="btn btn-primary btn-block"
-                                                onclick="loadData()">Apply Filters
+                                                onclick="loadData(1)">Apply Filters
                                             </button>
                                             <button type="button" class="btn btn-primary btn-block"
                                                 onclick="clearFilters()">Clear Filters
@@ -225,7 +225,7 @@ $title = 'Job Search | Emfob'; ?>
                                         <div class="form-group d-flex">
                                             <input type="text" class="form-control" id="searchInput"
                                                 placeholder="Search for a job">
-                                            <button class="btn btn-primary ml-2" onclick="searchJobs()">Search
+                                            <button class="btn btn-primary ml-2" onclick="loadData(1,'title')">Search
                                                 Job</button>
                                         </div>
                                     </div>
@@ -366,40 +366,52 @@ $title = 'Job Search | Emfob'; ?>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 <script>
-	function loadData() {
+	let currentPage;
+	let pageNo = 1;
+	let paginatedJobs;
+	document.addEventListener('DOMContentLoaded', function () {
+	  loadData(1);
+	  // Your DOM manipulation code here
+	});
+	function loadData(pageNo,title='') {
+		document.getElementById('jobResults').innerHTML = 'Loading..';
+		$('.pagination').html('');
+		currentPage = pageNo;
 		const xhr = new XMLHttpRequest();
-		const qry = "job_type="+$('#jobType').val();
-		xhr.open("GET", "<?php echo BASE_URL; ?>api/jobsearch.php?"+qry+"&limit=1", true);
+		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&salary="+$('#salaryRange').val()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
+		xhr.open("GET", "<?php echo BASE_URL; ?>api/jobsearch.php?"+qry+"&limit="+pageNo, true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
 		xhr.onload = function () {
 			if (xhr.status === 200) {
 			  const response = JSON.parse(xhr.responseText);
-			  console.log(response); // new post response
-			  searchResJobs(response);
+			  if(response.data.length !== 0){
+				searchResJobs(response.data,response.totalcnt,pageNo);
+			  }
+			  else{
+				  document.getElementById('jobResults').innerHTML = '<p>No jobs found.</p>';
+			  }
 			}
 		  };
-
-		const postData = {
-			jobType: $('#jobType').val(),
-			limit: 1
-		};
-
-		xhr.send(JSON.stringify(postData));
+		xhr.send();
 	}
 	
-	function searchResJobs(response){
+	function searchResJobs(response,cnt,pageNo){
 		
 		// Example data (replace with actual API data)
-        const jobs = response;
+        let jobs = response;
+		if(response.length === 0){
+			jobs = [];
+		}
 
         // Filter jobs
         const filteredJobs = jobs;
 
         // Paginate results
-        const totalResults = filteredJobs.length;
+        const totalResults = cnt;
         const totalPages = Math.ceil(totalResults / resultsPerPage);
-        const paginatedJobs = filteredJobs.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
+        //const paginatedJobs = filteredJobs.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
+		paginatedJobs = jobs;
 
         // Clear previous results
         $('#jobResults').empty();
@@ -431,200 +443,21 @@ $title = 'Job Search | Emfob'; ?>
 	}
 	
 	
-	
-    let currentPage = 1;
+    currentPage = pageNo;
     const resultsPerPage = 10;
-
-    function searchJobs() {
-        const jobType = $('#jobType').val();
-        const experienceLevel = $('#experienceLevel').val();
-        const location = $('#location').val();
-        const salaryRange = $('#salaryRange').val();
-        const industry = $('#industry').val();
-        const searchInput = $('#searchInput').val().toLowerCase();
-
-        // Example data (replace with actual API data)
-        const jobs = [
-            // Add your job listings here...
-            {
-                jobTitle: 'Software Engineer',
-                companyName: 'Tech Corp',
-                location: 'New York, USA',
-                salary: '50,000',
-                companyLogo: 'https://static.vecteezy.com/system/resources/previews/020/500/331/original/hyundai-logo-brand-symbol-with-name-blue-design-south-korean-car-automobile-illustration-free-vector.jpg',
-                postedDate: '2 days ago',
-                jobType: 'Full-time',
-                experienceLevel: 'Mid-level',
-                industry: 'Tech'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://cdn.iconscout.com/icon/free/png-256/free-toshiba-logo-icon-download-in-svg-png-gif-file-formats--company-brand-world-logos-vol-7-pack-icons-282829.png?f=webp',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://w7.pngwing.com/pngs/738/709/png-transparent-netflix-square-logo-tech-companies-thumbnail.png',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://s3.amazonaws.com/cdn.designcrowd.com/blog/2017/April/35-Famous-Square-Logos/2_300.png',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://cdn.dribbble.com/userupload/3703063/file/original-74325d68b7d0808d1eb8446e098166c1.jpg?resize=752x',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://images.squarespace-cdn.com/content/v1/5ede2122e582b96630a4a73e/1609375996518-DZU53FYNB3FMBYB1JHG6/HP-logo+2021.jpg',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://www.zarla.com/images/coca-cola-logo-2400x2400-20223105.png?crop=1:1,smart&width=150&dpr=2',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://www.zarla.com/images/google-logo-2400x2400-20220519.png?crop=1:1,smart&width=150&dpr=2',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Marketing Specialist',
-                companyName: 'Market Guru',
-                location: 'San Francisco, USA',
-                salary: '40,000',
-                companyLogo: 'https://s3.amazonaws.com/cdn.designcrowd.com/blog/100-Famous-Brand%20Logos-From-The-Most-Valuable-Companies-of-2020/mcdonalds-logo.png',
-                postedDate: '1 week ago',
-                jobType: 'Part-time',
-                experienceLevel: 'Entry-level',
-                industry: 'Marketing'
-            },
-            {
-                jobTitle: 'Software Engineer',
-                companyName: 'Tech Corp',
-                location: 'New York, USA',
-                salary: '50,000',
-                companyLogo: 'https://assets.hongkiat.com/uploads/logo-evolution/vw-today.jpg',
-                postedDate: '2 days ago',
-                jobType: 'Full-time',
-                experienceLevel: 'Mid-level',
-                industry: 'Tech'
-            },
-            {
-                jobTitle: 'Software Engineer',
-                companyName: 'Tech Corp',
-                location: 'New York, USA',
-                salary: '50,000',
-                companyLogo: 'https://www.zarla.com/images/apple-logo-2400x2400-20220512.png?crop=1:1,smart&width=150&dpr=2',
-                postedDate: '2 days ago',
-                jobType: 'Full-time',
-                experienceLevel: 'Mid-level',
-                industry: 'Tech'
-            }
-        ];
-
-        // Filter jobs
-        const filteredJobs = jobs.filter(function (job) {
-            return (
-                (jobType === '' || job.jobType === jobType) &&
-                (experienceLevel === '' || job.experienceLevel === experienceLevel) &&
-                (location === '' || job.location.toLowerCase().includes(location.toLowerCase())) &&
-                (salaryRange === '' || withinSalaryRange(job.salary, salaryRange)) &&
-                (industry === '' || job.industry === industry) &&
-                (searchInput === '' || job.jobTitle.toLowerCase().includes(searchInput))
-            );
-        });
-
-        // Paginate results
-        const totalResults = filteredJobs.length;
-        const totalPages = Math.ceil(totalResults / resultsPerPage);
-        const paginatedJobs = filteredJobs.slice((currentPage - 1) * resultsPerPage, currentPage * resultsPerPage);
-
-        // Clear previous results
-        $('#jobResults').empty();
-
-        // Display paginated jobs
-        if (paginatedJobs.length === 0) {
-            $('#jobResults').append('<p>No jobs found.</p>');
-        } else {
-            paginatedJobs.forEach(function (job) {
-                const jobTemplate = $('#jobTemplate').html()
-                    .replace('{{jobTitle}}', job.jobTitle)
-                    .replace('{{companyName}}', job.companyName)
-                    .replace('{{location}}', job.location)
-                    .replace('{{salary}}', job.salary)
-                    .replace('{{companyLogo}}', job.companyLogo)
-                    .replace('{{postedDate}}', job.postedDate);
-
-                $('#jobResults').append(jobTemplate);
-            });
-        }
-
-        // Only display pagination if there are more than 10 items
-        if (totalResults > resultsPerPage) {
-            updatePagination(totalPages);
-            $('.pagination').show();  // Show pagination
-        } else {
-            $('.pagination').empty().hide();  // Hide pagination if not needed
-        }
-    }
+	
     function clearFilters() {
         $('#jobResults').empty();
     }
 
     function updatePagination(totalPages) {
+		console.log(currentPage);
         let paginationHTML = '';
 
         // Previous Button
         paginationHTML += `
             <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>
+                <a class="page-link" href="#" onclick="loadData(${currentPage - 1})">Previous</a>
             </li>
         `;
 
@@ -632,7 +465,7 @@ $title = 'Job Search | Emfob'; ?>
         for (let i = 1; i <= totalPages; i++) {
             paginationHTML += `
                 <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                    <a class="page-link" href="#" onclick="loadData(${i})">${i}</a>
                 </li>
             `;
         }
@@ -640,7 +473,7 @@ $title = 'Job Search | Emfob'; ?>
         // Next Button
         paginationHTML += `
             <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>
+                <a class="page-link" href="#" onclick="loadData(${currentPage + 1})">Next</a>
             </li>
         `;
 

@@ -13,7 +13,6 @@ function db_insert($insertQry,$data=array()){
 	global $pdo;
 	$stmt = $pdo->prepare($insertQry);
 	$stmt->execute($data);
-	return $result;
 }
 
 function db_update($updateQry,$data=array()){

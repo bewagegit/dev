@@ -5,6 +5,14 @@ include_once("backend/db_functions.php");
 include_once("backend/common_functions.php");
 include_once("backend/page_authcheck.php");
 $title = 'Dashboard | Emfob';
+
+
+$course_section = getAllSelection(COURSE_SECTION);
+
+$sql = "SELECT * FROM `courses` a join course_section b on a.course_section = b.id";
+$stmt = $pdo->query($sql);
+$coursesList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!doctype html>
 <?php
@@ -75,26 +83,22 @@ include_once("dashboard-header.php"); ?>
                 <!-- Category Section -->
                 <div class="d-flex flex-wrap justify-content-center mb-4">
                     <button class="btn btn-outline-primary category-btn" onclick="filterCourses('all')">All</button>
-                    <button class="btn btn-outline-secondary category-btn" onclick="filterCourses('web')">Web
-                        Development</button>
-                    <button class="btn btn-outline-success category-btn" onclick="filterCourses('data')">Data
-                        Science</button>
-                    <button class="btn btn-outline-warning category-btn" onclick="filterCourses('ai')">Artificial
-                        Intelligence</button>
-                    <button class="btn btn-outline-info category-btn" onclick="filterCourses('marketing')">Digital
-                        Marketing</button>
+					<?php foreach($course_section as $val){ ?>
+					<button class="btn btn-outline-secondary category-btn" onclick="filterCourses('<?php echo  $val['name'] ?>')"><?php echo  $val['name'] ?></button>
+					<?php } ?>
                 </div>
 
                 <!-- Course List -->
                 <div class="row" id="courseList">
-                    <!-- Web Development Course 1 -->
-                    <div class="col-md-4 mb-4 course-item" data-category="web">
+				
+					<?php foreach($coursesList as $val){ ?>
+					 <div class="col-md-4 mb-4 course-item" data-category="<?php echo $val['name'] ?>">
                         <div class="course-card">
-                            <img src="https://www.pankajkumarseo.com/wp-content/uploads/2022/06/Web-Development-Training-Course-Delhi.jpg"
-                                alt="Web Development Course" class="course-thumbnail">
+                            <img src="<?php echo $val['logo'] ?>"
+                                alt="<?php echo $val['name'] ?>" class="course-thumbnail">
                             <div class="course-info">
-                                <h5>Introduction to Web Development</h5>
-                                <p class="text-muted">Learn HTML, CSS, and JavaScript to build stunning websites.
+                                <h5><?php echo $val['title'] ?></h5>
+                                <p class="text-muted"><?php echo $val['description'] ?>
                                 </p>
                                 <div class="action-buttons">
                                     <button class="btn btn-primary btn-sm">Enroll Now</button>
@@ -103,73 +107,8 @@ include_once("dashboard-header.php"); ?>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Web Development Course 2 -->
-                    <div class="col-md-4 mb-4 course-item" data-category="web">
-                        <div class="course-card">
-                            <img src="https://i0.wp.com/www.institutedata.com/wp-content/uploads/2024/04/Levelling-Up-Delving-into-Advanced-JavaScript-Techniques.png?fit=940%2C470&ssl=1"
-                                alt="Web Development Course" class="course-thumbnail">
-                            <div class="course-info">
-                                <h5>Advanced JavaScript Techniques</h5>
-                                <p class="text-muted">Master JavaScript and build interactive web applications.</p>
-                                <div class="action-buttons">
-                                    <button class="btn btn-primary btn-sm">Enroll Now</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Know More</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Data Science Course 1 -->
-                    <div class="col-md-4 mb-4 course-item" data-category="data">
-                        <div class="course-card">
-                            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20230222183754/Data-Science-Fir-beginner.png"
-                                alt="Data Science Course" class="course-thumbnail">
-                            <div class="course-info">
-                                <h5>Data Science for Beginners</h5>
-                                <p class="text-muted">Get started with data analysis, statistics, and machine
-                                    learning.</p>
-                                <div class="action-buttons">
-                                    <button class="btn btn-primary btn-sm">Enroll Now</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Know More</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Artificial Intelligence Course -->
-                    <div class="col-md-4 mb-4 course-item" data-category="ai">
-                        <div class="course-card">
-                            <img src="https://www.simplilearn.com/ice9/app/Introduction-to-Artificial-Intelligence_360X194.jpg"
-                                alt="AI Course" class="course-thumbnail">
-                            <div class="course-info">
-                                <h5>Artificial Intelligence Basics</h5>
-                                <p class="text-muted">Explore AI concepts and build basic AI models.</p>
-                                <div class="action-buttons">
-                                    <button class="btn btn-primary btn-sm">Enroll Now</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Know More</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Digital Marketing Course -->
-                    <div class="col-md-4 mb-4 course-item" data-category="marketing">
-                        <div class="course-card">
-                            <img src="https://media.licdn.com/dms/image/D5612AQEGi6lhmUDKNQ/article-cover_image-shrink_720_1280/0/1713018098797?e=2147483647&v=beta&t=shmVMbbgIWZ9TWoOFcr0cNNjgqqBAKKKQPrL5Hx9zc8"
-                                alt="Marketing Course" class="course-thumbnail">
-                            <div class="course-info">
-                                <h5>Digital Marketing Essentials</h5>
-                                <p class="text-muted">Learn SEO, SEM, and social media marketing to grow your
-                                    business.</p>
-                                <div class="action-buttons">
-                                    <button class="btn btn-primary btn-sm">Enroll Now</button>
-                                    <button class="btn btn-outline-secondary btn-sm">Know More</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+					<?php } ?>
+					
                     <!-- Add more courses as needed -->
                 </div>
             </div>

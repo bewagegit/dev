@@ -50,8 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     case '2':
                         header('Location: company_dashboard.php');
                         break;
+					case '3':
+                        header('Location: consultancy_dashboard.php');
+                        break;
+					case '4':
+                        header('Location: candidate_dashboard.php');
+                        break;
                     case 'admin':
-                        header('Location: admin_dashboard.php');
+                        header('Location: consultancy_dashboard.php');
                         break;
                     default:
                         header('Location: general_dashboard.php'); // Fallback for unknown roles

@@ -48,6 +48,13 @@ define("HIGHEST_QUALIFICATION","highest_qualification");
 define("PREFERRED_EMPLOYMENT_TYPE","preferred_employment_type");
 define("EXPERIENCE_LEVEL","experience_level");
 define("CATEGORIES","job_categories");
+define("COURSE_SECTION","course_section");
+define("COURSES","courses");
+
+define("CANDIDATE_PREVIOUS_DETAILS","candidate_previous_details");
+define("GROUPS","groups");
+define("CHAT_MESSAGES","chat_messages");
+
 
 define("MENU_ITEMS","menu_items");
 

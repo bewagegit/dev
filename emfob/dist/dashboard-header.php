@@ -1,3 +1,18 @@
+<?php
+include_once("backend/config.php");
+include_once("backend/constants.php");
+include_once("backend/db_functions.php");
+include_once("backend/common_functions.php");
+include_once("backend/page_authcheck.php");
+
+$userDetailsResult = getUserDetails('user_id,email,phone_number',USERS,'user_id = ?',array($_SESSION['user_id']));
+foreach($userDetailsResult as $val){
+	$userDetails= $val;
+}
+
+?>
+
+
 <html lang="en">
 
 <head>
@@ -64,152 +79,7 @@
                 <!-- Start menu -->
                 <div class="d-flex justify-content-between menu-sm px-3 ms-auto">
                     <div class="d-flex align-items-center gap-2">
-                        <!--<div class="dropdown d-none d-lg-block">
-                            <button type="button" class="btn btn-primary btn-sm fs-14 d-inline"
-                                data-bs-toggle="dropdown">
-                                Apps
-                                <i class="mdi mdi-chevron-down align-middle"></i>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-start dropdown-menu-animated">
-                                <a href="#" class="dropdown-item">
-                                    <div class="dropdown-icon"><i class="fa fa-boxes"></i></div>
-                                    <span class="dropdown-content">Inventory Manager</span>
-                                    <div class="dropdown-addon"><span class="badge badge-warning rounded-pill">20</span>
-                                    </div>
-                                </a>
-                                <div class="dropdown-submenu">
-                                    <a href="#" class="dropdown-item">
-                                        <div class="dropdown-icon"><i class="fa fa-project-diagram"></i></div>
-                                        <span class="dropdown-content">Project manager</span>
-                                        <div class="dropdown-addon"><i class="mdi mdi-chevron-right align-middle"></i>
-                                        </div>
-                                    </a>
-                                    <div class="dropdown-submenu-menu dropdown-submenu-end">
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Create project</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Delete project</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Ongoing project</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Completed project</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Urgent project</span></a>
-                                    </div>
-                                </div>
-                                <div class="dropdown-submenu">
-                                    <a href="#" class="dropdown-item">
-                                        <div class="dropdown-icon"><i class="fa fa-tasks"></i></div>
-                                        <span class="dropdown-content">Task manager</span>
-                                        <div class="dropdown-addon"><i class="mdi mdi-chevron-right align-middle"></i>
-                                        </div>
-                                    </a>
-                                    <div class="dropdown-submenu-menu dropdown-submenu-end">
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Show task</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Assign task</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Assign member</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Completed task</span> </a>
-                                        <a href="#" class="dropdown-item"><i class="dropdown-bullet"></i> <span
-                                                class="dropdown-content">Urgent task</span></a>
-                                    </div>
-                                </div>
-                                <a href="#" class="dropdown-item">
-                                    <div class="dropdown-icon"><i class="fa fa-dollar-sign"></i></div>
-                                    <span class="dropdown-content">Invoice</span>
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a href="apps-contact.php" class="dropdown-item">
-                                    <div class="dropdown-icon"><i class="fa fa-user-cog"></i></div>
-                                    <span class="dropdown-content">My Account</span>
-                                </a>
-                            </div>
-                        </div>-->
-
-                        <!--<div class="dropdown d-none d-lg-block">
-                            <button type="button" class="btn btn-primary btn-sm fs-14" data-bs-toggle="dropdown"
-                                aria-haspopup="false" aria-expanded="false">
-                                Features
-                                <i class="mdi mdi-chevron-down align-middle"></i>
-                            </button>
-                            <div
-                                class="dropdown-menu dropdown-menu-start dropdown-menu-lg-widest dropdown-menu-widest dropdown-menu-animated bg-primary-subtle overflow-hidden">
-                                <div class="dropdown-row justify-content-center">
-                                    <div class="p-2 menu-image">
-                                        <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/mega-menu.png" alt="mega-menu image" class="img-fluid"
-                                            style="height: 200px;">
-                                    </div>
-                                    <div class="dropdown-col">
-                                        <h2 class="">Welcome back!</h2>
-                                        <p class="text-muted mb-0">
-                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium,
-                                            commodi hic qui aspernatur doloremque quos tempora placeat culpa illum,
-                                            voluptatibus delectus provident cumque
-                                            aliquid enim, laborum aliquam. Quod, perferendis unde.
-                                        </p>
-                                        <div class="mt-3">
-                                            <a href="auth-login.php" class="btn btn-dark btn-wider">Login</a>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown-col border-start border-primary border-opacity-50">
-                                        <h4 class="dropdown-header">Features</h4>
-                                        <div class="grid-nav grid-nav-action">
-                                            <div class="grid-nav-row">
-                                                <a href="index.php" class="grid-nav-item">
-                                                    <div class="grid-nav-icon"><i class="far fa-window-restore"></i>
-                                                    </div>
-                                                    <span class="grid-nav-content">Dashboard</span>
-                                                </a>
-                                                <a href="apps-kanban.php" class="grid-nav-item">
-                                                    <div class="grid-nav-icon"><i class="far fa-clipboard"></i></div>
-                                                    <span class="grid-nav-content">TODO List</span>
-                                                </a>
-                                                <a href="#" class="grid-nav-item">
-                                                    <div class="grid-nav-icon"><i class="far fa-question-circle"></i>
-                                                    </div>
-                                                    <span class="grid-nav-content">Help Center</span>
-                                                </a>
-                                            </div>
-                                            <div class="grid-nav-row">
-                                                <a href="#" class="grid-nav-item">
-                                                    <div class="grid-nav-icon"><i class="far fa-images"></i></div>
-                                                    <span class="grid-nav-content">Gallery</span>
-                                                </a>
-                                                <a href="#" class="grid-nav-item">
-                                                    <div class="grid-nav-icon"><i class="far fa-chart-bar"></i></div>
-                                                    <span class="grid-nav-content">Scrumboard</span>
-                                                </a>
-                                                <a href="#" class="grid-nav-item">
-                                                    <div class="grid-nav-icon"><i class="far fa-bookmark"></i></div>
-                                                    <span class="grid-nav-content">Docs</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="dropdown-col border-start border-primary border-opacity-50">
-                                        <h4 class="dropdown-header">Tools</h4>
-                                        <a href="#" class="dropdown-item"><i
-                                                class="mdi mdi-checkbox-blank-circle align-middle dropdown-bullet me-2"></i>
-                                            <span class="dropdown-content">Components</span> </a>
-                                        <a href="#" class="dropdown-item"><i
-                                                class="mdi mdi-checkbox-blank-circle align-middle dropdown-bullet me-2"></i>
-                                            <span class="dropdown-content">Form Wizard</span> </a>
-                                        <a href="#" class="dropdown-item"><i
-                                                class="mdi mdi-checkbox-blank-circle align-middle dropdown-bullet me-2"></i>
-                                            <span class="dropdown-content">Documentation</span> </a>
-                                        <a href="#" class="dropdown-item"><i
-                                                class="mdi mdi-checkbox-blank-circle align-middle dropdown-bullet me-2"></i>
-                                            <span class="dropdown-content">Knowledge Base</span> </a>
-                                        <a href="#" class="dropdown-item"><i
-                                                class="mdi mdi-checkbox-blank-circle align-middle dropdown-bullet me-2"></i>
-                                            <span class="dropdown-content">Inventory Manager</span></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>-->
+                        
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
@@ -435,35 +305,77 @@
 		<!-- ========== Left Sidebar Start from DB ========== -->
 		
 		<?php
-		//get all top level menus  parent id is null
-		$menuDetails = db_select('*',MENU_ITEMS,'parent_id IS NULL AND is_active = 1 ');
+		
+		function getThirdLevelMenus($id){
+			$link2 = '';
+			//3nd level menus
+			$thirdLevelMenus = db_select('*',MENU_ITEMS,'parent_id = ? AND is_active = 1 ',array($id));
+			if(count($thirdLevelMenus)){
+				$link2 = '<ul class="sub-menu" aria-expanded="false">';
+				foreach($thirdLevelMenus as $tVal){
+					$link2  .= '<li>';
+					$link2 .= '<a href="'.( ($tVal['url'])? $tVal['url']:'javascript:void(); ') .'"><i class="mdi mdi-checkbox-blank-circle align-middle"></i>'.$tVal['title'].'</a>';
+					$link2 .= '</li>';
+				}
+				$link2 .= '</ul>';
+			}
+			return $link2;
+		}
+		
+			//get all top level menus  parent id is null
+			//$menuDetails = db_select('*',MENU_ITEMS,'parent_id IS NULL AND is_active = 1 ');
+		
+			$sql = "SELECT a.* FROM `menu_items` a 
+					inner join menu_permissions b on a.id =  b.menu_items_id 
+					where a.is_active = 1 AND parent_id IS NULL AND b.user_type_id = '".$_SESSION['user_type']."'";
+		
+			$stmt = $pdo->query($sql);
+			$menuDetails = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		?>
 		<div class="sidebar-left">
-            <div data-simplebar class="h-100">
-                <!--- Sidebar-menu -->
-                <div id="sidebar-menu">
-                    <!-- Left Menu Start -->
-                    <ul class="left-menu list-unstyled" id="side-menu">
+			<div data-simplebar class="h-100">
+				<!--- Sidebar-menu -->
+				<div id="sidebar-menu">
+					<!-- Left Menu Start -->
+					<ul class="left-menu list-unstyled" id="side-menu">
 					<?php foreach($menuDetails as $val){ ?>
 						<?php 
-						$link = '<li class="menu-title">';
-						if($val['url'] !=  ''){
-							$link .= '<a href="'.$val['url'].'" class="">';
+						if($val['menutype'] == 2){
+							if($val['url'] !=  ''){
+								$link = '<li><a href="'.$val['url'].'"><i class="fa '.$val['classname'].'"></i><span>'.$val['title'].'</span></a></li>';
+							}
+							else{
+								$link = '<li class="menu-title"><span>'.$val['title'].'</span></li>';
+							}
 						}
-						if($val['classname'] !=  ''){
-							$link .= '<i class="fas '.$val['classname'].'"></i>';
+						else{
+							$link = '<li class="menu-title">';
+							if($val['url'] !=  ''){
+								$link .= '<a href="'.$val['url'].'" class="">';
+							}
+							if($val['classname'] !=  ''){
+								$link .= '<i class="fas '.$val['classname'].'"></i>';
+							}
+							if($val['title'] !=  ''){
+								$link .= '<span>'.$val['title'].'</span>';
+							}
+							if($val['url'] !=  ''){
+								$link .= '</a>';
+							}
+							$link .= '</li>';
 						}
-						if($val['title'] !=  ''){
-							$link .= '<span>'.$val['title'].'</span>';
-						}
-						if($val['url'] !=  ''){
-							$link .= '</a>';
-						}
-						$link .= '</li>';
 						echo $link;
 						
+						
 						//2nd level menus
-						$secondLevelMenus = db_select('*',MENU_ITEMS,'parent_id = ? AND is_active = 1 ',array($val['id']));
+						//$secondLevelMenus = db_select('*',MENU_ITEMS,'parent_id = ? AND is_active = 1  ',array($val['id']));
+						$secondLevelMenusSql = "SELECT a.* FROM `menu_items` a 
+								inner join menu_permissions b on a.id =  b.menu_items_id 
+								where a.is_active = 1 AND parent_id ='".$val['id']."' AND b.user_type_id = '".$_SESSION['user_type']."'";
+					
+						$stmt = $pdo->query($secondLevelMenusSql);
+						$secondLevelMenus = $stmt->fetchAll(PDO::FETCH_ASSOC);
+						
 						if(count($secondLevelMenus)){
 							foreach($secondLevelMenus as $sVal){
 								$thirdMenus = '';
@@ -480,30 +392,13 @@
 								echo $link1;
 							}
 						}
-						
 						?>  
 					<?php }
-					function getThirdLevelMenus($id){
-						$link2 = '';
-						//3nd level menus
-						$thirdLevelMenus = db_select('*',MENU_ITEMS,'parent_id = ? AND is_active = 1 ',array($id));
-						if(count($thirdLevelMenus)){
-							$link2 = '<ul class="sub-menu" aria-expanded="false">';
-							foreach($thirdLevelMenus as $tVal){
-								$link2  .= '<li>';
-								$link2 .= '<a href="'.( ($tVal['url'])? $tVal['url']:'javascript:void(); ') .'"><i class="mdi mdi-checkbox-blank-circle align-middle"></i>'.$tVal['title'].'</a>';
-								$link2 .= '</li>';
-							}
-							$link2 .= '</ul>';
-						}
-						return $link2;
-					}
 					?>
 					</ul>
 				</div>
 			</div>
 		</div>
-		
 		<!-- ========== Left Sidebar ends from DB ========== -->
 
         <!-- ========== Left Sidebar Start ========== -->

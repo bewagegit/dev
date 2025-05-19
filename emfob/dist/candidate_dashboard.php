@@ -10,10 +10,6 @@ $title = 'Dashboard | Emfob';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$userDetailsResult = getUserDetails('user_id,email,phone_number',USERS,'user_id = ?',array($_SESSION['user_id']));
-foreach($userDetailsResult as $val){
-	$userDetails= $val;
-}
 
 include_once("dashboard-header.php");
 
@@ -254,8 +250,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-12">
-														<label for="address" class="form-label">Residential
-															Address <span style='color:red'>*</span>:</label>
+														<label for="address" class="form-label">Residential Address :</label>
 														<input type="text" class="form-control" id="address"
 															placeholder="Enter Your Address" required>
 														<div class="error" id="addressErr"></div>
@@ -277,7 +272,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													</div>
 													<div class="col-md-6">
 														<label for="maritalStatus" class="form-label">Marital
-															Status <span style='color:red'>*</span>:</label>
+															Status :</label>
 														<select class="form-control" id="maritalStatus" required>
 															<option value="" disabled selected>Select Marital Status
 															</option>
@@ -303,7 +298,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													</div>
 													<div class="col-md-6">
 														<label for="emergencyContact" class="form-label">Emergency
-															Contact <span style='color:red'>*</span>:</label>
+															Contact :</label>
 														<input type="text" class="form-control" id="emergencyContact"
 															placeholder="Emergency Contact Name">
 															<div class="error" id="emergencyContactErr"></div>
@@ -330,7 +325,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 												<div class="row mb-3">
 													<div class="col-md-12">
 														<label for="hobbiesInterests" class="form-label">Hobbies and
-															Interests <span style='color:red'>*</span>:</label>
+															Interests :</label>
 														<textarea class="form-control" id="hobbiesInterests" rows="3"
 															placeholder="Share your hobbies and interests"></textarea>
 														<div class="error" id="hobbiesInterestsErr"></div>
@@ -398,7 +393,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="degreeDetails" class="form-label">Degree
-																Details <span style='color:red'>*</span>:</label>
+																Details :</label>
 															<textarea class="form-control" id="degreeDetails" rows="3"
 																placeholder="Additional degree information (e.g., major, honors)"></textarea>
 															<div class="error" id="degreeDetailsErr"></div>
@@ -416,14 +411,14 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="certification" class="form-label">Certification
-																Title <span style='color:red'>*</span>:</label>
+																Title :</label>
 															<input type="text" class="form-control" id="certification"
 																placeholder="Enter Certification Title">
 															<div class="error" id="certificationErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="issuingOrganization" class="form-label">Issuing
-																Organization <span style='color:red'>*</span>:</label>
+																Organization :</label>
 															<input type="text" class="form-control" id="issuingOrganization"
 																placeholder="Enter Organization Name">
 															<div class="error" id="issuingOrganizationErr"></div>
@@ -432,13 +427,13 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="certificationDate" class="form-label">Completion
-																Date <span style='color:red'>*</span>:</label>
+																Date :</label>
 															<input type="date" class="form-control" id="certificationDate">
 															<div class="error" id="certificationDateErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="certificationLink" class="form-label">Certificate
-																Link <span style='color:red'>*</span>:</label>
+																Link :</label>
 															<input type="url" class="form-control" id="certificationLink"
 																placeholder="Enter the link to your certificate (if available)">
 															<div class="error" id="certificationLinkErr"></div>
@@ -447,7 +442,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="uploadCertificate" class="form-label">Upload
-																Certification <span style='color:red'>*</span>:</label>
+																Certification :</label>
 															<input type="file" class="form-control" id="uploadCertificate">
 															<div class="error" id="uploadCertificateErr"></div>
 														</div>
@@ -457,7 +452,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 													<div class="row mb-3">
 														<div class="col-md-12">
 															<label for="academicAchievements" class="form-label">Academic
-																Achievements <span style='color:red'>*</span>:</label>
+																Achievements :</label>
 															<textarea class="form-control" id="academicAchievements"
 																rows="3"
 																placeholder="Mention any academic awards, scholarships, or honors received."></textarea>
@@ -568,37 +563,53 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 															<div class="error" id="achievementsErr"></div>
 														</div>
 													</div>
-													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="previousJobTitle" class="form-label">Previous Job
-																Title <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="previousJobTitle"
-																placeholder="Enter Previous Job Title">
-															<div class="error" id="previousJobTitleErr"></div>
+													<div id="prevjob">
+														<div class="row mb-3" id="prevjob1">
+															<div class="col-md-6">
+																<label for="previousJobTitle" class="form-label">Previous Job
+																	Title <span style='color:red'>*</span>:</label>
+																<input type="text" class="form-control" id="previousJobTitle"
+																	placeholder="Enter Previous Job Title">
+																<div class="error" id="previousJobTitleErr"></div>
+															</div>
+															<div class="col-md-6">
+																<label for="previousCompanyName" class="form-label">Previous
+																	Company Name <span style='color:red'>*</span>:</label>
+																<input type="text" class="form-control" id="previousCompanyName"
+																	placeholder="Enter Previous Company Name">
+																<div class="error" id="previousCompanyNameErr"></div>
+															</div>
 														</div>
-														<div class="col-md-6">
-															<label for="previousCompanyName" class="form-label">Previous
-																Company Name <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="previousCompanyName"
-																placeholder="Enter Previous Company Name">
-															<div class="error" id="previousCompanyNameErr"></div>
+														<div class="row mb-3" id="prevjob2">
+															<div class="col-md-6">
+																<label for="previousDurationFrom" class="form-label">Previous
+																	Job Duration (From) <span style='color:red'>*</span>:</label>
+																<input type="date" class="form-control"
+																	id="previousDurationFrom">
+																<div class="error" id="previousDurationFromErr"></div>
+															</div>
+															<div class="col-md-6">
+																<label for="previousDurationTo" class="form-label">Previous Job
+																	Duration (To) <span style='color:red'>*</span>:</label>
+																<input type="date" class="form-control" id="previousDurationTo">
+																<div class="error" id="previousDurationToErr"></div>
+															</div>
 														</div>
 													</div>
+													<input type="hidden" id="totalcntJobs" value="" />
+													
+													<div class="row mb-3" id="prevDetails"></div>
+													
 													<div class="row mb-3">
-														<div class="col-md-6">
-															<label for="previousDurationFrom" class="form-label">Previous
-																Job Duration (From) <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control"
-																id="previousDurationFrom">
-															<div class="error" id="previousDurationFromErr"></div>
-														</div>
-														<div class="col-md-6">
-															<label for="previousDurationTo" class="form-label">Previous Job
-																Duration (To) <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="previousDurationTo">
-															<div class="error" id="previousDurationToErr"></div>
+														<div style="float:right" class="d-flex justify-content-end">
+															<button type="button" class="btn btn-primary"
+																id="addJob">Add Job</button>&nbsp;&nbsp;&nbsp;
+															<button type="button" class="btn btn-primary"
+																id="removeJob">Remove Job</button>	
 														</div>
 													</div>
+													
+													
 													<div class="d-flex justify-content-between">
 														<button type="button" class="btn btn-secondary"
 															id="prevStep3">Previous</button>
@@ -686,26 +697,9 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <label for="noticePeriod" class="form-label">Notice Period (if
-                                                            applicable):</label>
-                                                        <input type="text" class="form-control" id="prefNoticePeriod"
-                                                            placeholder="Enter notice period (e.g., 30 days)">
-														<div class="error" id="prefNoticePeriodErr"></div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label for="skillsKeywords"
-                                                            class="form-label">Skills/Keywords <span style='color:red'>*</span>:</label>
-                                                        <input type="text" class="form-control" id="skillsKeywords"
-                                                            placeholder="Enter skills or keywords for your profile"
-                                                            required>
-														<div class="error" id="skillsKeywordsErr"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
                                                     <div class="col-md-12">
                                                         <label for="jobPreferences" class="form-label">Additional Job
-                                                            Preferences <span style='color:red'>*</span>:</label>
+                                                            Preferences :</label>
                                                         <textarea class="form-control" id="jobPreferences" rows="3"
                                                             placeholder="Any additional preferences related to job type, location, or benefits."></textarea>
 														<div class="error" id="jobPreferencesErr"></div>
@@ -806,7 +800,8 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 <script src="<?php echo BASE_URL ?>js/common_functions.js"></script>
 
 <script>
-
+	
+	
     document.addEventListener('DOMContentLoaded', function () {
         const steps = document.querySelectorAll('.form-step');
         const stepperItems = document.querySelectorAll('#stepper li');
@@ -919,7 +914,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
             formData.append('preferred_comm_method', document.getElementById('preferredCommMethod').value);
             formData.append('emergency_contact_name', document.getElementById('emergencyContact').value);
             formData.append('emergency_contact_number', document.getElementById('emergencyContactNumber').value);
-            //formData.append('languages_spoken', document.getElementById('languagesSpoken').value);
+            formData.append('languages_spoken', document.getElementById('hidden_tags').value);
             formData.append('hobbies_interests', document.getElementById('hobbiesInterests').value);
 
             // Handle file uploads
@@ -966,6 +961,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 
             formData.append('preferred_job_title', document.getElementById('preferredJobTitle').value);
             formData.append('preferred_job_location', document.getElementById('preferredJobLocation').value);
+			formData.append('preferred_employment_type', document.getElementById('preferredEmploymentType').value);
             formData.append('preferred_salary_range', document.getElementById('preferredSalaryRange').value);
             formData.append('willingness_to_relocate', document.getElementById('willingnessToRelocate').value);
             formData.append('expected_joining_date', document.getElementById('expectedJoiningDate').value);
@@ -1004,13 +1000,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 						"gender":"Gender",
 						"dob" : "Date of Birth",
 						"nationality" : "Nationality",
-						"address" : "Address",
-						"maritalStatus" : "Marital Status",
 						"preferredCommMethod" : "Preferred Communication Method",
-						"emergencyContact" : "Emergency Contact Name",
-						"emergencyContactNumber" : "Emergency Contact Number",
-						//"languagesSpoken" : "Languages Spoken",
-						"hobbiesInterests" : "Hobbies & Interests",
 						"profilePicture" : "Profile Picture"
 						};
 						
@@ -1060,14 +1050,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 						"fieldOfStudy":"Field of Study",
 						"institution" : "Institution",
 						"graduationYear" : "Graduation Year",
-						"degreeDetails" : "Degree Details",
-						"gradePercentage" : "Grade Percentage",
-						"certification" : "Certification",
-						"issuingOrganization" : "Issuing Organization",
-						"certificationDate" : "Certification Date",
-						"certificationLink" : "Certification Link",
-						"uploadCertificate" : "Upload Certificate",
-						"academicAchievements" : "Academic Achievements"
+						"gradePercentage" : "Grade Percentage"
 						};
 		clearHtmlError(array1);
 		chkValidInput(array1,0);
@@ -1101,6 +1084,40 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 						"previousDurationTo" : "Previous Duration To"
 						};
 		clearHtmlError(array1);
+		//get newly created html elements
+		var totalJobs;
+		totalJobs = document.getElementById('totalcntJobs').value;
+		let listJobs;
+		if(totalJobs > 0){
+			var str1 = '{'; 
+			for(var i=0;i<totalJobs;i++){
+				str1 +=  	'"previousJobTitle_'+i+'":"Previous Job Title",'+
+							'"previousCompanyName_'+i+'":"Previous Company Name",'+
+							'"previousDurationFrom_'+i+'":"Previous Duration From",'+
+							'"previousDurationTo_'+i+'":"Previous Duration To",';			
+			}
+			var str = str1.substring(0,str1.length-1)+'}';
+			listJobs = JSON.parse(str);
+		}
+		
+		if(totalJobs > 0){
+			Object.entries(listJobs).forEach(([key, val]) => {
+				var v1 = key.split("_");
+				if(document.getElementById(v1[0]+v1[1]).value === ''){
+				  document.getElementById(v1[0]+"Err"+v1[1]).innerHTML = val;
+				}	
+			});
+			for(var i=0;i<totalJobs;i++){
+				var tmpPreviousDurationFrom = document.getElementById('previousDurationFrom'+i).value.split("-");
+				var tmpPreviousDurationTo = document.getElementById('previousDurationTo'+i).value.split("-");
+				var tmpd1 = Date.UTC(tmpPreviousDurationFrom[2], tmpPreviousDurationFrom[1]-1, tmpPreviousDurationFrom[0]); 
+				var tmpd2 = Date.UTC(tmpPreviousDurationTo[2], tmpPreviousDurationTo[1]-1, tmpPreviousDurationTo[0]);
+				if(tmpd1 > tmpd2){
+					document.getElementById('previousDurationFromErr'+i).innerHTML = "From date must be less than To Date";
+				}
+			}
+		}
+		
 		chkValidInput(array1,0);
 		
 		//check from date must be greater than to date
@@ -1142,8 +1159,6 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 						"preferredSalaryRange" : "Preferred Salary Range",
 						"willingnessToRelocate" : "Willing to relocate",
 						"expectedJoiningDate" : "Expected Joining Date",
-						"prefNoticePeriod" : "Preferred Notice Period",
-						"skillsKeywords" : "Skills Keywords",
 						"jobPreferences" : "Job Preferences"
 						};
 		clearHtmlError(array1);
@@ -1164,6 +1179,57 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		var restrictNo = '#contactNumber,#emergencyContactNumber';
 		//restrict only number 
 		restrictNumbers(restrictNo);
+		
+		var incr = 0;
+		var html1 ;  
+		
+		
+		$("#addJob").click(function(){
+			
+			html1 = `<div class="row mb-3">
+				<div class="col-md-6">
+					<label for="previousJobTitle${incr}" class="form-label">Previous Job
+						Title <span style='color:red'>*</span>:</label>
+					<input type="text" class="form-control" id="previousJobTitle${incr}"
+						placeholder="Enter Previous Job Title">
+					<div class="error" id="previousJobTitleErr${incr}"></div>
+				</div>
+				<div class="col-md-6">
+					<label for="previousCompanyName${incr}" class="form-label">Previous
+						Company Name <span style='color:red'>*</span>:</label>
+					<input type="text" class="form-control" id="previousCompanyName${incr}"
+						placeholder="Enter Previous Company Name">
+					<div class="error" id="previousCompanyNameErr${incr}"></div>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-md-6">
+					<label for="previousDurationFrom${incr}" class="form-label">Previous
+						Job Duration (From) <span style='color:red'>*</span>:</label>
+					<input type="date" class="form-control"
+						id="previousDurationFrom${incr}">
+					<div class="error" id="previousDurationFromErr${incr}"></div>
+				</div>
+				<div class="col-md-6">
+					<label for="previousDurationTo${incr}" class="form-label">Previous Job
+						Duration (To) <span style='color:red'>*</span>:</label>
+					<input type="date" class="form-control" id="previousDurationTo${incr}">
+					<div class="error" id="previousDurationToErr${incr}"></div>
+				</div>
+			</div>`;
+			
+			document.getElementById("prevDetails").insertAdjacentHTML('beforeend', "<div id='previousJob"+incr+"'>"+html1+"</div>");
+			incr++;
+			document.getElementById("totalcntJobs").value = incr;
+		});
+		
+		$("#removeJob").click(function(){
+			if(incr != 0){
+				document.getElementById("previousJob"+(incr-1)).remove();
+				incr--;
+				document.getElementById("totalcntJobs").value = incr;
+			}
+		});
 		
 	});
 	
@@ -1192,7 +1258,7 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		formData.append('preferred_comm_method', document.getElementById('preferredCommMethod').value);
 		formData.append('emergency_contact_name', document.getElementById('emergencyContact').value);
 		formData.append('emergency_contact_number', document.getElementById('emergencyContactNumber').value);
-		//formData.append('languages_spoken', document.getElementById('languagesSpoken').value);
+		formData.append('languages_spoken', document.getElementById('hidden_tags').value);
 		formData.append('hobbies_interests', document.getElementById('hobbiesInterests').value);
 
 		// Handle file uploads
@@ -1253,6 +1319,8 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		})
 		.then(response => response.json())
 		.then(data => {
+			//uploading additional job details
+			addingAdditionalDetails();
 		  console.log('Success:', data);
 		})
 		.catch(error => {
@@ -1260,6 +1328,33 @@ $pref_employment_type = getAllSelection(PREFERRED_EMPLOYMENT_TYPE);
 		});
 
 	}
+	
+	function addingAdditionalDetails(){
+		console.log("adiditional job");
+		var totalJobs = $("#totalcntJobs").val();
+		if(totalJobs > 0){
+			const formData = new FormData();
+			formData.append('totaljobs', totalJobs);
+			for(var i=0;i<totalJobs;i++){
+				formData.append('previousJobTitle'+i, document.getElementById('previousJobTitle'+i).value);
+				formData.append('previousCompanyName'+i, document.getElementById('previousCompanyName'+i).value);
+				formData.append('previousDurationFrom'+i, document.getElementById('previousDurationFrom'+i).value);
+				formData.append('previousDurationTo'+i, document.getElementById('previousDurationTo'+i).value);
+			}
+			fetch('<?php echo BASE_URL_ADMIN ?>backend/save-candidate-previousjob-profile.php', {
+			  method: 'POST',
+			  body: formData
+			})
+			.then(response => response.json())
+			.then(data => {
+			  console.log('Success:', data);
+			})
+			.catch(error => {
+			  console.error('Error:', error);
+			});
+		}
+	}
+
 
 </script>
 
