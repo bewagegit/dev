@@ -4,7 +4,7 @@ include_once("backend/constants.php");
 include_once("backend/db_functions.php");
 include_once("backend/common_functions.php");
 include_once("backend/page_authcheck.php");
-$title = 'Skill Badges | Emfob';
+$title = 'Chat Page | Emfob';
 
 ?>
 
@@ -14,25 +14,28 @@ include_once("dashboard-header.php");
 
 $userid = $_SESSION['user_id'];
 
-if($_SESSION['user_type'] ==2)
-	$usertype = 1;
-if($_SESSION['user_type'] ==1)
-	$usertype = 2;
-
-
-// Fetch available exams
-$sql = "SELECT * FROM `".USERS."` WHERE `user_type` = $usertype and is_online =1 and user_id !='".$userid."' ";	
-$stmt = $pdo->query($sql);
-$recruiters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$allChatList = getAllChatList($userid);
 
 //Get all group List
 $groups = db_select("id,group_name as name",GROUPS);
+
+if($_SESSION['user_type'] == 2){
+	$domain = explode("@",$_SESSION['email']);
+	$domain = explode(".",$domain[1]);
+	//print_r($domain);
+	//Get all group List
+	$qry = " email like '%@".$domain[0].".%' and user_id != '".$_SESSION['user_id']."' ";
+	// Fetch available chat List
+	$sql = "SELECT * FROM `".USERS."` WHERE $qry order by user_id desc limit 0,5 ";	
+	$stmt = $pdo->query($sql);
+	$groupPeopleList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 
 //Get all group List
 $stmt = $pdo->prepare("SELECT * FROM `".CHAT_MESSAGES."` a
 					   inner join `".USERS."` b on a.userid_to = b.user_id
-					   where a.user_id_from = ? group by user_id_from order by a.created_at desc");
+					   where a.userid_from = ? group by userid_from order by a.created_at desc");
 		
 $stmt->execute([$userid]); // Verify email and user type
 $messages = $stmt->fetchAll();
@@ -69,23 +72,27 @@ $messages = $stmt->fetchAll();
                         <div class="chat-leftsidebar card mb-0">
                             <div class="search-box card-body pb-0">
                                 <div class="position-relative">
-                                    <input type="text" class="form-control" placeholder="Search...">
+                                    <input type="text" class="form-control" id="searchChatList" placeholder="Search...">
                                     <i class="mdi mdi-magnify search-icon fs-20"></i>
                                 </div>
                             </div>
 
                             <div class="card-body border-bottom">
                                 <div class=" d-flex align-items-center justify-content-between mb-3">
-                                    <h5 class="mb-0">Recruiters</h5>
+                                    <h5 class="mb-0"><?php echo ($_SESSION['user_type'] == 2 )? "Candidates" :"Recruiters"; ?></h5>
                                     <a href="#!">All</a>
                                 </div>
-                                <div class="hstack gap-3 flex-wrap">
+                                <div class="hstack gap-3 flex-wrap" id="chatListArea">
 								<?php
-								foreach($recruiters as $val){
+								foreach($allChatList as $val){
+									if($val['is_online'] == 1)
+										$status = "online";
+									else
+										$status = "offline";
 									?>
-									<div onclick="DisplayChatMessages('<?php echo $val['user_id'] ?>')" class="user-img online align-self-center">
+									<div onclick="DisplayChatMessages('<?php echo $val['user_id'] ?>')" class="user-img <?php echo $status; ?> align-self-center">
 										<div class="avatar-2xs avatar avatar-circle align-self-center">
-											<span class="bg-light text-body">
+											<span class="bg-light text-body" alt="avatar-2">
 												<?php echo substr($val['email'],0,1); ?> 
 											</span>
 										</div>
@@ -104,11 +111,11 @@ $messages = $stmt->fetchAll();
                                             class="avatar-2xs avatar rounded-circle" alt="avatar-2">
                                     </div>
                                     <div class="flex-1">
-                                        <h5 class="font-size-15 mb-1">Ricky Clark</h5>
+                                        <h5 class="font-size-15 mb-1"><?php echo ucfirst(explode("@",$userDetails['email'])[0]); ?></h5>
                                         <p class="text-muted mb-0"><i
                                                 class="mdi mdi-circle text-success align-middle me-1"></i> Active</p>
                                     </div>
-
+									<?php if($_SESSION['user_type'] == 2 || $_SESSION['user_type'] == 3  ){ ?>
                                     <div>
                                         <div class="dropdown chat-noti-dropdown">
                                             <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -116,19 +123,18 @@ $messages = $stmt->fetchAll();
                                                 <i class="mdi mdi-dots-horizontal fs-20"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">Action</a>
-                                                <a class="dropdown-item" href="#">Another action</a>
-                                                <a class="dropdown-item" href="#">Something else here</a>
+                                                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#myModal" href="javascript:void(0)">Create Group</a>
                                             </div>
                                         </div>
                                     </div>
+									<?php } ?>
                                 </div>
                             </div>
 
                             <div class="py-3 border-bottom">
                                 <h5 class="fs-14 px-3 mb-3"><i class="mdi mdi-pin align-middle text-muted"></i> Pinned
                                 </h5>
-                                <ul class="list-unstyled chat-list" data-simplebar style="max-height: 120px;">
+                                <ul class="list-unstyled chat-list" data-simplebar style="max-height: 120px;overflow: auto;">
                                     <li class="active">
                                         <a href="#">
                                             <div class="d-flex">
@@ -271,21 +277,24 @@ $messages = $stmt->fetchAll();
                                             <span class="">Chat</span>
                                         </a>
                                     </li>
+									<?php if($_SESSION['user_type'] == 2) { ?>
                                     <li class="nav-item">
                                         <a href="#group" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
                                             <i class="mdi mdi-account-multiple-outline fs-16 align-middle me-2"></i>
                                             <span class="">Group</span>
                                         </a>
                                     </li>
+									<?php } ?>
                                 </ul>
                             </div>
 
+							<input type="hidden" id="recentMessageId" value="" />
                             <div class="tab-content py-3">
                                 <div class="tab-pane show active" id="chat">
                                     <div>
                                         <h5 class="fs-14 px-3 mb-3"><i class="mdi mdi-android-messages text-muted"></i>
                                             Recent</h5>
-                                        <ul class="list-unstyled chat-list" data-simplebar style="max-height: 250px;">
+                                        <ul id="recentChatList" class="list-unstyled chat-list" data-simplebar style="max-height: 250px; ">
 										<?php
 										if(count($messages) == 0){
 											?>
@@ -300,39 +309,11 @@ $messages = $stmt->fetchAll();
 											</li>
 											<?php
 										}
-										else{
-											foreach($messages as $key => $val){
-												$uname = explode("@",$val['email']);
-											?>
-												<li class="active" onclick="DisplayChatMessages('<?php echo $val['userid_to']; ?>')">
-													<a href="#">
-														<div class="d-flex">
-															<div class="user-img online align-self-center me-3">
-																<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png"
-																	class="rounded-circle avatar-2xs avatar" alt="avatar-2">
-																<span class="user-status"></span>
-															</div>
-
-															<div class="flex-1 overflow-hidden">
-																<h5 class="text-truncate fs-14 mb-1"><?php echo $uname[0]; ?></h5>
-																<p class="text-truncate mb-0"><?php echo $val['message']; ?></p>
-															</div>
-															<div>
-																<p class="fs-11 mb-0">04 min</p>
-																<div><i
-																		class="mdi mdi-check-all align-middle ms-2 text-info"></i>
-																</div>
-															</div>
-														</div>
-													</a>
-												</li>
-											<?php 
-											}
-										} ?>
+										 ?>
                                         </ul>
                                     </div>
                                 </div>
-
+								<?php if($_SESSION['user_type'] == 2) { ?>
                                 <div class="tab-pane" id="group">
                                     <h5 class="fs-14 px-3 mb-3"><i
                                             class="mdi mdi-account-multiple-outline align-middle"></i> Group</h5>
@@ -356,19 +337,20 @@ $messages = $stmt->fetchAll();
 										<?php } ?>
                                     </ul>
                                 </div>
+								<?php } ?>
                             </div>
                         </div>
 
                         <!-- chat content -->
                         <div class="w-100 user-chat mt-4 mt-sm-0">
-                            <div class="p-3 px-lg-4 user-chat-border">
-                                <div class="row">
+                            <div class="p-3 px-lg-4 user-chat-border" id="userChatArea" style="display:none">
+                                <div class="row" >
                                     <!-- User Info Section -->
                                     <div class="col-md-4 col-6">
-                                        <h5 class="font-size-15 mb-1 text-truncate" id="username">Frank Vickery</h5>
+                                        <h5 class="font-size-15 mb-1 text-truncate text-capitalize" id="username"></h5>
 										<input type="hidden" id="useridVal" />
-                                        <p class="text-muted text-truncate mb-0">
-                                            <i class="mdi mdi-circle text-success align-middle me-1"></i> Active now
+                                        <p class="text-muted text-truncate mb-0" id="onlinestatus">
+                                             Active now
                                         </p>
                                     </div>
 
@@ -441,13 +423,13 @@ $messages = $stmt->fetchAll();
 
                             <div class="px-lg-2">
                                 <div class="chat-conversation p-3">
-                                    <ul class="list-unstyled mb-0 pe-3" id="chatConversations" data-simplebar style="max-height: 650px;">
+                                    <ul class="list-unstyled mb-0 pe-3" id="chatConversations" data-simplebar style="max-height: 650px;overflow-y: scroll;">
 										 
                                     </ul>
                                 </div>
 
                             </div>
-                            <div class="px-lg-3">
+                            <div class="px-lg-3" id="userChatMessageArea" style="display:none">
                                 <div class="p-3 chat-input-section">
                                     <div class="row">
                                         <div class="col">
@@ -468,7 +450,6 @@ $messages = $stmt->fetchAll();
                             </div>
                         </div>
                     </div>
-					<input type="hidden" id="currentChatId" value="" />
                     <!-- end row -->
 
                 </div> <!-- container-fluid -->
@@ -702,6 +683,49 @@ $messages = $stmt->fetchAll();
             </div>
         </div> <!-- end card-->
     </div>
+	
+	<!-- model popup starts -->
+	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		
+		  <div class="modal-header">
+			<h5 class="modal-title" id="myModalLabel">Create a New Group</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  
+		  <div class="modal-body">
+			<div class="row mb-3">
+				<div class="col-md-12">
+					<label for="address" class="form-label">Group Name :</label>
+					<input type="text" class="form-control" id="groupname"
+						placeholder="Enter Group Name" required>
+					<div class="error" id="groupnameErr"></div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<label for="gender" class="form-label">Add People <span style='color:red'>*</span>:</label>
+				<select class="form-control" id="addPeople" multiple required>
+					<option value="" disabled selected>Select Gender</option>
+					<?php foreach($groupPeopleList as $val){ ?>
+					<option value="<?php echo $val['user_id'] ?>"><?php echo $val['email'] ?></option>
+					<?php } ?>
+				</select>
+				<div class="error" id="addPeopleErr"></div>
+			</div>
+			<div class="success" id="modelResult"></div>
+		  </div>
+		  
+		  
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" onclick="saveGroup()">Save changes</button>
+		  </div>
+		  
+		</div>
+	  </div>
+	</div>
+	<!-- model popup ends -->
 
     <!-- JAVASCRIPT -->
     <script src="<?php echo BASE_URL_ADMIN; ?>assets/libs/jquery/jquery.min.js"></script>
@@ -719,14 +743,21 @@ $messages = $stmt->fetchAll();
 
     <script src="<?php echo BASE_URL_ADMIN; ?>assets/js/app.js"></script>
 	<script>
+	var chatConversationCache = '';
 	function DisplayChatMessages(id){
-		console.log(id);
+		$("#userChatArea,#userChatMessageArea").show();
+		$("#recentMessageId").val(id);
+		$("#chatConversations").html('');
+		let timestamp = Date.now();
+		setTimeout(loadChat, 10000);
+		
 		$.ajax({
-			url: "api/getAllOnlineCmpyDetails.php" + "?user_id=" + id,
+			url: "api/getAllOnlineCmpyDetails.php" + "?user_id=" + id+"&timestamp="+timestamp,
 			method: 'GET',
 			success: function(data) {
 				
 				var resp = data['data'];
+				
 				if(data['data'].length == 0){
 					var noChats = `
 								<li>
@@ -737,85 +768,146 @@ $messages = $stmt->fetchAll();
 					$("#chatConversations").html(noChats);
 				}
 				else{
-					for(var i=0;i<resp.length;i++){
-						//username
-						$("#useridVal").val(id);
-						var username = resp[i]['email'].split("@"); 
-						$("#username").html(username[0]);
-						if(resp[i]['ismessaged'] == 'no'){
-							var noChats = `
-										<li>
-											<div class="conversation-list"> No Chats yet
-											</div>
-										</li>
-										`;
-							$("#chatConversations").html(noChats);
-						}
-						else{
-							var html = '';
-							for(var i=0;i<resp.length;i++){
-								var createdAt = resp[i].created_at.split(" ");
-								createdAt = createdAt[1].substring(0,5);
-								var username = resp[i].email.split('@');
-								if(resp[i].message_type == "s"){
-									html += `
-											<li>
-												<div class="conversation-list">
-													<div class="chat-avatar">
-														<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png" alt="avatar-2">
-													</div>
-													<div class="ctext-wrap">
-														<div class="conversation-name">${username[0]}</div>
-														<div class="chat-bubble chat-bubble-primary">
-															<p class="mb-0">
-																${resp[i].message}
-															</p>
-														</div>
-														<p class="chat-time mb-0"><i
-																class="mdi mdi-clock-outline align-middle me-1"></i> ${createdAt}
-														</p>
-													</div>
-												</div>
-											</li>
-											`;
-								}
-								else{
-									html += `<li class="right">
-												<div class="conversation-list">
-													<div class="chat-avatar">
-														<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png" alt="avatar-2">
-													</div>
-													<div class="ctext-wrap">
-														<div class="conversation-name">${username[0]}</div>
-														<div class="chat-bubble chat-bubble-primary">
-															<p class="mb-0">
-																${resp[i].message}
-															</p>
-														</div>
-														<p class="chat-time mb-0"><i
-																class="mdi mdi-clock-outline align-middle me-1"></i> ${createdAt}
-														</p>
-													</div>
-												</div>
-											</li>
-											`;
-								}
+					
+						for(var i=0;i<resp.length;i++){
+							//username
+							$("#useridVal").val(id);
+							var username = resp[i]['email'].split("@"); 
+							
+							if(resp[i]['userid_from'] == <?php echo $_SESSION['user_id']; ?>){
+								username = resp[i]['emailto'].split("@");
 							}
-							$("#chatConversations").html(html);
+							
+							$("#username").html(username[0]);
+							if(resp[i]['is_online'] == 1)
+								$("#onlinestatus").html('<i class="mdi mdi-circle text-success align-middle me-1"></i> Active Now') ;
+							else
+								$("#onlinestatus").html('<i class="mdi mdi-circle text-secondary align-middle me-1"></i> Offline') ;
+							if(resp[i]['ismessaged'] == 'no'){
+								var noChats = `<li>
+												<div class="conversation-list">No Chats yet</div>
+											   </li>
+											  `;
+								$("#chatConversations").html(noChats);
+							}
+							else{
+								var html = '';
+								for(var i=0;i<resp.length;i++){
+									var createdAt = resp[i].created_at.split(" ");
+									createdAt = createdAt[1].substring(0,5);
+									var email = resp[i].email.split("@");
+									
+									const readable = timeAgo(resp[i].created_at);
+									
+									if(resp[i].userid_from == "<?php echo $_SESSION['user_id']; ?>"){
+										html += `<li>
+													<div class="conversation-list">
+														<div class="chat-avatar">
+															<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png" alt="avatar-2">
+														</div>
+														<div class="ctext-wrap">
+															<div class="conversation-name">${email[0]}</div>
+															<div class="chat-bubble chat-bubble-primary">
+																<p class="mb-0">
+																	${resp[i].message}
+																</p>
+															</div>
+															<p class="chat-time mb-0"><i
+																	class="mdi mdi-clock-outline align-middle me-1"></i> ${readable}
+															</p>
+														</div>
+													</div>
+												</li>`;
+									}
+									else{
+										html += `<li class="right">
+													<div class="conversation-list">
+														<div class="chat-avatar">
+															<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png" alt="avatar-2">
+														</div>
+														<div class="ctext-wrap">
+															<div class="conversation-name">${email[0]}</div>
+															<div class="chat-bubble chat-bubble-primary">
+																<p class="mb-0">
+																	${resp[i].message}
+																</p>
+															</div>
+															<p class="chat-time mb-0"><i
+																	class="mdi mdi-clock-outline align-middle me-1"></i> ${readable}
+															</p>
+														</div>
+													</div>
+												</li>`;
+									}
+								}
+								$("#chatConversations").html(html);
+								scrollToBottom();
+							}
 						}
-					}
+					
+					
 				}
 			},
 			error: function(err) {
 				console.error('Error:', err);
 			}
 		});
+		
+		$("#chatTextMessage").keydown(function(event) {
+			if (event.key === "Enter") {
+				sendMessage();
+			}
+		});
 	}
+	$(document).ready(function(){
+		getRecentMessageList('<?php echo $_SESSION['user_id']; ?>');
+		$('#searchChatList').on('input', function(e) {
+			var inputValue = $(this).val();
+			 $.ajax({
+				url: "api/getChatList.php?q=" + inputValue,
+				method: 'GET',
+				success: function(data) {
+					$("#chatListArea").html('');
+					var html = '';
+					if(data.length == 0){
+						html +=`<div class="user-img ${data[i]['user_id']} align-self-center">
+										No Users available
+									</div>`
+					}
+					else{
+						for(var i=0;i<data.length;i++){
+							var email = data[i].email.split("@");
+							email = email[0].substr(0,1);
+							var status;
+							if(data[i]['is_online'] == 1)
+								status = "online";
+							else
+								status = "offline";
+							html +=`<div onclick="DisplayChatMessages('${data[i]['user_id']}')" class="user-img ${status} align-self-center">
+										<div class="avatar-2xs avatar avatar-circle align-self-center">
+											<span class="bg-light text-body" alt="avatar-2">
+												${email}
+											</span>
+										</div>
+										<span class="user-status"></span>
+									</div>`
+						}
+					}
+					console.log(html);
+					$("#chatListArea").html(html);
+					
+				},
+				error: function(err) {
+					console.error('Error:', err);
+				}
+			});
+		});
+	});
 	function sendMessage(){
 		id = $("#useridVal").val();
 		$("#useridVal").val('');
-		$("#currentChatId").val(id);
 		message = $("#chatTextMessage").val();
+		$("#chatTextMessage").val('');
 		$.ajax({
 			url: "api/sendMessageToUser.php" + "?user_id=" + id+"&message="+message,
 			method: 'GET',
@@ -825,6 +917,129 @@ $messages = $stmt->fetchAll();
 			error: function(err) {
 				console.error('Error:', err);
 			}
+		});
+	}
+	function loadChat(){
+		var id = $("#recentMessageId").val();
+		DisplayChatMessages(id);
+	}
+	function scrollToBottom() {
+		const chatBox = document.getElementById("chatConversations");
+		chatBox.scrollTop = chatBox.scrollHeight;	
+		window.scrollTo({
+		  top: document.body.scrollHeight,
+		  behavior: 'smooth'
+		});
+	}
+	function timeAgo(date) {
+		const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+		if (seconds < 60) return "just now";
+		const minutes = Math.floor(seconds / 60);
+		if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+		const hours = Math.floor(minutes / 60);
+		if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+		const days = Math.floor(hours / 24);
+		return `${days} day${days !== 1 ? 's' : ''} ago`;
+	}
+	function getRecentMessageList(id){
+		$.ajax({
+			url: "api/getAllRecentChat.php?user_id=" + id,
+			method: 'GET',
+			success: function(data) {
+				var html = '';
+				if(data.length == 0){
+					html += `<li class="active">
+                                                <a href="#">
+                                                    <div class="d-flex">
+                                                        <div class="user-img online align-self-center me-3">
+														No Chat messages to show
+														</div>
+													</div>
+												</a>
+											</li>`;
+				}
+				else{
+					for(var i=0;i<data.length;i++){
+						var email = '';
+						var chatID = data[i]['userid_from'];
+						email = data[i].emailfrom.split("@");
+						if(data[i]['userid_from'] == id){
+							email = data[i].emailto.split("@");
+							chatID = data[i]['userid_to'];
+						}
+						
+						html += `<li class="active" onclick="DisplayChatMessages('${chatID}')">
+															<a href="#">
+																<div class="d-flex">
+																	<div class="user-img online align-self-center me-3">
+																		<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png"
+																			class="rounded-circle avatar-2xs avatar" alt="avatar-2">
+																		<span class="user-status"></span>
+																	</div>
+																	<div class="flex-1 overflow-hidden">
+																		<h5 class="text-truncate text-capitalize fs-14 mb-1">${email[0]}</h5>
+																		<p class="text-truncate mb-0">${data[i]['message']}</p>
+																	</div>
+																	<div>
+																		<p class="fs-11 mb-0">04 min</p>
+																		<div><i
+																				class="mdi mdi-check-all align-middle ms-2 text-info"></i>
+																		</div>
+																	</div>
+																</div>
+															</a>
+														</li>`;
+					}
+				}
+				$("#recentChatList").html(html);
+			},
+			error: function(err) {
+				console.error('Error:', err);
+			}
+		});
+	}
+	function saveGroup(){
+		$('.error').each(function(index, element) {
+			element.innerHTML = '';
+		})
+		var groupname = document.getElementById('groupname').value;
+		var addPeople = document.getElementById('addPeople').value;
+		
+		if(groupname == ''){
+			document.getElementById('groupnameErr').innerHTML = "Please enter Group Name";
+		}
+		if(addPeople == ''){
+			document.getElementById('addPeopleErr').innerHTML = "Please select Group Person";
+		}
+		const select = document.getElementById('addPeople');
+		const selected = Array.from(select.selectedOptions).map(option => option.value);
+		if(selected.length > 3){
+			document.getElementById('addPeopleErr').innerHTML = "Please select only 3 peoples";
+		}
+		
+		const formData = new FormData();
+		formData.append('groupname', groupname);
+		formData.append('addPeople', selected.join("#"));
+		
+		fetch('<?php echo BASE_URL_ADMIN ?>backend/save-group.php', {
+		  method: 'POST',
+		  body: formData
+		})
+		.then(response => response.json())
+		.then(data => {
+			if(data.code == 1){
+				//uploading additional job details
+				$("#modelResult").addClass('text-primary');
+				$("#modelResult").html(data.result);
+				$('#groupname,#addPeople').val('');
+			}
+			else{
+				$("#modelResult").addClass('error');
+				$("#modelResult").html(data.result);
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
 		});
 	}
 	</script>

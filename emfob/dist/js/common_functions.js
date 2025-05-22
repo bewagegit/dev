@@ -136,5 +136,4 @@ document.addEventListener("DOMContentLoaded", () => {
 		document.getElementById('hidden_tags').value = tagArray;
   }
   
-  
 });

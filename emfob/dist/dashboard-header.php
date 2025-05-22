@@ -36,7 +36,13 @@ foreach($userDetailsResult as $val){
     <link href="<?php echo BASE_URL_ADMIN; ?>assets/libs/simplebar/simplebar.min.css" rel="stylesheet">
     <!-- App Css-->
     <link href="<?php echo BASE_URL_ADMIN; ?>assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
-
+	
+	<script>
+		const BASE_URL 			= "<?php echo BASE_URL; ?>";
+		const BASE_URL_ADMIN 	= "<?php echo BASE_URL_ADMIN; ?>";
+	</script>
+	
+	<script src="<?php echo BASE_URL; ?>js/user-session.js"></script>
 </head>
 
 <body>

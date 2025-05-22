@@ -11,9 +11,8 @@ extract($_GET);
 
 if(isset($user_id) && $user_id != '' && isset($message) && $message != '' ){
 	// Fetch available exams
-	$sql = "insert into chat_messages(user_id_from,userid_to,message,message_type) values(:user_id_from,:userid_to,:message,:message_type) ";	
-	db_insert($sql,array("user_id_from" => $_SESSION['user_id'],"userid_to" => $user_id, "message" => $message,"message_type"=>"s"));
-	db_insert($sql,array("user_id_from" => $user_id,"userid_to" => $_SESSION['user_id'], "message" => $message,"message_type"=>"r"));
+	$sql = "insert into chat_messages(userid_from,userid_to,message,message_type) values(:userid_from,:userid_to,:message,:message_type) ";	
+	db_insert($sql,array("userid_from" => $_SESSION['user_id'],"userid_to" => $user_id, "message" => $message,"message_type"=>"s"));
 	json_encode(array("Message send successfully"));
 }
 ?>

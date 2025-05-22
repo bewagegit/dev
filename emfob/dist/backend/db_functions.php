@@ -19,7 +19,6 @@ function db_update($updateQry,$data=array()){
 	global $pdo;
 	$stmt = $pdo->prepare($updateQry);
 	$stmt->execute($data);
-	return $result;
 }
 
 ?>

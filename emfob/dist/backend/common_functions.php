@@ -55,4 +55,22 @@ function decrypt($encryptedData, $key) {
     return openssl_decrypt($encrypted, 'AES-256-CBC', $key, 0, $iv);
 }
 
+function getAllChatList($userid,$query=''){
+	global $pdo;
+
+	if($_SESSION['user_type'] ==2)
+		$usertype = 1;
+	if($_SESSION['user_type'] ==1)
+		$usertype = 2;
+	
+	$qry = '';
+	if($query != '')
+		$qry = " and email like '%".$query."%' ";
+	// Fetch available chat List
+	$sql = "SELECT * FROM `".USERS."` WHERE `user_type` = $usertype  and user_id !='".$userid."' $qry order by user_id desc limit 0,5 ";	
+	$stmt = $pdo->query($sql);
+	$chatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	return $chatList;
+}
+
 ?>
