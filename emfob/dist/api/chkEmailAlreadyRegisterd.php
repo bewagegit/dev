@@ -4,6 +4,9 @@ include_once("../backend/config.php");
 include_once("../backend/constants.php");
 include_once("../backend/db_functions.php");
 include_once("../backend/common_functions.php");
+
+include_once("chkAuthenticate.php");
+
 extract($_GET);
 if(isset($email) && $email != ''){
 	$result = db_select("email",USERS," email= ? ",array($email));

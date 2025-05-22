@@ -12,10 +12,10 @@ error_reporting(E_ALL);
 ini_set("error_reporting",-1);
 extract($_GET);
 
-if(isset($user_id) && $user_id != '' && isset($message) && $message != '' ){
+if(isset($user_idfrom) && $user_idfrom != '' && isset($group_id) && $group_id != '' && isset($message) && $message != '' ){
 	// Fetch available exams
-	$sql = "insert into chat_messages(userid_from,userid_to,message,message_type) values(:userid_from,:userid_to,:message,:message_type) ";	
-	db_insert($sql,array("userid_from" => $_SESSION['user_id'],"userid_to" => $user_id, "message" => $message,"message_type"=>"s"));
-	json_encode(array("Message send successfully"));
+	$sql = "insert into ".GROUP_CHAT_MESSAGES."(userid_from,group_id,message) values(:userid_from,:group_id,:message) ";	
+	db_insert($sql,array("userid_from" => $_SESSION['user_id'],"group_id" => $group_id, "message" => $message));
+	json_encode(array("Group Message send successfully"));
 }
 ?>

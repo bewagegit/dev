@@ -53,7 +53,10 @@ define("COURSES","courses");
 
 define("CANDIDATE_PREVIOUS_DETAILS","candidate_previous_details");
 define("GROUPS","groups");
+define("GROUP_MEMBER","group_member");
 define("CHAT_MESSAGES","chat_messages");
+define("GROUP_CHAT_MESSAGES","group_chat_messages");
+
 
 
 define("MENU_ITEMS","menu_items");
