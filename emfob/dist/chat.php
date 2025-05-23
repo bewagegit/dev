@@ -305,7 +305,7 @@ $messages = $stmt->fetchAll();
                                     <ul class="list-unstyled mb-0 pe-3" id="chatConversations" data-simplebar style="max-height: 650px;overflow-y: scroll;">
 										 
                                     </ul>
-									<input type="hidden" id="allMessageIds" value=""></div>
+									<input type="hidden" id="allMessageIds" value="">
                                 </div>
 
                             </div>

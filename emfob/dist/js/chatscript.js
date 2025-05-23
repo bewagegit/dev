@@ -86,7 +86,7 @@ function DisplayChatMessages(id,type=''){
 							
 							if(resp[i].userid_from == USER_ID){
 								html += `<li>
-											<div class="conversation-list ${pinned} " data-id="${resp[i].id}">
+											<div class="conversation-list ${pinned} " id="${resp[i].id}" data-id="${resp[i].id}">
 												<div class="chat-avatar">
 													<img src="${BASE_URL_ADMIN}assets/images/users/avatar-6.png" alt="avatar-2">
 												</div>
@@ -106,7 +106,7 @@ function DisplayChatMessages(id,type=''){
 							}
 							else{
 								html += `<li class="right">
-											<div class="conversation-list ${pinned}" data-id="${resp[i].id}">
+											<div class="conversation-list ${pinned}" id="${resp[i].id}" data-id="${resp[i].id}">
 												<div class="chat-avatar">
 													<img src="${BASE_URL_ADMIN}assets/images/users/avatar-6.png" alt="avatar-2">
 												</div>
