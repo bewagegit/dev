@@ -4,12 +4,7 @@ require_once 'config.php'; // Include your PDO database connection
 
 include_once("../../../emfob/dist/backend/config.php");
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
+require_once 'check-userlogged.php'; 
 
 error_reporting(E_ALL);
 ini_set("error_reporting",-1);
@@ -43,7 +38,7 @@ if(isset($groupname) && $groupname != '' && isset($addPeople) && $addPeople != '
 		$params = [
 			':groupname' => $groupname,
 			':user_id' => $_SESSION['user_id'],
-			':addPeople' => $addPeople
+			':addPeople' => "#".$addPeople."#"
 		];
 
 		// Execute the statement

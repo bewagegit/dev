@@ -18,7 +18,6 @@ $allChatList = getAllChatList($userid);
 
 
 //Get all group List
-
 $sql = "SELECT id,user_id,group_name as name FROM `".GROUPS."` WHERE user_id = ".$_SESSION['user_id']." or group_member like '%#".$_SESSION['user_id']."#%' ";	
 $stmt = $pdo->query($sql);
 $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -45,6 +44,14 @@ $stmt = $pdo->prepare("SELECT * FROM `".CHAT_MESSAGES."` a
 $stmt->execute([$userid]); // Verify email and user type
 $messages = $stmt->fetchAll();
 ?>
+<style>
+.chat-conversation li :hover{
+	background-color:#f2dfc9;
+}
+.pinnedMessage{
+	background-color:#f2dfc9;
+}
+</style>
 
 <!-- ============================================================== -->
         <!-- Start right Content here -->
@@ -139,137 +146,8 @@ $messages = $stmt->fetchAll();
                             <div class="py-3 border-bottom">
                                 <h5 class="fs-14 px-3 mb-3"><i class="mdi mdi-pin align-middle text-muted"></i> Pinned
                                 </h5>
-                                <ul class="list-unstyled chat-list" data-simplebar style="max-height: 120px;overflow: auto;">
-                                    <li class="active">
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img online align-self-center me-3">
-                                                    <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-5.png"
-                                                        class="rounded-circle avatar-2xs avatar" alt="avatar-2">
-                                                    <span class="user-status"></span>
-                                                </div>
-
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Frank Vickery</h5>
-                                                    <p class="text-truncate mb-0">Manager - Bewage</p>
-                                                </div>
-                                                <div class="fs-11">04 min</div>
-                                            </div>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img away align-self-center me-3">
-                                                    <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-4.png"
-                                                        class="rounded-circle avatar-2xs avatar" alt="avatar-3">
-                                                    <span class="user-status"></span>
-                                                </div>
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Robert Winter</h5>
-                                                    <p class="text-truncate mb-0">HR - Dell Technologies</p>
-                                                </div>
-                                                <div class="fs-11">09 min</div>
-                                            </div>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img online align-self-center me-3">
-                                                    <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png"
-                                                        class="rounded-circle avatar-2xs avatar" alt="avatar-6">
-                                                    <span class="user-status"></span>
-                                                </div>
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Stephen Hadley</h5>
-                                                    <p class="text-truncate mb-0">I've finished it! See you so</p>
-                                                </div>
-                                                <div class="fs-11">5hrs</div>
-                                            </div>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img online me-3">
-                                                    <div class="avatar-2xs avatar avatar-circle align-self-center">
-                                                        <span class="bg-light text-body">
-                                                            C
-                                                        </span>
-                                                    </div>
-                                                    <span class="user-status mb-2"></span>
-                                                </div>
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Crystal Elliott</h5>
-                                                    <p class="text-truncate mb-0">This theme is awesome!</p>
-                                                </div>
-                                                <div class="fs-11">21 min</div>
-                                            </div>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img align-self-center me-3">
-                                                    <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-4.png"
-                                                        class="rounded-circle avatar-2xs avatar" alt="avatar-4">
-                                                    <span class="user-status"></span>
-                                                </div>
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Kristen Steele</h5>
-                                                    <p class="text-truncate mb-0">Nice to meet you</p>
-                                                </div>
-                                                <div class="fs-11">1 hr</div>
-                                            </div>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img away me-3">
-                                                    <div class="avatar-2xs avatar avatar-circle align-self-center">
-                                                        <span class="bg-light text-body">
-                                                            M
-                                                        </span>
-                                                    </div>
-                                                    <span class="user-status mb-2"></span>
-                                                </div>
-
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Mitchel Givens</h5>
-                                                    <p class="text-truncate mb-0">Hey! there I'm available</p>
-                                                </div>
-                                                <div class="fs-11">3 hrs</div>
-                                            </div>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="#">
-                                            <div class="d-flex">
-                                                <div class="user-img online me-3">
-                                                    <div class="avatar-2xs avatar avatar-circle align-self-center">
-                                                        <span class="bg-light text-body">
-                                                            K
-                                                        </span>
-                                                    </div>
-                                                    <span class="user-status mb-2"></span>
-                                                </div>
-
-                                                <div class="flex-1 overflow-hidden">
-                                                    <h5 class="text-truncate fs-14 mb-1">Tracy Penley</h5>
-                                                    <p class="text-truncate mb-0">This theme is awesome!</p>
-                                                </div>
-                                                <div class="fs-11">24/03</div>
-                                            </div>
-                                        </a>
-                                    </li>
+                                <ul id="recentPinnedMessageList" class="list-unstyled chat-list" data-simplebar style="max-height: 120px;overflow: auto;">
+                                    
                                 </ul>
                             </div>
 
@@ -304,13 +182,11 @@ $messages = $stmt->fetchAll();
 										if(count($messages) == 0){
 											?>
 											<li class="active">
-                                                <a href="#">
-                                                    <div class="d-flex">
-                                                        <div class="user-img online align-self-center me-3">
-														No Chat messages to show
-														</div>
+												<div class="d-flex">
+													<div class="user-img online align-self-center me-3">
+													No Pinned messages to show
 													</div>
-												</a>
+												</div>
 											</li>
 											<?php
 										}
@@ -414,9 +290,7 @@ $messages = $stmt->fetchAll();
                                                         <i class="mdi mdi-dots-horizontal"></i>
                                                     </button>
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        <a class="dropdown-item" href="#">Action</a>
-                                                        <a class="dropdown-item" href="#">Another action</a>
-                                                        <a class="dropdown-item" href="#">Something else</a>
+                                                        <a class="dropdown-item" href="javascript:pinUnpin()">Pin / Unpin Message</a>
                                                     </div>
                                                 </div>
                                             </li>
@@ -431,6 +305,7 @@ $messages = $stmt->fetchAll();
                                     <ul class="list-unstyled mb-0 pe-3" id="chatConversations" data-simplebar style="max-height: 650px;overflow-y: scroll;">
 										 
                                     </ul>
+									<input type="hidden" id="allMessageIds" value=""></div>
                                 </div>
 
                             </div>

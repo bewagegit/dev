@@ -1,10 +1,11 @@
 var chatConversationCache = '';
 let timeoutId = null;
+var respChangeChk = '';
+var respChangeGroupChk = '';
+
 function DisplayChatMessages(id,type=''){
-	$("#userChatArea,#userChatMessageArea,#sendmessage").show();
-	$("#sendgroupmessage").hide();
-	$("#recentMessageId").val(id);
-	$("#chatConversations").html('');
+	respChangeGroupChk = '';
+	
 	let timestamp = Date.now();
 	if (timeoutId == null) {
 		timeoutId = setInterval(loadChat, 10000);
@@ -18,8 +19,27 @@ function DisplayChatMessages(id,type=''){
 		url: "api/getAllOnlineCmpyDetails.php" + "?user_id=" + id+"&timestamp="+timestamp,
 		method: 'GET',
 		success: function(data) {
+			var allMessageID = [];
+			for(var i=0;i<data['data'].length;i++){
+				allMessageID.push(data['data'][i]['id']);
+			}
+			$("#allMessageIds").val(JSON.stringify(allMessageID));
+			
+			if(respChangeChk == JSON.stringify(data)){
+				return;
+			}
+			
+			$("#userChatArea,#userChatMessageArea,#sendmessage").show();
+			$("#sendgroupmessage").hide();
+			$("#recentMessageId").val(id);
+			$("#chatConversations").html('');
+			
+			if(respChangeChk != JSON.stringify(data)){
+				respChangeChk = JSON.stringify(data);
+			}
 			
 			var resp = data['data'];
+			
 			
 			if(data['data'].length == 0){
 				var noChats = `
@@ -31,7 +51,6 @@ function DisplayChatMessages(id,type=''){
 				$("#chatConversations").html(noChats);
 			}
 			else{
-				
 				for(var i=0;i<resp.length;i++){
 					//username
 					$("#useridVal").val(id);
@@ -42,6 +61,7 @@ function DisplayChatMessages(id,type=''){
 					}
 					
 					$("#username").html(username[0]);
+					
 					if(data['is_online'] == 1)
 						$("#onlinestatus").html('<i class="mdi mdi-circle text-success align-middle me-1"></i> Active Now') ;
 					else
@@ -49,8 +69,7 @@ function DisplayChatMessages(id,type=''){
 					if(data['ismessaged'] == 'no'){
 						var noChats = `<li>
 										<div class="conversation-list">No Chats yet</div>
-									   </li>
-									  `;
+									   </li>`;
 						$("#chatConversations").html(noChats);
 					}
 					else{
@@ -61,10 +80,13 @@ function DisplayChatMessages(id,type=''){
 							var email = resp[i].email.split("@");
 							
 							const readable = timeAgo(resp[i].created_at);
+							var pinned = '';
+							if(resp[i].is_pinned == 1)
+								pinned = 'pinnedMessage'
 							
 							if(resp[i].userid_from == USER_ID){
 								html += `<li>
-											<div class="conversation-list">
+											<div class="conversation-list ${pinned} " data-id="${resp[i].id}">
 												<div class="chat-avatar">
 													<img src="${BASE_URL_ADMIN}assets/images/users/avatar-6.png" alt="avatar-2">
 												</div>
@@ -84,7 +106,7 @@ function DisplayChatMessages(id,type=''){
 							}
 							else{
 								html += `<li class="right">
-											<div class="conversation-list">
+											<div class="conversation-list ${pinned}" data-id="${resp[i].id}">
 												<div class="chat-avatar">
 													<img src="${BASE_URL_ADMIN}assets/images/users/avatar-6.png" alt="avatar-2">
 												</div>
@@ -107,15 +129,17 @@ function DisplayChatMessages(id,type=''){
 						scrollToBottom();
 					}
 				}
+				console.log(allMessageID);
 			}
 		},
 		error: function(err) {
-			console.error('Error:', err);
+			//console.error('Error:', err);
 		}
 	});
 }
 $(document).ready(function(){
 	getRecentMessageList(USER_ID);
+	getPinnedChatMessageList(USER_ID);
 	$('#searchChatList').on('input', function(e) {
 		var inputValue = $(this).val();
 		 $.ajax({
@@ -153,7 +177,7 @@ $(document).ready(function(){
 				
 			},
 			error: function(err) {
-				console.error('Error:', err);
+				//console.error('Error:', err);
 			}
 		});
 	});
@@ -163,6 +187,17 @@ $(document).ready(function(){
 			sendMessage();
 		}
 	});
+	
+	$(document).on('click', '.conversation-list', function() {
+		if($(".pinnedMessage").length > 2){
+			$(this).removeClass('pinnedMessage');
+			pinUnpin();
+			return false;
+		}
+		$(this).toggleClass('pinnedMessage');
+		pinUnpin();
+	});
+	
 });
 function sendMessage(){
 	id = $("#useridVal").val();
@@ -307,12 +342,11 @@ function saveGroup(){
 }
 
 let timeoutId1 = null;
+
 //Load all the group chat messages
 function DisplayGroupChatMessage(id){
-	$("#userChatArea,#userChatMessageArea,#sendgroupmessage").show();
-	$("#sendmessage").hide();
-	$("#recentMessageId").val(id);
-	$("#chatConversations").html('');
+	respChangeChk = '';
+	
 	if (timeoutId1 == null) {
 		timeoutId1 = setInterval(loadChat1, 10000);
 	}
@@ -320,6 +354,15 @@ function DisplayGroupChatMessage(id){
 		url: "api/getAllGroupChatDetails.php" + "?group_id=" + id,
 		method: 'GET',
 		success: function(data) {
+			
+			if(respChangeGroupChk == JSON.stringify(data)){
+				return;
+			}
+			
+			$("#userChatArea,#userChatMessageArea,#sendgroupmessage").show();
+			$("#sendmessage").hide();
+			$("#recentMessageId").val(id);
+			$("#chatConversations").html('');
 			
 			var resp = data;
 			
@@ -393,6 +436,7 @@ function DisplayGroupChatMessage(id){
 		}
 	});
 }
+
 function loadChat1(){
 	var id = $("#recentMessageId").val();
 	DisplayGroupChatMessage(id);
@@ -407,6 +451,86 @@ function sendGroupMessage(){
 		method: 'GET',
 		success: function(data) {
 			DisplayGroupChatMessage($userid);
+		},
+		error: function(err) {
+			//console.error('Error:', err);
+		}
+	});
+}
+
+function pinUnpin(){
+	var pinIds = [];
+	$(".pinnedMessage").each(function(){
+		pinIds.push($(this).attr("data-id"));
+	}); 
+	var allMessageId = $("#allMessageIds").val();
+	if(pinIds.length <=3 && pinIds.length >= 0 ){
+		$.ajax({
+			url: "api/addPinnedMessage.php",
+			method: 'POST',
+			data: {pinnedID: pinIds,allMessageId  : allMessageId },
+			success: function(data) {
+				console.log(data);
+			},
+			error: function(err) {
+				//console.error('Error:', err);
+			}
+		});
+	}
+	console.log(pinIds);
+}
+
+
+function getPinnedChatMessageList(id){
+	$.ajax({
+		url: "api/getAllPinnedChat.php?user_id=" + id,
+		method: 'GET',
+		success: function(data) {
+			var html = '';
+			if(data.length == 0){
+				html += `<li class="active">
+											<a href="#">
+												<div class="d-flex">
+													<div class="user-img online align-self-center me-3">
+													No Chat messages to show
+													</div>
+												</div>
+											</a>
+										</li>`;
+			}
+			else{
+				for(var i=0;i<data.length;i++){
+					var email = '';
+					var chatID = data[i]['userid_from'];
+					email = data[i].emailfrom.split("@");
+					if(data[i]['userid_from'] == id){
+						email = data[i].emailto.split("@");
+						chatID = data[i]['userid_to'];
+					}
+					
+					html += `<li class="active" onclick="DisplayChatMessages('${chatID}')">
+														<a href="#">
+															<div class="d-flex">
+																<div class="user-img online align-self-center me-3">
+																	<img src="${BASE_URL_ADMIN}assets/images/users/avatar-6.png"
+																		class="rounded-circle avatar-2xs avatar" alt="avatar-2">
+																	<span class="user-status"></span>
+																</div>
+																<div class="flex-1 overflow-hidden">
+																	<h5 class="text-truncate text-capitalize fs-14 mb-1">${email[0]}</h5>
+																	<p class="text-truncate mb-0">${data[i]['message']}</p>
+																</div>
+																<div>
+																	<p class="fs-11 mb-0">04 min</p>
+																	<div><i class="mdi mdi-check-all align-middle ms-2 text-info"></i>
+																	</div>
+																</div>
+															</div>
+														</a>
+													</li>`;
+				}
+			}
+			$("#recentPinnedMessageList").html(html);
 		},
 		error: function(err) {
 			console.error('Error:', err);
