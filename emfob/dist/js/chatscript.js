@@ -303,9 +303,11 @@ function saveGroup(){
 	
 	if(groupname == ''){
 		document.getElementById('groupnameErr').innerHTML = "Please enter Group Name";
+		return;
 	}
 	if(addPeople == ''){
 		document.getElementById('addPeopleErr').innerHTML = "Please select Group Person";
+		return;
 	}
 	const select = document.getElementById('addPeople');
 	const selected = Array.from(select.selectedOptions).map(option => option.value);
