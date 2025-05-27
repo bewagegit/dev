@@ -94,7 +94,7 @@ include_once("dashboard-header.php"); ?>
 
                             <button class="btn referral-btn mb-4">Refer Now</button>
 
-                            <div class="points-section mt-4">
+                            <!--<div class="points-section mt-4">
                                 <h4>How it Works</h4>
                                 <div class="row text-start mt-3">
                                     <div class="col-12 col-md-4 mb-3">
@@ -116,7 +116,7 @@ include_once("dashboard-header.php"); ?>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -131,9 +131,6 @@ include_once("dashboard-header.php"); ?>
                     alert("Referral link copied: " + copyText.value);
                 }
             </script>
-
-
-            
 
         </div> <!-- container-fluid -->
     </div>

@@ -592,7 +592,7 @@ $messages = $stmt->fetchAll();
 			<div class="col-md-6">
 				<label for="gender" class="form-label">Add People <span style='color:red'>*</span>:</label>
 				<select class="form-control" id="addPeople" multiple required>
-					<option value="" disabled selected>Select Gender</option>
+					<option value="" disabled selected>Select People</option>
 					<?php foreach($groupPeopleList as $val){ ?>
 					<option value="<?php echo $val['user_id'] ?>"><?php echo $val['email'] ?></option>
 					<?php } ?>

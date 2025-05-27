@@ -8,7 +8,16 @@ $title = 'Dashboard | Emfob';
 ?>
 <!doctype html>
 <?php
-include_once("dashboard-header.php"); ?>
+include_once("dashboard-header.php"); 
+
+print_r($_SESSION['user_id']);
+
+//Get all group List
+$stmt = $pdo->prepare("SELECT * FROM `".CANDIDATES_PROFILES."` a where user_id  = '".$_SESSION['user_id']."' order by id desc limit 0,1 ");
+		
+$stmt->execute(); // Verify email and user type
+$roadMapDetails = $stmt->fetchAll();
+?>
 <style>
     /* Minimal custom styling */
     .print-btn {
@@ -64,9 +73,9 @@ include_once("dashboard-header.php"); ?>
                 <div class="card mb-4">
                     <div class="card-body">
                         <h5 class="card-title"><i class="fas fa-briefcase"></i> Career Goal</h5>
-                        <p><strong>Goal:</strong> Full Stack Developer</p>
+                        <p><strong>Goal:</strong> <?php echo ucfirst($roadMapDetails[0]['current_job_title']?? ''); ?></p>
                         <p><strong>Current Skill Level:</strong> Intermediate</p>
-                        <p><strong>Skills:</strong> HTML, CSS, JavaScript, Basic PHP</p>
+                        <p><strong>Skills:</strong> <?php echo ucfirst($roadMapDetails[0]['key_skills']?? ''); ?> HTML, CSS, JavaScript, Basic PHP</p>
                     </div>
                 </div>
 

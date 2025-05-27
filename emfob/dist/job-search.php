@@ -124,6 +124,11 @@ $title = 'Job Search | Emfob'; ?>
     .pagination .page-link {
         border-radius: 50%;
     }
+	
+	input[type="range"] {
+	  width: 100%;
+	  accent-color: #4caf50; /* For modern browsers */
+	}
 </style>
 
 
@@ -193,12 +198,14 @@ $title = 'Job Search | Emfob'; ?>
                                             </div>
                                             <div class="form-group">
                                                 <label for="salaryRange">Salary Range</label>
-                                                <select class="form-control" id="salaryRange">
+												<!--<select class="form-control" id="salaryRange">
                                                     <option value="">All</option>
                                                     <option value="20000-40000">20,000 - 40,000</option>
                                                     <option value="40000-60000">40,000 - 60,000</option>
                                                     <option value="60000-above">60,000+</option>
-                                                </select>
+                                                </select>-->
+												<span id="brightnessValue">10000</span></label>
+												<input type="range" id="range" min="0" step="1000" max="300000" value="10000">
                                             </div>
                                             <div class="form-group">
                                                 <label for="industry">Industry</label>
@@ -364,6 +371,7 @@ $title = 'Job Search | Emfob'; ?>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyrKx3qDBUdn7_wwXP08LZ8-nh05M5e7A&libraries=places"></script>
 
 <script>
 	let currentPage;
@@ -372,13 +380,14 @@ $title = 'Job Search | Emfob'; ?>
 	document.addEventListener('DOMContentLoaded', function () {
 	  loadData(1);
 	  // Your DOM manipulation code here
+	  
 	});
 	function loadData(pageNo,title='') {
 		document.getElementById('jobResults').innerHTML = 'Loading..';
 		$('.pagination').html('');
 		currentPage = pageNo;
 		const xhr = new XMLHttpRequest();
-		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&salary="+$('#salaryRange').val()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
+		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&salary="+$('#brightnessValue').val()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
 		xhr.open("GET", "<?php echo BASE_URL; ?>api/jobsearch.php?"+qry+"&limit="+pageNo, true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
@@ -493,6 +502,18 @@ $title = 'Job Search | Emfob'; ?>
         if (range === '60000+') return salaryValue >= 60000;
         return true;
     }
+	
+	
+	const input = document.getElementById('location');
+	const autocomplete = new google.maps.places.Autocomplete(input)
+	
+	
+	const range = document.getElementById('range');
+	const valueDisplay = document.getElementById('brightnessValue');
+
+	range.addEventListener('input', () => {
+		valueDisplay.textContent = range.value;
+	});
 </script>
 
 
