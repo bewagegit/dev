@@ -41,6 +41,6 @@ else{
 	$sql = "SELECT a.email,a.is_online FROM ".USERS." a WHERE a.user_id ='".$user_id."' ";	
 	$stmt = $pdo->query($sql);
 	$userDetails = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	echo json_encode(array("ismessaged" => 'no',"is_online" => $userDetails[0]['is_online'],"email" => $userDetails[0]['email'],'data' => $userDetails));
+	echo json_encode(array("ismessaged" => 'no',"is_online" => isset($userDetails[0]['is_online'])  ?? $userDetails[0]['is_online'] ,"email" => isset($userDetails[0]['email']) ?? $userDetails[0]['email'],'data' => $userDetails));
 }
 ?>

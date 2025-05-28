@@ -8,6 +8,7 @@ include_once("backend/page_authcheck.php");
 $employment_type = getAllSelection(EMPLOYMENT_TYPE);
 $experience_level = getAllSelection(EXPERIENCE_LEVEL);
 $categories = db_select('id,category_name',CATEGORIES);
+$language = db_select('id,languages_name',LANGUAGES,'active = ? ',array(1),'order by id asc');
 
 $title = 'Job Search | Emfob'; ?>
 
@@ -196,14 +197,16 @@ $title = 'Job Search | Emfob'; ?>
                                                 <input type="text" class="form-control" id="location"
                                                     placeholder="Enter location">
                                             </div>
+											<div class="form-group">
+                                                <label for="location">Language</label>
+												<select class="form-control" id="language">
+												<?php foreach($language as $val){ ?>
+													<option value="<?php echo $val['id'] ?>"><?php echo $val['languages_name'] ?></option>
+												<?php } ?>
+												</select>
+                                            </div>
                                             <div class="form-group">
                                                 <label for="salaryRange">Salary Range</label>
-												<!--<select class="form-control" id="salaryRange">
-                                                    <option value="">All</option>
-                                                    <option value="20000-40000">20,000 - 40,000</option>
-                                                    <option value="40000-60000">40,000 - 60,000</option>
-                                                    <option value="60000-above">60,000+</option>
-                                                </select>-->
 												<span id="brightnessValue">10000</span></label>
 												<input type="range" id="range" min="0" step="1000" max="300000" value="10000">
                                             </div>
@@ -387,7 +390,8 @@ $title = 'Job Search | Emfob'; ?>
 		$('.pagination').html('');
 		currentPage = pageNo;
 		const xhr = new XMLHttpRequest();
-		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&salary="+$('#brightnessValue').val()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
+		console.log($('#brightnessValue').val());
+		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&language="+$('#language').val()+"&salary="+$('#brightnessValue').html()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
 		xhr.open("GET", "<?php echo BASE_URL; ?>api/jobsearch.php?"+qry+"&limit="+pageNo, true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 

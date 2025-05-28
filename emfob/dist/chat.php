@@ -28,9 +28,11 @@ if($_SESSION['user_type'] == 2){
 	$domain = explode(".",$domain[1]);
 	//print_r($domain);
 	//Get all group List
-	$qry = " email like '%@".$domain[0].".%' and user_id != '".$_SESSION['user_id']."' ";
+	$qry = " email like '%@".$domain[0].".%' and a.user_id != '".$_SESSION['user_id']."' ";
 	// Fetch available chat List
-	$sql = "SELECT * FROM `".USERS."` WHERE $qry order by user_id desc limit 0,5 ";	
+	$sql = "SELECT * FROM `".USERS."` a
+		inner join `".CANDIDATES_PROFILES."` b on a.user_id = b.user_id WHERE $qry order by a.user_id desc limit 0,5 ";	
+	//echo $sql;
 	$stmt = $pdo->query($sql);
 	$groupPeopleList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -43,6 +45,9 @@ $stmt = $pdo->prepare("SELECT * FROM `".CHAT_MESSAGES."` a
 		
 $stmt->execute([$userid]); // Verify email and user type
 $messages = $stmt->fetchAll();
+
+//echo "<pre>";
+//print_r($allChatList);
 ?>
 <style>
 .chat-conversation li :hover{
@@ -51,6 +56,7 @@ $messages = $stmt->fetchAll();
 .pinnedMessage{
 	background-color:#f2dfc9;
 }
+.offline .user-status{background-color: #fe5b5b;}
 </style>
 
 <!-- ============================================================== -->
@@ -94,54 +100,41 @@ $messages = $stmt->fetchAll();
                                     <h5 class="mb-0"><?php echo ($_SESSION['user_type'] == 2 )? "Candidates" :"Recruiters"; ?></h5>
                                     <a href="#!">All</a>
                                 </div>
-                                <div class="hstack gap-3 flex-wrap" id="chatListArea">
-								<?php
-								foreach($allChatList as $val){
-									if($val['is_online'] == 1)
-										$status = "online";
-									else
-										$status = "offline";
-									?>
-									<div onclick="DisplayChatMessages('<?php echo $val['user_id'] ?>')" class="user-img <?php echo $status; ?> align-self-center">
-										<div class="avatar-2xs avatar avatar-circle align-self-center">
-											<span class="bg-light text-body" alt="avatar-2">
-												<?php echo substr($val['email'],0,1); ?> 
-											</span>
-										</div>
-										<span class="user-status"></span>
-									</div>
-									<?php 
-								}
-								?>
-                                </div>
-                            </div>
+                                <!--<div class="hstack gap-3 flex-wrap" id="chatListArea"> -->
+									<ul class="list-unstyled chat-list" id="chatListArea" data-simplebar style="max-height: 120px;">
+										<?php
+										foreach($allChatList as $val){
+											//print_r($val);
+											if($val['is_online'] == 1)
+												$status = "online";
+											else
+												$status = "offline";
+											$email = $val['email'];
+											
+											?>
+											<li class="active" onclick="DisplayChatMessages('<?php echo $val['user_id']; ?>')">
+												<a href="#">
+													<div class="d-flex">
+														<div class="user-img online align-self-center me-3">
+															<img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-5.png"
+																class="rounded-circle avatar-2xs avatar" alt="avatar-2">
+															<span class="user-status"></span>
+														</div>
 
-                            <div class="card-body border-bottom">
-                                <div class="d-flex">
-                                    <div class="align-self-center me-3">
-                                        <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png"
-                                            class="avatar-2xs avatar rounded-circle" alt="avatar-2">
-                                    </div>
-                                    <div class="flex-1">
-                                        <h5 class="font-size-15 mb-1"><?php echo ucfirst(explode("@",$userDetails['email'])[0]); ?></h5>
-                                        <p class="text-muted mb-0"><i
-                                                class="mdi mdi-circle text-success align-middle me-1"></i> Active</p>
-                                    </div>
-									<?php if($_SESSION['user_type'] == 2 || $_SESSION['user_type'] == 3  ){ ?>
-                                    <div>
-                                        <div class="dropdown chat-noti-dropdown">
-                                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
-                                                <i class="mdi mdi-dots-horizontal fs-20"></i>
-                                            </button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#myModal" href="javascript:void(0)">Create Group</a>
-                                            </div>
-                                        </div>
-                                    </div>
-									<?php } ?>
-                                </div>
+														<div class="flex-1 overflow-hidden">
+															<h5 class="text-truncate fs-14 mb-1"><?php echo $val['full_name']; ?></h5>
+															<p class="text-truncate mb-0"><?php echo $val['current_job_title']; ?> - <?php echo $val['company_name']; ?></p>
+														</div>
+													</div>
+												</a>
+											</li>
+											<?php 
+										}
+										?>
+										</ul>
+                                <!-- </div> -->
                             </div>
+							
 
                             <div class="py-3 border-bottom">
                                 <h5 class="fs-14 px-3 mb-3"><i class="mdi mdi-pin align-middle text-muted"></i> Pinned
@@ -208,7 +201,6 @@ $messages = $stmt->fetchAll();
                                                             <?php echo ucfirst(substr($val['name'],0,1)); ?>
                                                         </span>
                                                     </div>
-
                                                     <div class="flex-1">
                                                         <h5 class="fs-14 mb-0"><?php echo $val['name']; ?></h5>
                                                     </div>
@@ -219,6 +211,37 @@ $messages = $stmt->fetchAll();
                                     </ul>
                                 </div>
 								<?php } ?>
+                            </div>
+							<?php 
+								$classStatus = "text-success";
+								$classTxt = "Active";
+							?>
+                            <div class="card-body border-bottom" style="border-top: 1px solid var(--bs-border-color);">
+                                <div class="d-flex">
+                                    <div class="align-self-center me-3">
+                                        <img src="<?php echo BASE_URL_ADMIN; ?>assets/images/users/avatar-6.png"
+                                            class="avatar-2xs avatar rounded-circle" alt="avatar-2">
+                                    </div>
+                                    <div class="flex-1">
+                                        <h5 class="font-size-15 mb-1"><?php echo ucfirst(explode("@",$userDetails['email'])[0]); ?></h5>
+                                        <p class="text-muted mb-0">
+											<i class="mdi mdi-circle <?php echo $classStatus ?> align-middle me-1"></i> 
+											<?php echo $classTxt; ?></p>
+                                    </div>
+									<?php if($_SESSION['user_type'] == 2 || $_SESSION['user_type'] == 3  ){ ?>
+                                    <div>
+                                        <div class="dropdown chat-noti-dropdown">
+                                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                <i class="mdi mdi-dots-horizontal fs-20"></i>
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#myModal" href="javascript:void(0)">Create Group</a>
+                                            </div>
+                                        </div>
+                                    </div>
+									<?php } ?>
+                                </div>
                             </div>
                         </div>
 
@@ -590,13 +613,12 @@ $messages = $stmt->fetchAll();
 				</div>
 			</div>
 			<div class="col-md-6">
-				<label for="gender" class="form-label">Add People <span style='color:red'>*</span>:</label>
-				<select class="form-control" id="addPeople" multiple required>
-					<option value="" disabled selected>Select People</option>
-					<?php foreach($groupPeopleList as $val){ ?>
-					<option value="<?php echo $val['user_id'] ?>"><?php echo $val['email'] ?></option>
-					<?php } ?>
-				</select>
+				<label for="gender" class="form-label">Add People <span style='color:red'>*</span>:</label><br/>
+				<?php foreach($groupPeopleList as $val){ ?>
+					<input type="checkbox" class="form-check-input" name="groupName[]" value="<?php echo $val['user_id']  ?>" />
+					<label class="form-check-label" for="customControlInline"><?php echo $val['email'] ?></label>
+					<br/>
+				<?php } ?>
 				<div class="error" id="addPeopleErr"></div>
 			</div>
 			<div class="success" id="modelResult"></div>

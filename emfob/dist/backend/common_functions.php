@@ -65,9 +65,11 @@ function getAllChatList($userid,$query=''){
 	
 	$qry = '';
 	if($query != '')
-		$qry = " and email like '%".$query."%' ";
+		$qry = " and b.full_name like '%".$query."%' ";
 	// Fetch available chat List
-	$sql = "SELECT * FROM `".USERS."` WHERE `user_type` = $usertype  and user_id !='".$userid."' $qry order by user_id desc limit 0,5 ";	
+	$sql = "SELECT * FROM `".USERS."` a
+		LEFT JOIN `".CANDIDATES_PROFILES."` b on a.user_id = b.user_id
+		WHERE a.`user_type` = $usertype  and a.user_id !='".$userid."' $qry order by a.user_id desc limit 0,5 ";	
 	$stmt = $pdo->query($sql);
 	$chatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	return $chatList;

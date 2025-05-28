@@ -34,36 +34,31 @@ if(isset($limit) && $limit != '' ){
 		$whereQry .= " a.location like :location AND ";
 		$qry[':location'] = "%".$location."%";
 	}
-	if(isset($salary) &&  $salary != ''){
-		$salExplode = explode("-",$salary);
-		if($salExplode[1] != 'above'){
-			$whereQry .= " a.salary_start >=  :salstart AND salary_end <=  :salend  AND ";
-			$qry[":salstart"] = $salExplode[0];
-			$qry[":salend"] = $salExplode[1];
-		}
-		else{
-			$whereQry .= " a.salary_start >=  :salstart  AND ";
-			$qry[":salstart"] = $salExplode[0];
-		}
+	if(isset($language) && $language != ''){
+		$whereQry .= " FIND_IN_SET (:language, a.languages_id) > 0  AND ";
+		$qry[':language'] = $language;
+	}
+	if(isset($salary) && $salary != ''){
+		$whereQry .= " ( $salary BETWEEN a.salary_start AND a.salary_end  ) AND ";
 	}
 	if(isset($industry) && $industry){
 		$whereQry .= " b.category_name like :category_name AND ";
 		$qry[":category_name"] = "%".$industry."%";
 	}
 	
-	$totalQueryStr = "SELECT *,c.name cmpname,d.name emptype,e.name experience FROM `jobs` a 
-					  INNER JOIN `job_categories` b on a.category_id = b.id
-					  INNER JOIN `companies` c on c.id = a.company_id
-					  INNER JOIN `employment_type` d on d.id = a.job_type
-					  INNER JOIN `experience_level` e on e.id = a.experience
+	$totalQueryStr = "SELECT *,c.name cmpname,d.name emptype,e.name experience FROM `".JOBS."` a 
+					  INNER JOIN `".JOB_CATEGORIES."` b on a.category_id = b.id
+					  INNER JOIN `".COMPANIES."` c on c.id = a.company_id
+					  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
+					  INNER JOIN `".EXPERIENCE_LEVEL."` e on e.id = a.experience
 					  WHERE $whereQry 1 = 1 ";
 	
 	
-	$queryStr = "SELECT *,c.name cmpname,d.name emptype,e.name experience FROM `jobs` a 
-			  INNER JOIN `job_categories` b on a.category_id = b.id
-			  INNER JOIN `companies` c on c.id = a.company_id
-			  INNER JOIN `employment_type` d on d.id = a.job_type
-			  INNER JOIN `experience_level` e on e.id = a.experience
+	$queryStr = "SELECT *,c.name cmpname,d.name emptype,e.name experience FROM `".JOBS."` a 
+			  INNER JOIN `".JOB_CATEGORIES."` b on a.category_id = b.id
+			  INNER JOIN `".COMPANIES."` c on c.id = a.company_id
+			  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
+			  INNER JOIN `".EXPERIENCE_LEVEL."` e on e.id = a.experience
 			  WHERE  $whereQry 1 = 1 ORDER BY posted_on desc LIMIT $start,$limit";
 	
 	$attempt_stmt = $pdo->prepare($queryStr);

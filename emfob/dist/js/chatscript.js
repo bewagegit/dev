@@ -65,7 +65,7 @@ function DisplayChatMessages(id,type=''){
 					if(data['is_online'] == 1)
 						$("#onlinestatus").html('<i class="mdi mdi-circle text-success align-middle me-1"></i> Active Now') ;
 					else
-						$("#onlinestatus").html('<i class="mdi mdi-circle text-secondary align-middle me-1"></i> Offline') ;
+						$("#onlinestatus").html('<i class="mdi mdi-circle text-danger align-middle me-1"></i> Offline') ;
 					if(data['ismessaged'] == 'no'){
 						var noChats = `<li>
 										<div class="conversation-list">No Chats yet</div>
@@ -140,8 +140,14 @@ function DisplayChatMessages(id,type=''){
 $(document).ready(function(){
 	getRecentMessageList(USER_ID);
 	getPinnedChatMessageList(USER_ID);
+	var searchListBackup = '';
+	searchListBackup = $("#chatListArea").html();
 	$('#searchChatList').on('input', function(e) {
-		var inputValue = $(this).val();
+		 var inputValue = $(this).val();
+		 if(inputValue == ''){
+			 $("#chatListArea").html(searchListBackup);
+			 return;
+		 }
 		 $.ajax({
 			url: "api/getChatList.php?q=" + inputValue,
 			method: 'GET',
@@ -152,6 +158,7 @@ $(document).ready(function(){
 					html +=`<div class="user-img ${data[i]['user_id']} align-self-center">
 									No Users available
 								</div>`
+					$("#chatListArea").html(html);
 				}
 				else{
 					for(var i=0;i<data.length;i++){
@@ -162,19 +169,26 @@ $(document).ready(function(){
 							status = "online";
 						else
 							status = "offline";
-						html +=`<div onclick="DisplayChatMessages('${data[i]['user_id']}')" class="user-img ${status} align-self-center">
-									<div class="avatar-2xs avatar avatar-circle align-self-center">
-										<span class="bg-light text-body" alt="avatar-2">
-											${email}
-										</span>
-									</div>
-									<span class="user-status"></span>
-								</div>`
+						html +=`
+								<li onclick="DisplayChatMessages('${data[i].user_id}')" class="active">
+									<a href="#">
+										<div class="d-flex">
+											<div class="user-img online align-self-center me-3">
+												<img src="`+BASE_URL_ADMIN+`assets/images/users/avatar-5.png"
+													class="rounded-circle avatar-2xs avatar" alt="avatar-2">
+												<span class="user-status"></span>
+											</div>
+
+											<div class="flex-1 overflow-hidden">
+												<h5 class="text-truncate fs-14 mb-1">${data[i].full_name}</h5>
+												<p class="text-truncate mb-0">${data[i].current_job_title} - ${data[i].company_name} </p>
+											</div>
+										</div>
+									</a>
+								</li>`;
 					}
+					$("#chatListArea").html(html);
 				}
-				console.log(html);
-				$("#chatListArea").html(html);
-				
 			},
 			error: function(err) {
 				//console.error('Error:', err);
@@ -264,6 +278,11 @@ function getRecentMessageList(id){
 						chatID = data[i]['userid_to'];
 					}
 					
+					var createdAt = data[i].created_at.split(" ");
+					createdAt = createdAt[1].substring(0,5);
+					
+					const readable = timeAgo(data[i].created_at);
+					
 					html += `<li class="active" onclick="DisplayChatMessages('${chatID}')">
 														<a href="#">
 															<div class="d-flex">
@@ -277,9 +296,8 @@ function getRecentMessageList(id){
 																	<p class="text-truncate mb-0">${data[i]['message']}</p>
 																</div>
 																<div>
-																	<p class="fs-11 mb-0">04 min</p>
-																	<div><i
-																			class="mdi mdi-check-all align-middle ms-2 text-info"></i>
+																	<p class="fs-11 mb-0">${readable}</p>
+																	<div><i class="mdi mdi-check-all align-middle ms-2 text-info"></i>
 																	</div>
 																</div>
 															</div>
@@ -509,7 +527,15 @@ function getPinnedChatMessageList(id){
 						email = data[i].emailto.split("@");
 						chatID = data[i]['userid_to'];
 					}
+					var createdAt = data[i].created_at.split(" ");
+					createdAt = createdAt[1].substring(0,5);
 					
+					const readable = timeAgo(data[i].created_at);
+					var status;
+					if(data[i]['is_online'] == 1)
+						status = "online";
+					else
+						status = "offline";
 					html += `<li class="active" onclick="DisplayChatMessages('${chatID}')">
 														<a href="#">
 															<div class="d-flex">
@@ -523,7 +549,7 @@ function getPinnedChatMessageList(id){
 																	<p class="text-truncate mb-0">${data[i]['message']}</p>
 																</div>
 																<div>
-																	<p class="fs-11 mb-0">04 min</p>
+																	<p class="fs-11 mb-0">${readable}</p>
 																	<div><i class="mdi mdi-check-all align-middle ms-2 text-info"></i>
 																	</div>
 																</div>

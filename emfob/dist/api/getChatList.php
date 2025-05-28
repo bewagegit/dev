@@ -13,7 +13,9 @@ ini_set("error_reporting",-1);
 extract($_GET);
 
 $userid = $_SESSION['user_id'];
-
-$allChatList = getAllChatList($userid,$q);
+if($q != '')
+	$allChatList = getAllChatList($userid,$q);
+else
+	$allChatList = getAllChatList($userid);
 echo json_encode($allChatList);
 ?>

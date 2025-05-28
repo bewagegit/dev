@@ -1,8 +1,8 @@
 <?php
 
-function db_select($select,$from,$where = "1=1",$whereArray=array()){
+function db_select($select,$from,$where = "1=1",$whereArray=array(),$orderBy = ''){
 	global $pdo;
-	$query = "select $select from $from where $where";
+	$query = "SELECT $select FROM $from WHERE $where $orderBy";
 	$stmt = $pdo->prepare($query);
     $stmt->execute($whereArray);
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
