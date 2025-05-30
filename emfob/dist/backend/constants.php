@@ -63,6 +63,9 @@ define("LANGUAGES","languages");
 
 define("MENU_ITEMS","menu_items");
 
+//Job Postings
+define("JOB_INDUSTRY","job_industry");
+
 //start the session variable 
 @session_start();
 

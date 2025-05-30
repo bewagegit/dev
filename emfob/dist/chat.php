@@ -46,8 +46,7 @@ $stmt = $pdo->prepare("SELECT * FROM `".CHAT_MESSAGES."` a
 $stmt->execute([$userid]); // Verify email and user type
 $messages = $stmt->fetchAll();
 
-//echo "<pre>";
-//print_r($allChatList);
+
 ?>
 <style>
 .chat-conversation li :hover{
@@ -253,6 +252,8 @@ $messages = $stmt->fetchAll();
                                     <div class="col-md-4 col-6">
                                         <h5 class="font-size-15 mb-1 text-truncate text-capitalize" id="username"></h5>
 										<input type="hidden" id="useridVal" />
+										<div id="groupMember">
+										</div>
                                         <p class="text-muted text-truncate mb-0" id="onlinestatus">
                                              Active now
                                         </p>

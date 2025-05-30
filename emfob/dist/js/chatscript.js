@@ -366,6 +366,7 @@ let timeoutId1 = null;
 //Load all the group chat messages
 function DisplayGroupChatMessage(id){
 	respChangeChk = '';
+	console.log("this is testing");
 	
 	if (timeoutId1 == null) {
 		timeoutId1 = setInterval(loadChat1, 10000);
@@ -374,6 +375,14 @@ function DisplayGroupChatMessage(id){
 		url: "api/getAllGroupChatDetails.php" + "?group_id=" + id,
 		method: 'GET',
 		success: function(data) {
+			
+			$("#groupMember").html("this is testing");
+			var groupTxt = '';
+			for(var i=0;i<data['groupMember'].length;i++){
+				groupTxt += data['groupMember'][i];
+				groupTxt += "<br/>";
+			}
+			$("#groupMember").html(groupTxt);
 			
 			if(respChangeGroupChk == JSON.stringify(data)){
 				return;
@@ -385,6 +394,7 @@ function DisplayGroupChatMessage(id){
 			$("#chatConversations").html('');
 			
 			var resp = data;
+
 			
 			if(data['data'].length == 0){
 				var noChats = `

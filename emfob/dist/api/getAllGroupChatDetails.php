@@ -40,15 +40,34 @@ $sql = "SELECT * FROM ".GROUP_CHAT_MESSAGES." a
 $stmt = $pdo->query($sql);
 $groupChatList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if(count($groupChatList) >= 1){
-	echo json_encode(array("ismessaged" => 'yes','data' => $groupChatList));
-}
-else{
-	$sql = "SELECT * FROM ".GROUPS." a where a.id = ".$group_id." limit 1 ";	
+$sql = "SELECT * FROM ".GROUPS." a where a.id = ".$group_id." limit 1 ";	
 
-	$stmt = $pdo->query($sql);
-	$groupName = $stmt->fetchAll(PDO::FETCH_ASSOC);
-	echo json_encode(array("ismessaged" => 'no',"group_name" => $groupName[0]['group_name'] ,'data' => []));
+$stmt = $pdo->query($sql);
+$groupName = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$groupList = explode("#",$groupName[0]['group_member']);
+$groupsMember = [];
+foreach($groupList as $val){
+	if($val != '')
+		$groupsMember[] = $val;
+}
+$sql = "SELECT * FROM  ".USERS."  a
+		inner join ".CANDIDATES_PROFILES." b on a.user_id = b.user_id
+		where 1=1 and a.user_id IN ('".implode("','",$groupsMember)."')  ";	
+
+$stmt = $pdo->query($sql);
+$groupsMemberRes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$groupsMemberNames = [];
+foreach($groupsMemberRes as $val){
+	$groupsMemberNames[] = $val['full_name'];
+}
+
+if(count($groupChatList) >= 1){
+	echo json_encode(array("ismessaged" => 'yes' , 'groupMember' => $groupsMemberNames,'data' => $groupChatList));
+}
+else{	
+	echo json_encode(array("ismessaged" => 'no',"group_name" => $groupName[0]['group_name'], 'groupMember' => $groupsMemberNames  ,'data' => []));
 }
 
 /*
