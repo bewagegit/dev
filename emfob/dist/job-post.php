@@ -13,8 +13,9 @@ include_once("dashboard-header.php");
 
 //page 1 form
 $companies = getAllSelection(COMPANIES);
-$job_industry = getAllSelection(JOB_INDUSTRY);
 $employment_type = getAllSelection(EMPLOYMENT_TYPE);
+$job_industry = getAllSelection(JOB_INDUSTRY);
+$job_benefits = getAllSelection(JOB_BENEFITS);
 
 // Fetch available exams
 try {
@@ -53,6 +54,14 @@ try {
         padding-right: 70px; /* Make space for the logo */
     }
 </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
+<div id="overlay"></div>
+
+<div id="popup">
+  <p id="popupTxt"></p>
+  <button id="closeBtn">Close</button>
+</div>
 
 <div class="main-content">
     <div class="page-content">
@@ -108,8 +117,8 @@ try {
 													<div class="d-flex align-items-center">
 														<div class="step-number">Step 3</div>
 														<div class="step-label">
-															<strong>Application Details</strong><br>
-															<small>Upload resume & job preferences</small>
+															<strong>Contact Details</strong><br>
+															<small>Communication details to recruiter </small>
 														</div>
 													</div>
 												</li>
@@ -227,18 +236,24 @@ try {
 																placeholder="Enter Certifications">
 															<div class="error" id="certificationsErr"></div>
 														</div>
+														<div class="col-md-6">
+															<label for="noticePeriod" class="form-label">Notice Period (in days):</label>
+															<input type="number" min="0" max="90" class="form-control" id="noticePeriod" name="noticePeriod"
+																placeholder="Enter Notice Period">
+															<div class="error" id="noticePeriodErr"></div>
+														</div>
 													</div>
 													<!-- Educational Qualifications -->
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="jobDescription" class="form-label">Job Description / Summary <span style='color:red'>*</span>:</label>
-															<textarea class="form-control" id="jobDescription" rows="7"  name="jobDescription"
+															<textarea class="form-control" id="jobDescription" rows="7"  name="jobDescription" maxlength="500"
 															placeholder="Job Description / Summary"></textarea>
 															<div class="error" id="jobDescriptionErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="keyResponsibility" class="form-label">Key Responsibilities / Duties <span style='color:red'>*</span>:</label>
-															<textarea class="form-control" id="keyResponsibility" rows="7" name="keyResponsibility"
+															<textarea class="form-control" id="keyResponsibility" rows="7" name="keyResponsibility" maxlength="200"
 															placeholder="Job Description / Summary"></textarea>
 															
 															<div class="error" id="keyResponsibilityErr"></div>
@@ -246,9 +261,10 @@ try {
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="preferredSkills" class="form-label">Expected Start Date <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="expectedStartDate" name="expectedStartDate" required>
-															<div class="error" id="expectedStartDateErr"></div>
+															<label for="preferredSkills" class="form-label">Shift Timing (Day / Night)<span style='color:red'>*</span>:</label>
+															<input type="text" class="form-control" id="shfitTiming" name="shfitTiming"
+																placeholder="Enter Shift Timing">
+															<div class="error" id="shfitTimingErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="noOfOpenings" class="form-label">Number of Openings <span style='color:red'>*</span>:</label>
@@ -261,25 +277,25 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="preferredJobTitle" class="form-label">Application Deadline <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="applicationDeadLine" name="applicationDeadLine" required>
+															<input type="date" class="form-control" id="applicationDeadLine" min="0" name="applicationDeadLine" required>
 															<div class="error" id="applicationDeadLineErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="preferredJobLocation" class="form-label">Job Posting Date<span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="jobPostingsDate" name="jobPostingsDate" required>
+															<input type="date" class="form-control" id="jobPostingsDate" min="0" name="jobPostingsDate" required>
 															<div class="error" id="jobPostingsDateErr"></div>
 														</div>
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="institution"
-																class="form-label">Recruiter Name :</label>
-															<input type="text" class="form-control" id="reportingTo" name="reportingTo"
-																placeholder="Enter Recruiter Name">
-															<div class="error" id="reportingToErr"></div>
+															<label for="language" class="form-label">Language :</label>
+															<input type="text" class="form-control" name="language"
+																id="language"
+																placeholder="Enter Language" required>
+															<div class="error" id="languageErr"></div>
 														</div>
 														<div class="col-md-6">
-															<label for="certifications" class="form-label">Travel Requirements :</label>
+															<label for="travelRequirements" class="form-label">Travel Requirements :</label>
 															<input type="text" class="form-control" name="travelRequirements"
 																id="travelRequirements"
 																placeholder="Enter Travel Requirements" required>
@@ -289,29 +305,31 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="salaryRange" class="form-label">Salary (Monthly)
-															₹ <input type="number" class="form-control" id="salaryRangeMin" name="salaryRangeMin"
+															₹ <input type="number" class="form-control" min="0" step="500"  id="salaryRangeMin" name="salaryRangeMin"
 																placeholder="Min">
 															<div class="error" id="salaryRangeMinErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="salaryRange" class="form-label">Salary (Monthly)
-															₹ <input type="number" class="form-control" id="salaryRangeMax" name="salaryRangeMax"
+															₹ <input type="number" class="form-control" min="0" step="500"   id="salaryRangeMax" name="salaryRangeMax"
 																placeholder="Max">
 															<div class="error" id="salaryRangeMaxErr"></div>
 														</div>
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="otherCompensation" class="form-label">Incentives / Bonus :</label>
-															<input type="text" class="form-control" id="otherCompensation" name="otherCompensation"
-																placeholder="Enter other compensation" required>
-															<div class="error" id="otherCompensationErr"></div>
+															<label for="incentivesBonus" class="form-label">Incentives / Bonus :</label>
+															<input type="text" class="form-control" id="incentivesBonus" name="incentivesBonus"
+																placeholder="Enter Incentives bonus" required>
+															<div class="error" id="incentivesBonusErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="preferredJobLocation" class="form-label">Benefits (e.g., Health Insurance, Paid Time Off) :</label>
-															<input type="text" class="form-control" name="preferredJobLocation"
-																id="preferredJobLocation"
-																placeholder="Enter your preferred location" required>
+															<select class="form-control" multiple="multiple" id="enhanced-multiselect" name="enhanced-multiselect" required>
+																<?php foreach($job_benefits as $val){ ?>
+																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+																<?php } ?>
+															</select>
 															<div class="error" id="preferredJobLocationErr"></div>
 														</div>
 													</div>
@@ -330,6 +348,7 @@ try {
 												<!-- Step 3: Resume & Preferences -->
 												<div class="form-step" id="form-step-3" style="display: none;">
 													<div class="row mb-3">
+														
 														<div class="col-md-6">
 															<label for="contactName" class="form-label">Contact Name<span style='color:red'>*</span>:</label>
 															<input type="text" class="form-control" name="contactName"
@@ -411,7 +430,17 @@ try {
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyrKx3qDBUdn7_wwXP08LZ8-nh05M5e7A&libraries=places"></script>
 <script src="<?php echo BASE_URL ?>js/common_validation.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <script>
+const choices = new Choices('#enhanced-multiselect', {
+    removeItemButton: true,
+    maxItemCount: 25,
+    searchResultLimit: 25,
+    renderChoiceLimit: 25
+  });
+
+
 const input = document.getElementById('jobLocation');
 const autocomplete = new google.maps.places.Autocomplete(input);
 
@@ -507,16 +536,14 @@ function page2Validation(){
 					"expRequirements":"Experience Requirements",
 					"reqSkills":"Required Skills",
 					"prefSkills":"Preferred Skills",
-					"expectedStartDate" : "Expected start date",
+					"shfitTiming" : "Shift Timing",
 					"noOfOpenings" : "No. of Openings",
 					"applicationDeadLine" : "Application DeadLine",
 					"jobPostingsDate" : "Job Posting Date",
 					"jobDescription":"Job Description",
 					"keyResponsibility":"Key Responsibilities",
-					"noOfOpenings":"No. or Openings",
-					"applicationDeadLine":"Application Dead Line",
-					"jobPostingsDate":"Job Postings",
-					"expectedStartDate":"Expected Start Date"
+					"salaryRangeMin":"Salary Range Min",
+					"salaryRangeMax":"Salary Range Max"
 					};
 					
 	clearHtmlError(array1);
@@ -532,7 +559,7 @@ function page2Validation(){
 //validation for page 3 form
 function page3Validation(){
 	const array1 = {
-					"salaryRange":"Salary Range",
+					
 					};	
 	clearHtmlError(array1);
 	chkValidInput(array1,0);
@@ -548,7 +575,6 @@ function page3Validation(){
 //validation for page 4 form
 function page4Validation(){
 	const array1 = {
-					"applyBy":"Apply By",
 					"contactName":"Contact Name",
 					"contactEmail":"Contact Email",
 					"contactPhone":"Contact Phone"
@@ -568,12 +594,17 @@ function handleFormSubmit(event) {
 	// Create FormData object
 	const formData = new FormData();
 	
+	const select = document.getElementById("enhanced-multiselect");
+    const selected = Array.from(select.selectedOptions).map(option => option.value);
+	
 	//generate forma data
-	let formDataIds = ['jobtitle','industryDomainName','jobType','employmentType','jobLocation','jobDescription','keyResponsibility','expectedStartDate','noOfOpenings','applicationDeadLine','jobPostingsDate','reportingTo','travelRequirements','educationRequirements','expRequirements','reqSkills','prefSkills','certifications','salaryRange','otherCompensation','preferredJobLocation','applyBy','contactName','contactEmail','contactPhone','ScreeningQuestions']
+	let formDataIds = ['jobtitle','industryDomainName','jobType','employmentType','jobLocation','educationRequirements','expRequirements','reqSkills','prefSkills','certifications','jobDescription','keyResponsibility','shfitTiming','noOfOpenings','applicationDeadLine','jobPostingsDate','travelRequirements','salaryRangeMin','salaryRangeMax','incentivesBonus','contactName','contactEmail','contactPhone','ScreeningQuestions']
 	
 	for(var i=0;i<formDataIds.length;i++){
 		formData.append(formDataIds[i], document.getElementById(formDataIds[i]).value);
 	}	
+	formData.append('benefits',selected);	
+	console.log(formData);
 
 	fetch('<?php echo BASE_URL_ADMIN ?>backend/save-job-post.php', {
 	  method: 'POST',
@@ -581,11 +612,18 @@ function handleFormSubmit(event) {
 	})
 	.then(response => response.json())
 	.then(data => {
-	  console.log('Success:', data);
+		$("#overlay,#popup").show();
+		$("#popupTxt").html(data.message)
+	  //console.log('Success:', data);
 	})
 	.catch(error => {
 		console.log(error);
-	  console.error('Error:', error);
+		console.error('Error:', error);
+	});
+	
+	$("#closeBtn").click(function(){
+		$("#overlay,#popup").hide();
+		window.location.href = '<?php echo BASE_URL ?>job-post.php';
 	});
 	
 }

@@ -36,6 +36,7 @@ foreach($userDetailsResult as $val){
     <link href="<?php echo BASE_URL_ADMIN; ?>assets/libs/simplebar/simplebar.min.css" rel="stylesheet">
     <!-- App Css-->
     <link href="<?php echo BASE_URL_ADMIN; ?>assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+	<link href="<?php echo BASE_URL; ?>assets/css/custom-styles.css" id="app-style" rel="stylesheet" type="text/css" />
 	
 	<script>
 		const BASE_URL 			= "<?php echo BASE_URL; ?>";
@@ -333,7 +334,7 @@ foreach($userDetailsResult as $val){
 		
 			$sql = "SELECT a.* FROM `menu_items` a 
 					inner join menu_permissions b on a.id =  b.menu_items_id 
-					where a.is_active = 1 AND parent_id IS NULL AND b.user_type_id = '".$_SESSION['user_type']."'";
+					where a.is_active = 1 AND parent_id IS NULL AND b.user_type_id = '".$_SESSION['user_type']."' order by position asc";
 		
 			$stmt = $pdo->query($sql);
 			$menuDetails = $stmt->fetchAll(PDO::FETCH_ASSOC);

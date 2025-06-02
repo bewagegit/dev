@@ -75,4 +75,43 @@ function getAllChatList($userid,$query=''){
 	return $chatList;
 }
 
+function getPaginationLinks($pagelimit,$total){
+	$preDisabled = '';
+	$url = '#';
+	if(!isset($pagelimit) || $pagelimit == 1 ){
+		$preDisabled = ' class="disabled" ';
+	}else{
+		$url = BASE_URL."job_list.php?pagelimit=".($pagelimit -1);
+	}
+	
+	$links = '';
+	for ($i = 1; $i <= $total; $i++){
+		$activeClass = '';
+		if(!isset($pagelimit) && $i == 1){
+			$activeClass = ' class="active" ';
+		}
+		if(isset($pagelimit) && $i == $pagelimit){
+			$activeClass = ' class="active" ';
+		}
+		$href = BASE_URL."job_list.php?pagelimit=".$i;
+		$links .= '<li '.$activeClass.'><a href="'.$href.'">'.$i.'</a></li>';
+	}
+	
+	$lastDisabled = $urlLast = '';
+	
+	if(!isset($pagelimit) || $pagelimit == $total ){
+		$lastDisabled = ' class="disabled" ';
+		$urlLast =  '#';
+	}
+	else{
+		$urlLast = BASE_URL."job_list.php?pagelimit=".($pagelimit + 1);
+	}
+	$html = '<ul class="pagination">
+			<li '.$preDisabled.'><a href="'.$url.'">&laquo;</a></li>'.$links.'
+			<li '.$lastDisabled.'><a href="'.$urlLast.'">&raquo;</a></li>
+		  </ul>
+		';
+	return $html;	
+}
+
 ?>

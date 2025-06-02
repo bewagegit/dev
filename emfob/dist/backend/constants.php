@@ -65,6 +65,7 @@ define("MENU_ITEMS","menu_items");
 
 //Job Postings
 define("JOB_INDUSTRY","job_industry");
+define("JOB_BENEFITS","benefits");
 
 //start the session variable 
 @session_start();
