@@ -10,7 +10,7 @@ extract($_POST);
 try {
 	if(isset($jobtitle) && isset($industryDomainName) && isset($jobType) &&
 		isset($employmentType) && isset($jobLocation) && isset($jobDescription) &&
-		isset($keyResponsibility) && isset($educationRequirements) && isset($expRequirements) && isset($reqSkills) &&
+		isset($educationRequirements) && isset($expRequirements) && isset($reqSkills) &&
 		isset($prefSkills) && isset($salaryRangeMin) && isset($salaryRangeMax) && isset($noOfOpenings) &&
 		isset($applicationDeadLine) && isset($jobPostingsDate)  && isset($contactName) &&
 		isset($contactEmail) && isset($contactPhone) && isset($ScreeningQuestions)  ){
@@ -19,13 +19,13 @@ try {
 			// Prepare SQL statement
 			$sql = "INSERT INTO ".JOB_POSTINGS." (
 				posted_by_user_id,job_title,industry_domain_name,job_type,employment_type,
-				job_location, job_description ,key_responsibilities,education_requirements,
-				experience_requirement,req_skills,pref_skills,certifications,salaryRangeMin,salaryRangeMax,otherCompensation,noOfOpenings,applicationDeadLine,job_postings_date,shift_timing,
+				job_location, job_description ,education_requirements,
+				experience_requirement,req_skills,pref_skills,certifications,notice_period,language,incentives_bonus,travel_requirement,salaryRangeMin,salaryRangeMax,otherCompensation,noOfOpenings,applicationDeadLine,job_postings_date,shift_timing,
 				contact_name,contact_email,contact_phone,screening_questions
 			) VALUES (
 				:posted_by_user_id, :jobtitle, :industryDomainName, :jobType, :employmentType, :jobLocation, :jobDescription,
-				:keyResponsibility, :educationRequirements,
-				:expRequirements, :reqSkills, :prefSkills, :certifications, :salaryRangeMin, :salaryRangeMax , :benefits,
+				:educationRequirements,
+				:expRequirements, :reqSkills, :prefSkills, :certifications, :noticePeriod, :language ,:incentives_bonus, :travelRequirements, :salaryRangeMin, :salaryRangeMax , :benefits,
 				:noOfOpenings, :applicationDeadLine, :jobPostingsDate,
 				:shift_timing, :contactName, :contactEmail, :contactPhone,
 				:ScreeningQuestions
@@ -43,12 +43,15 @@ try {
 				':employmentType' => $employmentType ?? null,
 				':jobLocation' => $jobLocation ?? null,
 				':jobDescription' => $jobDescription ?? null,
-				':keyResponsibility' => $keyResponsibility ?? null,
 				':educationRequirements' => $educationRequirements ?? null,
 				':expRequirements' => $expRequirements ?? null,
 				':reqSkills' => $reqSkills ?? null,
 				':prefSkills' => $prefSkills ?? null,
 				':certifications' => $certifications ?? null,
+				':noticePeriod' => $noticePeriod ?? null,
+				':language' => $language ?? null,
+				':travelRequirements' => $travelRequirements ?? null,
+				':incentives_bonus' => $incentivesBonus ?? null,
 				':salaryRangeMin' => $salaryRangeMin ?? null,
 				':salaryRangeMax' => $salaryRangeMax ?? null,
 				':benefits' => $benefits ?? null,
@@ -62,8 +65,13 @@ try {
 				':ScreeningQuestions' => $ScreeningQuestions ?? null
 			];
 			
+			foreach ($params as $key => $value) {
+				$sql = str_replace($key, "'" . addslashes($value) . "'", $sql);
+			}
+			
 			// Execute the statement
 			$stmt->execute($params);
+			
 			
 			// Return success response
 			echo json_encode([

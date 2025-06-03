@@ -16,9 +16,9 @@ $userid = $_SESSION['user_id'];
 $stmt = $pdo->prepare("SELECT *,(SELECT GROUP_CONCAT(name) FROM `benefits` where FIND_IN_SET (id, a.otherCompensation)) benefits 
 						FROM `".JOB_POSTINGS."` a
 					   inner join `".USERS."` b on a.posted_by_user_id  = b.user_id
-					   where a.posted_by_user_id = ? and a.id= ? order by a.id desc ");
+					   where a.id= ? order by a.id desc ");
 		
-$stmt->execute([$userid,$job_id]); // Verify email and user type
+$stmt->execute([$job_id]); // Verify email and user type
 $jobs = $stmt->fetchAll();
 
 
@@ -28,6 +28,7 @@ include_once("dashboard-header.php");
 ?>
 <style>
 #jobView{font-size:16px}
+.card {margin-bottom: 5px !important;}
 </style>
 
 
@@ -58,58 +59,59 @@ include_once("dashboard-header.php");
             <!-- end page title -->
 
             <div class="row" id="jobView">
+			
+				<div class="container my-5">
+					<div class="card shadow-lg rounded">
+					  <div class="card-body">
+						<!-- Job Title and Company -->
+						<div class="d-flex justify-content-between align-items-center">
+						  <div>
+							<h3 class="card-title"><?php echo $jobs[0]['job_title']?? ''; ?></h3>
+							<h6 class="text-muted">Tech Solutions Pvt Ltd</h6>
+						  </div>
+						  <button class="btn btn-primary">Apply Now</button>
+						</div>
+
+						<!-- Job Meta -->
+						<div class="my-3">
+						  <span class="badge bg-secondary"><?php echo $jobs[0]['job_title']?? ''; ?></span>
+						  <span class="ms-3 text-muted"><i class="bi bi-geo-alt-fill"></i> <?php echo $jobs[0]['job_location']?? ''; ?></span>
+						  <span class="ms-3 text-muted"><i class="bi bi-currency-rupee"></i> ₹<?php echo $jobs[0]['salaryRangeMin']?? ''; ?> - ₹<?php echo $jobs[0]['salaryRangeMax']?? ''; ?> / Month</span>
+						  <span class="ms-3 text-muted">Experience: <?php echo $jobs[0]['experience_requirement']?? ''; ?> Years</span>
+						</div>
+
+						<hr>
+
+						<!-- Job Description -->
+						<h5>Job Description</h5>
+						<p>
+						  <?php echo $jobs[0]['job_description']?? ''; ?>
+						</p>
+
+						<!-- Responsibilities -->
+						<h5>Responsibilities</h5>
+						<ul>
+						  <li>Develop new user-facing features using React.js</li>
+						  <li>Build reusable code and libraries for future use</li>
+						  <li>Ensure the technical feasibility of UI/UX designs</li>
+						</ul>
+
+						<!-- Requirements -->
+						<h5>Requirements</h5>
+						<ul>
+						  <li><?php echo $jobs[0]['education_requirements']?? ''; ?></li>
+						  <li><?php echo $jobs[0]['experience_requirement']?? ''; ?></li>
+						  <li>Good understanding of REST APIs</li>
+						</ul>
+
+						<!-- Company Info -->
+						<h5>About Company</h5>
+						<p>Tech Solutions is a fast-growing software company focused on delivering high-quality digital experiences.</p>
+					  </div>
+					</div>
+				  </div>
                 <!-- Career Goal Section -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-briefcase"></i> <?php echo $jobs[0]['job_title'] ?></h5>
-						<p><strong>Location:</strong> <?php echo $jobs[0]['job_location']; ?></p>
-						<p><strong>Pay:</strong> <?php echo "₹".$jobs[0]['salaryRangeMin']." - ".$jobs[0]['salaryRangeMax']; ?> a Month</p>
-                    </div>
-                </div>
-				
-				<div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-map-signs"></i>Job details</h5>
-                        <p><strong>Pay:</strong> <?php echo "₹".$jobs[0]['salaryRangeMin']." - ".$jobs[0]['salaryRangeMax']; ?> a Month</p>
-						<p><strong>Type:</strong> <?php echo $jobs[0]['employment_type']; ?></p>
-						<p><strong>Shift Type:</strong> <?php echo ucfirst($jobs[0]['shift_timing']); ?> Shift</p>
-                    </div>
-                </div>
-				<?php if(isset($jobs[0]['job_location']) && $jobs[0]['job_location'] != ''){ ?>
-				<div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-map-signs"></i>Location</h5>
-                        <p><strong>Location:</strong> <?php echo $jobs[0]['job_location']; ?></p>
-                    </div>
-                </div>
-				<?php } ?>
-				<?php if(isset($jobs[0]['benefits']) && $jobs[0]['benefits'] != ''){ ?>
-				<div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-map-signs"></i>Benefits</h5>
-                        <p><?php
-						$benefits = explode(",",$jobs[0]['benefits']);
-						foreach($benefits as $val){
-							echo $val."<br/>";
-						}
-						?></p>
-                    </div>
-                </div>
-				<?php } ?>
-				
-				<div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-map-signs"></i>Description</h5>
-                        <p><?php echo $jobs[0]['job_description']; ?></p>
-						<h5 class="card-title"><i class="fas fa-map-signs"></i>Key Responsibility</h5>
-                        <p><?php echo $jobs[0]['key_responsibilities']; ?></p>
-						<?php if($jobs[0]['experience_requirement']){ ?>
-						<h5 class="card-title"><i class="fas fa-map-signs"></i>Experience Required</h5>
-                        <p>Min <?php echo $jobs[0]['experience_requirement']; ?> Year (Required)</p>
-						<?php } ?>
-                    </div>
-                </div>
-				
+               
             </div> <!-- container-fluid -->
         </div>
         <!-- End Page-content -->

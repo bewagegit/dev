@@ -283,25 +283,9 @@ $title = 'Job Search | Emfob'; ?>
                     </div>
                 </div>
             </div>
-
-
         </div>
-
         <!-- Main Content Ends Here -->
-
-
-
-
     </div>
-
-
-
-
-
-
-
-
-
 </div> <!-- container-fluid -->
 
 </div>
@@ -364,7 +348,7 @@ $title = 'Job Search | Emfob'; ?>
                                     <i class="fas fa-paper-plane"></i> Easy Apply
                                 </button>
                             </div>
-                <a href="#" class="btn btn-outline-success rounded-pill">View Details</a>
+                <a href="<?php echo BASE_URL ?>/job-view.php?job_id={{jobid}}" class="btn btn-outline-success rounded-pill">View Details</a>
             </div>
         </div>
     </div>
@@ -435,6 +419,7 @@ $title = 'Job Search | Emfob'; ?>
         } else {
             paginatedJobs.forEach(function (job) {
                 const jobTemplate = $('#jobTemplate').html()
+					.replace('{{jobid}}', job.jobid)
                     .replace('{{jobTitle}}', job.jobTitle)
                     .replace('{{companyName}}', job.companyName)
                     .replace('{{location}}', job.location)

@@ -31,6 +31,15 @@ try {
 }
 
 
+//Get all group List
+$stmt = $pdo->prepare("SELECT *,(SELECT GROUP_CONCAT(name) FROM `benefits` where FIND_IN_SET (id, a.otherCompensation)) benefits 
+						FROM `".JOB_POSTINGS."` a
+					   inner join `".USERS."` b on a.posted_by_user_id  = b.user_id
+					   where a.posted_by_user_id = ? and a.id= ? order by a.id desc ");
+		
+$stmt->execute([$userid,$edit_id]); // Verify email and user type
+$jobs = $stmt->fetchAll();
+
 ?>
 
 <style>
@@ -139,7 +148,7 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="jobtitle" class="form-label">Job Title <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="jobtitle" name="jobtitle" 
+															<input type="text" class="form-control" id="jobtitle" name="jobtitle" value="<?php echo ($jobs[0]['job_title']) ?? '' ?>"
 																placeholder="Enter Job Title" required>
 																<div class="error" id="jobtitleErr"></div>
 														</div>
@@ -162,7 +171,7 @@ try {
 															<select class="form-control" id="industryDomainName" name="industryDomainName" required>
 																<option value="" disabled selected>Select Industry</option>
 																<?php foreach($job_industry as $val){ ?>
-																<option><?php echo $val['name'] ?></option>
+																<option <?php echo ($jobs[0]['industry_domain_name'] == $val['id'])? 'selected':'' ?> value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 																<?php } ?>
 															</select>
 															<div class="error" id="industryDomainNameErr"></div>
@@ -172,7 +181,7 @@ try {
 															<select class="form-control" id="jobType" name="jobType" required>
 																<option value="" disabled selected>Select Job Type</option>
 																<?php foreach($employment_type as $val){ ?>
-																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+																<option <?php echo ($jobs[0]['job_type'] == $val['id'])? 'selected':'' ?> value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 																<?php } ?>
 															</select>
 															<div class="error" id="jobTypeErr"></div>
@@ -182,14 +191,14 @@ try {
 														<div class="col-md-6">
 															<label for="empType" class="form-label">Employment Type <span style='color:red'>*</span> :</label>
 															<select class="form-control" id="employmentType" name="employmentType" required>
-																<option value="1" >Temporary</option>
-																<option value="2" >Permanent</option>
+																<option value="1" <?php echo ($jobs[0]['employment_type'] == 1)? 'selected':'' ?> >Temporary</option>
+																<option value="2" <?php echo ($jobs[0]['employment_type'] == 2)? 'selected':'' ?> >Permanent</option>
 															</select>
 															<div class="error" id="employementTypeErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="jobLocation" class="form-label">Job Location <span style='color:red'>*</span> :</label>
-																<input type="text" class="form-control" id="jobLocation" name="jobLocation" 
+																<input type="text" class="form-control" id="jobLocation" name="jobLocation" value="<?php echo ($jobs[0]['job_location']) ?? '' ?>"
 																placeholder="Enter Job Location" required>
 															<div class="error" id="jobLocationErr"></div>
 														</div>
@@ -209,13 +218,13 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="jobTitle" class="form-label">Education Requirements <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="educationRequirements" name="educationRequirements" 
+															<input type="text" class="form-control" id="educationRequirements" name="educationRequirements" value="<?php echo ($jobs[0]['education_requirements']) ?? '' ?>"
 																placeholder="Enter Education Requirements" required>
 															<div class="error" id="educationRequirementsErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="companyName" class="form-label">Experience Requirements (in Yrs)<span style='color:red'>*</span>:</label>
-															<input type="number" min="0" class="form-control" id="expRequirements" name="expRequirements" 
+															<input type="number" min="0" class="form-control" id="expRequirements" name="expRequirements" value="<?php echo ($jobs[0]['experience_requirement']) ?? '' ?>"
 																placeholder="Enter Experience Requirements" required>
 															<div class="error" id="expRequirementsErr"></div>
 														</div>
@@ -223,13 +232,13 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="reqSkills" class="form-label">Required Skills / Technical Skills <span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="reqSkills" name="reqSkills" 
+															<input type="text" class="form-control" id="reqSkills" name="reqSkills" value="<?php echo ($jobs[0]['req_skills']) ?? '' ?>"
 																placeholder="Enter Required Skills">
 															<div class="error" id="reqSkillsErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="prefSkills" class="form-label">Preferred Skills<span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="prefSkills" name="prefSkills"
+															<input type="text" class="form-control" id="prefSkills" name="prefSkills" value="<?php echo ($jobs[0]['pref_skills']) ?? '' ?>"
 																placeholder="Enter Preferred Skills">
 															<div class="error" id="prefSkillsErr"></div>
 														</div>
@@ -237,13 +246,13 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="noticePeriod" class="form-label">Certifications (if any) :</label>
-															<input type="text" class="form-control" id="certifications" name="certifications"
+															<input type="text" class="form-control" id="certifications" name="certifications" value="<?php echo ($jobs[0]['certifications']) ?? '' ?>"
 																placeholder="Enter Certifications">
 															<div class="error" id="certificationsErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="noticePeriod" class="form-label">Notice Period (in days):</label>
-															<input type="number" min="0" max="90" class="form-control" id="noticePeriod" name="noticePeriod"
+															<input type="number" min="0" max="90" class="form-control" id="noticePeriod" name="noticePeriod" value="<?php echo ($jobs[0]['notice_period']) ?? '' ?>"
 																placeholder="Enter Notice Period">
 															<div class="error" id="noticePeriodErr"></div>
 														</div>
@@ -252,21 +261,21 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-12">
 															<label for="jobDescription" class="form-label">Job Description / Summary <span style='color:red'>*</span>:</label>
-															<textarea class="form-control" id="jobDescription" rows="7"  name="jobDescription" maxlength="1000"
-															placeholder="Job Description / Summary"></textarea>
+															<textarea class="form-control" id="jobDescription" rows="7"  name="jobDescription" maxlength="1000" 
+															placeholder="Job Description / Summary"><?php echo ($jobs[0]['job_description']) ?? '' ?></textarea>
 															<div class="error" id="jobDescriptionErr"></div>
 														</div>												
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="preferredSkills" class="form-label">Shift Timing (Day / Night)<span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" id="shfitTiming" name="shfitTiming"
+															<input type="text" class="form-control" id="shfitTiming" name="shfitTiming" value="<?php echo ($jobs[0]['shift_timing']) ?? '' ?>"
 																placeholder="Enter Shift Timing">
 															<div class="error" id="shfitTimingErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="noOfOpenings" class="form-label">Number of Openings <span style='color:red'>*</span>:</label>
-															<input type="number" min="0" class="form-control" id="noOfOpenings" name="noOfOpenings"
+															<input type="number" min="0" class="form-control" id="noOfOpenings" name="noOfOpenings" value="<?php echo ($jobs[0]['noOfOpenings']) ?? '' ?>"
 																placeholder="Enter No of Openings">
 															<div class="error" id="noOfOpeningsErr"></div>
 														</div>
@@ -275,12 +284,12 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="preferredJobTitle" class="form-label">Application Deadline <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="applicationDeadLine" min="0" name="applicationDeadLine" required>
+															<input type="date" class="form-control" id="applicationDeadLine" min="0" name="applicationDeadLine" value="<?php echo ($jobs[0]['applicationDeadLine']) ?? '' ?>" required>
 															<div class="error" id="applicationDeadLineErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="preferredJobLocation" class="form-label">Job Posting Date<span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="jobPostingsDate" min="0" name="jobPostingsDate" required>
+															<input type="date" class="form-control" id="jobPostingsDate" min="0" name="jobPostingsDate" value="<?php echo ($jobs[0]['job_postings_date']) ?? '' ?>" required>
 															<div class="error" id="jobPostingsDateErr"></div>
 														</div>
 													</div>
@@ -288,28 +297,28 @@ try {
 														<div class="col-md-6">
 															<label for="language" class="form-label">Language :</label>
 															<input type="text" class="form-control" name="language"
-																id="language"
+																id="language" value="<?php echo ($jobs[0]['language']) ?? '' ?>"
 																placeholder="Enter Language" required>
 															<div class="error" id="languageErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="travelRequirements" class="form-label">Travel Requirements :</label>
 															<input type="text" class="form-control" name="travelRequirements"
-																id="travelRequirements"
+																id="travelRequirements" value="<?php echo ($jobs[0]['travel_requirement']) ?? '' ?>"
 																placeholder="Enter Travel Requirements" required>
 															<div class="error" id="travelRequirementsErr"></div>
 														</div>
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="salaryRange" class="form-label">Salary (Monthly)
-															₹ <input type="number" class="form-control" min="0" step="500"  id="salaryRangeMin" name="salaryRangeMin"
+															<label for="salaryRange" class="form-label">Salary (Monthly) 
+															₹ <input type="number" class="form-control" min="0" step="500"  id="salaryRangeMin" name="salaryRangeMin" value="<?php echo ($jobs[0]['salaryRangeMin']) ?? '' ?>"
 																placeholder="Min">
 															<div class="error" id="salaryRangeMinErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="salaryRange" class="form-label">Salary (Monthly)
-															₹ <input type="number" class="form-control" min="0" step="500"   id="salaryRangeMax" name="salaryRangeMax"
+															₹ <input type="number" class="form-control" min="0" step="500"   id="salaryRangeMax" name="salaryRangeMax" value="<?php echo ($jobs[0]['salaryRangeMax']) ?? '' ?>"
 																placeholder="Max">
 															<div class="error" id="salaryRangeMaxErr"></div>
 														</div>
@@ -317,15 +326,18 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="incentivesBonus" class="form-label">Incentives / Bonus :</label>
-															<input type="text" class="form-control" id="incentivesBonus" name="incentivesBonus"
+															<input type="text" class="form-control" id="incentivesBonus" name="incentivesBonus" value="<?php echo ($jobs[0]['incentives_bonus']) ?? '' ?>"
 																placeholder="Enter Incentives bonus" required>
 															<div class="error" id="incentivesBonusErr"></div>
 														</div>
+														<?php $otherCompensation = ($jobs[0]['otherCompensation'])? explode(",",$jobs[0]['otherCompensation']) :[];
+														?>
 														<div class="col-md-6">
 															<label for="preferredJobLocation" class="form-label">Benefits (e.g., Health Insurance, Paid Time Off) :</label>
 															<select class="form-control" multiple="multiple" id="enhanced-multiselect" name="enhanced-multiselect" required>
-																<?php foreach($job_benefits as $val){ ?>
-																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+																<?php
+																foreach($job_benefits as $val){ ?>
+																<option <?php echo (in_array($val['id'],$otherCompensation))? " selected='selected' ": "" ?> value="<?php echo $val['id'] ?>" ><?php echo $val['name'] ?></option>
 																<?php } ?>
 															</select>
 															<div class="error" id="preferredJobLocationErr"></div>
@@ -349,7 +361,7 @@ try {
 														
 														<div class="col-md-6">
 															<label for="contactName" class="form-label">Contact Name<span style='color:red'>*</span>:</label>
-															<input type="text" class="form-control" name="contactName"
+															<input type="text" class="form-control" name="contactName" value="<?php echo ($jobs[0]['contact_name']) ?? '' ?>"
 																id="contactName"
 																placeholder="Enter your contact name" required>
 															<div class="error" id="contactNameErr"></div>
@@ -357,21 +369,21 @@ try {
 														<div class="col-md-6">
 															<label for="contactEmail" class="form-label">Contact Email<span style='color:red'>*</span>:</label>
 															<input type="text" class="form-control"
-																id="contactEmail" name="contactEmail"
+																id="contactEmail" name="contactEmail" value="<?php echo ($jobs[0]['contact_email']) ?? '' ?>"
 																placeholder="Enter your contact email" required>
 															<div class="error" id="contactEmailErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="contactPhone" class="form-label">Contact Phone<span style='color:red'>*</span>:</label>
 															<input type="text" class="form-control"
-																id="contactPhone" name="contactPhone"
+																id="contactPhone" name="contactPhone" value="<?php echo ($jobs[0]['contact_phone']) ?? '' ?>"
 																placeholder="Enter contact phone no" required>
 															<div class="error" id="contactPhoneErr"></div>
 														</div>
 														<div class="col-md-12">
 															<label for="screenQuestions" class="form-label">Screening Questions :</label>
 															<textarea class="form-control" name="ScreeningQuestions" id="ScreeningQuestions" rows="3"
-															placeholder="Screening Questions"></textarea>
+															placeholder="Screening Questions"><?php echo ($jobs[0]['screening_questions']) ?? '' ?></textarea>
 															<div class="error" id="screenQuestionsErr"></div>
 														</div>
 														<div class="mt-3"></div>
@@ -596,15 +608,16 @@ function handleFormSubmit(event) {
     const selected = Array.from(select.selectedOptions).map(option => option.value);
 	
 	//generate forma data
-	let formDataIds = ['jobtitle','industryDomainName','jobType','employmentType','jobLocation','educationRequirements','expRequirements','reqSkills','prefSkills','certifications', 'noticePeriod','jobDescription','shfitTiming','noOfOpenings','applicationDeadLine','jobPostingsDate','language','travelRequirements','salaryRangeMin','salaryRangeMax','incentivesBonus','contactName','contactEmail','contactPhone','ScreeningQuestions']
+	let formDataIds = ['jobtitle','industryDomainName','jobType','employmentType','jobLocation','educationRequirements','expRequirements','reqSkills','prefSkills','certifications','noticePeriod','jobDescription','shfitTiming','noOfOpenings','applicationDeadLine','jobPostingsDate','language','travelRequirements','salaryRangeMin','salaryRangeMax','incentivesBonus','contactName','contactEmail','contactPhone','ScreeningQuestions']
 	
 	for(var i=0;i<formDataIds.length;i++){
 		formData.append(formDataIds[i], document.getElementById(formDataIds[i]).value);
 	}	
 	formData.append('benefits',selected);	
+	formData.append('edit_id','<?php echo $edit_id ?>');
 	console.log(formData);
 
-	fetch('<?php echo BASE_URL_ADMIN ?>backend/save-job-post.php', {
+	fetch('<?php echo BASE_URL_ADMIN ?>backend/save-job-post-edit.php', {
 	  method: 'POST',
 	  body: formData
 	})
@@ -621,7 +634,7 @@ function handleFormSubmit(event) {
 	
 	$("#closeBtn").click(function(){
 		$("#overlay,#popup").hide();
-		window.location.href = '<?php echo BASE_URL ?>job-post.php';
+		window.location.href = '<?php echo BASE_URL ?>job_list.php';
 	});
 	
 }

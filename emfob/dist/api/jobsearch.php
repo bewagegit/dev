@@ -19,7 +19,7 @@ if(isset($limit) && $limit != '' ){
 	$limit *= 10;
 	$start = $limit-10;
 	if(isset($title) &&  $title != ''){
-		$whereQry .= " a.title like :title AND ";
+		$whereQry .= " a.job_title like :title AND ";
 		$qry[':title'] = "%".$title."%";
 	}
 	if(isset($job_type) &&  $job_type != ''){
@@ -35,31 +35,28 @@ if(isset($limit) && $limit != '' ){
 		$qry[':location'] = "%".$location."%";
 	}
 	if(isset($language) && $language != ''){
-		$whereQry .= " FIND_IN_SET (:language, a.languages_id) > 0  AND ";
-		$qry[':language'] = $language;
+		//$whereQry .= " a.language like :language AND ";
+		//$qry[':language'] = "%".$language."%";
 	}
 	if(isset($salary) && $salary != ''){
-		$whereQry .= " ( $salary BETWEEN a.salary_start AND a.salary_end  ) AND ";
+		$whereQry .= " ( $salary BETWEEN a.salaryRangeMin AND a.salaryRangeMax  ) AND ";
 	}
 	if(isset($industry) && $industry){
 		$whereQry .= " b.category_name like :category_name AND ";
 		$qry[":category_name"] = "%".$industry."%";
 	}
 	
-	$totalQueryStr = "SELECT *,c.name cmpname,d.name emptype,e.name experience FROM `".JOBS."` a 
-					  INNER JOIN `".JOB_CATEGORIES."` b on a.category_id = b.id
-					  INNER JOIN `".COMPANIES."` c on c.id = a.company_id
+	$totalQueryStr = "SELECT *,c.name cmpname,d.name emptype FROM `".JOB_POSTINGS."` a 
+					  INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
+					  LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
 					  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
-					  INNER JOIN `".EXPERIENCE_LEVEL."` e on e.id = a.experience
 					  WHERE $whereQry 1 = 1 ";
 	
-	
-	$queryStr = "SELECT *,c.name cmpname,d.name emptype,e.name experience FROM `".JOBS."` a 
-			  INNER JOIN `".JOB_CATEGORIES."` b on a.category_id = b.id
-			  INNER JOIN `".COMPANIES."` c on c.id = a.company_id
-			  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
-			  INNER JOIN `".EXPERIENCE_LEVEL."` e on e.id = a.experience
-			  WHERE  $whereQry 1 = 1 ORDER BY posted_on desc LIMIT $start,$limit";
+	$queryStr = "SELECT *,c.name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
+				 INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
+				 LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
+				 INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type	
+				 WHERE  $whereQry 1 = 1 ORDER BY job_postings_date desc LIMIT $start,$limit";
 	
 	$attempt_stmt = $pdo->prepare($queryStr);
 	$attempt_stmt->execute($qry);
@@ -69,20 +66,21 @@ if(isset($limit) && $limit != '' ){
 	$total_qry_result = $pdo->prepare($totalQueryStr);
 	$total_qry_result->execute($qry);
 	$rowCount = $total_qry_result->rowCount();
-
-
 	
 	$search_result = $attempt_stmt->fetchAll(PDO::FETCH_ASSOC);
+	
 	$result = array();
 	foreach($search_result as $val){
-		$result[] = array('jobTitle' => $val['title'],
-                'companyName' => $val['title'],
-                'location'  => $val['location'],
-                'salary' => $val['salary_start']." - ".$val['salary_end'],
+		$result[] = array(
+				'jobid' => $val['jobid'],
+				'jobTitle' => $val['job_title'],
+                'companyName' => $val['cmpname'],
+                'location'  => $val['job_location'],
+                'salary' => $val['salaryRangeMin']." - ".$val['salaryRangeMax'],
                 'companyLogo' =>  $val['logo'],
-                'postedDate' => $val['posted_on'],
+                'postedDate' => $val['job_postings_date'],
                 'jobType' => $val['emptype'],
-                'experienceLevel' => $val['experience'],
+                'experienceLevel' => $val['experience_requirement'],
                 'industry' => $val['cmpname']);
 	}
 	if(count($result) >= 1){

@@ -21,7 +21,7 @@ $start = ($page - 1) * $limit;
 // Fetch total number of rows
 $stmt = $pdo->prepare("SELECT COUNT(id) AS total FROM `".JOB_POSTINGS."` a
 					   inner join `".USERS."` b on a.posted_by_user_id  = b.user_id
-					   where a.posted_by_user_id = ? order by a.id desc");
+					   where a.posted_by_user_id = ? and status = 1  order by a.id desc");
 
 $stmt->execute([$userid]); // Verify email and user type
 $row = $stmt->fetchAll();
@@ -32,7 +32,7 @@ $pages = ceil($total / $limit);
 //Get all group List
 $stmt = $pdo->prepare("SELECT * FROM `".JOB_POSTINGS."` a
 					   inner join `".USERS."` b on a.posted_by_user_id  = b.user_id
-					   where a.posted_by_user_id = ? order by a.id desc LIMIT $start, $limit ");
+					   where a.posted_by_user_id = ? and status = 1 order by a.id desc LIMIT $start, $limit ");
 		
 $stmt->execute([$userid]); // Verify email and user type
 $jobs = $stmt->fetchAll();
@@ -63,6 +63,57 @@ $jobs = $stmt->fetchAll();
     .card-header {
         position: relative;
         padding-right: 70px; /* Make space for the logo */
+    }
+	
+	.job-container {
+      max-width: 800px;
+      margin: 40px auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .job-header {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+
+    .job-header h1 {
+      margin: 0;
+    }
+
+    .company-info {
+      color: #777;
+      margin-top: 5px;
+    }
+
+    .job-section {
+      margin-bottom: 20px;
+    }
+
+    .job-section h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .job-section p {
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .apply-btn {
+      display: inline-block;
+      background-color: #007bff;
+      color: white;
+      padding: 12px 25px;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .apply-btn:hover {
+      background-color: #0056b3;
     }
 </style>
 
@@ -132,7 +183,7 @@ $jobs = $stmt->fetchAll();
 										<?php foreach($jobs as $val){ ?>
                                             <tr>
                                                 <td class="align-middle"><?php echo $val['id'] ?></td>
-                                                <td class="align-middle"><i class="marker marker-dot m-0 me-2 text-primary"></i> <?php echo $val['status'] ?></td>
+                                                <td class="align-middle"><i class="marker marker-dot m-0 me-2 text-primary"></i> <?php echo ($val['status'] == 1)? "Active":"" ?></td>
                                                 <td class="align-middle">
                                                     <?php echo $val['job_title'] ?>
                                                 </td>
@@ -140,9 +191,9 @@ $jobs = $stmt->fetchAll();
                                                 <td class="align-middle"><?php echo date("d/m/Y",strtotime($val['applicationDeadLine'])) ?></td>
                                                 <td class="align-middle"><?php echo date("d/m/Y",strtotime($val['job_postings_date']) ) ?></td>
 												<td class="align-middle">
-													<a class="btn btn-primary waves-effect waves-light" href="<?php echo BASE_URL."jobpostview" ?>">View</a>
-													<a class="btn btn-primary waves-effect waves-light" href="<?php echo BASE_URL."jobpostedit" ?>">Edit</a>
-													<a class="btn btn-primary waves-effect waves-light" href="<?php echo BASE_URL."jobpostdelete" ?>">Delete</a>
+													<a class="btn btn-primary waves-effect waves-light" onclick="viewJob('<?php echo $val['id']; ?>')" >View</a>
+													<a class="btn btn-primary waves-effect waves-light" href="<?php echo BASE_URL."job-post-edit.php?edit_id=".$val['id'] ?>">Edit</a>
+													<a class="btn btn-primary waves-effect waves-light" onclick="deleteJobId('<?php echo $val['id']; ?>')" href="javascript:void(0);">Archieve</a>
 												</td>
                                             </tr>
 										<?php } ?>
@@ -181,9 +232,72 @@ $jobs = $stmt->fetchAll();
             </div>
         </div>
     </footer>
-	<!-- -->
-    <?php //include "footer.php"; ?>
 </div>
+
+<!-- Modal HTML -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">View Job</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+	 <!-- starts  -->
+	 <div class="container my-5">
+		<div class="card shadow-lg">
+		  <div class="card-body">
+			<!-- Job Header -->
+			<h2 id="cardTitle" class="card-title"></h2>
+			<h6 id="cardLocation" class="text-muted"></h6>
+			<hr />
+
+			<!-- Job Description -->
+			<div class="mb-4">
+			  <h5>Job Description</h5>
+			  <p id="jobDescription">
+			  </p>
+			</div>
+
+			<!-- Requirements -->
+			<div class="mb-4">
+			  <h5>Requirements</h5>
+			   <ul id="jobRequirement">
+				<!--<li>3+ years of experience in frontend development</li>
+				<li>Proficiency in React or Vue.js</li>
+				<li>Strong understanding of web standards and responsive design</li>-->
+			  </ul>
+			</div>
+
+			<!-- Salary -->
+			<div class="mb-4">
+			  <h5>Salary</h5>
+			  <p id="jobSalary"><!-- $80,000 - $100,000 / year--></p>
+			</div>
+			<div class="mb-4">
+			  <h5>Benefits</h5>
+			  <p id="benefits"><!-- $80,000 - $100,000 / year--></p>
+			</div>
+			<div class="mb-4">
+			  <h5>Application Deadline</h5>
+			  <p id="applicationDeadLine"><!-- $80,000 - $100,000 / year--></p>
+			</div>
+			<div class="mb-4">
+			  <h5>Application Posting Date</h5>
+			  <p id="job_postings_date"><!-- $80,000 - $100,000 / year--></p>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	 <!-- ends -->
+	 
+	 
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- JAVASCRIPT -->
 <script src="<?php echo BASE_URL_ADMIN; ?>assets/libs/jquery/jquery.min.js"></script>
@@ -192,6 +306,55 @@ $jobs = $stmt->fetchAll();
 <script src="<?php echo BASE_URL_ADMIN; ?>assets/libs/simplebar/simplebar.min.js"></script>
 <script src="<?php echo BASE_URL_ADMIN; ?>assets/libs/node-waves/waves.min.js"></script>
 <script src="<?php echo BASE_URL_ADMIN; ?>assets/js/app.js"></script>
+<script>
+function deleteJobId(id){
+	if (confirm("Do you really want to archieve this job ?")) {
+		fetch('<?php echo BASE_URL ?>api/archievejob.php?archieve_id='+id, {
+		  method: 'GET'
+		})
+		.then(response => response.json())
+		.then(data => {
+			window.location.href ="<?php echo BASE_URL; ?>/job_list.php"
+		})
+		.catch(error => {
+			console.log(error);
+			console.error('Error:', error);
+		});
+		// User clicked OK
+		//window.location.href ="<?php echo BASE_URL; ?>api/archievejob.php?archieve_id="+id
+	} 
+}
+function viewJob(id){
+	// Get the modal element
+	const myModalEl = document.getElementById('myModal');
+  
+	// Create a new Bootstrap modal instance
+	const myModal = new bootstrap.Modal(myModalEl);
+	myModal.show(); 
+	fetch('<?php echo BASE_URL ?>api/getJobList.php?job_id='+id, {
+	  method: 'GET'
+	})
+	.then(response => response.json())
+	.then(data => {
+		$("#cardTitle").html(data[0].job_title);
+		$("#cardLocation").html(data[0].job_location);
+		var requirement = '';
+		requirement += '<li>'+data[0].education_requirements+'</li>';
+		requirement += '<li>Min '+data[0].experience_requirement+' experienced</li>';
+		requirement += '<li>Required : '+data[0].req_skills+'</li>';
+		requirement += '<li>Preferred : '+data[0].pref_skills+'</li>';
+		$("#jobRequirement").html(requirement);
+		$("#benefits").html(data[0].benefits);
+		$("#jobSalary").html('<li>Salary : ₹ '+data[0].salaryRangeMin + '-'+ data[0].salaryRangeMax +'</li>');
+		$("#applicationDeadLine").html(data[0].applicationDeadLine);
+		$("#job_postings_date").html(data[0].job_postings_date);
+	})
+	.catch(error => {
+		console.log(error);
+		console.error('Error:', error);
+	});
+}
+</script>
 
 </body>
 </html>
