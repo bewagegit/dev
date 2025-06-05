@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Insert user-specific details based on the selected user type
         switch ($userType) {
-            case 'candidate':
+            case '1':
                 if (isset($_POST['candidate_name']) && isset($_POST['experience_level'])) {
                     $candidateName = $_POST['candidate_name'];
                     $experienceLevel = $_POST['experience_level'];
@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 break;
 
-            case 'employer':
+            case '2':
                 if (isset($_POST['company_name']) && isset($_POST['company_website'])) {
                     $companyName = $_POST['company_name'];
                     $companyWebsite = $_POST['company_website'];
@@ -88,22 +88,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ]);
                 }
                 break;
-
-            case 'freelancer':
-                if (isset($_POST['freelancer_name']) && isset($_POST['portfolio_link'])) {
-                    $freelancerName = $_POST['freelancer_name'];
-                    $portfolioLink = $_POST['portfolio_link'];
-                    $sql = "INSERT INTO freelancers (user_id, name, portfolio_link) VALUES (:user_id, :name, :portfolio_link)";
-                    $stmt = $pdo->prepare($sql);
-                    $stmt->execute([
-                        ':user_id' => $user_id,
-                        ':name' => $freelancerName,
-                        ':portfolio_link' => $portfolioLink
-                    ]);
-                }
-                break;
-
-            case 'consultancy':
+				
+            case '3':
                 if (isset($_POST['consultancy_name']) && isset($_POST['consultancy_website'])) {
                     $consultancyName = $_POST['consultancy_name'];
                     $consultancyWebsite = $_POST['consultancy_website'];
@@ -113,6 +99,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         ':user_id' => $user_id,
                         ':name' => $consultancyName,
                         ':website_link' => $consultancyWebsite
+                    ]);
+                }
+                break;
+			
+			case '4':
+                if (isset($_POST['freelancer_name']) && isset($_POST['portfolio_link'])) {
+                    $freelancerName = $_POST['freelancer_name'];
+                    $portfolioLink = $_POST['portfolio_link'];
+                    $sql = "INSERT INTO freelancers (user_id, name, portfolio_link) VALUES (:user_id, :name, :portfolio_link)";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([
+                        ':user_id' => $user_id,
+                        ':name' => $freelancerName,
+                        ':portfolio_link' => $portfolioLink
                     ]);
                 }
                 break;

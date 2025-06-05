@@ -12,6 +12,7 @@ error_reporting(E_ALL);
 ini_set("error_reporting",-1);
 extract($_GET);
 
+
 if(isset($limit) && $limit != '' ){
 	$whereQry = '';
 	$qry = [];
@@ -23,27 +24,30 @@ if(isset($limit) && $limit != '' ){
 		$qry[':title'] = "%".$title."%";
 	}
 	if(isset($job_type) &&  $job_type != ''){
-		$whereQry .= " a.job_type = :job_type AND ";
-		$qry[':job_type'] = $job_type;
+		$whereQry .= " a.job_type IN(".$job_type.") AND ";
 	}
 	if(isset($exp_level) &&  $exp_level != ''){
-		$whereQry .= " a.experience = :experience_level  AND ";
+		$whereQry .= " a.experience_requirement = :experience_level  AND ";
 		$qry[':experience_level'] = $exp_level;
 	}
 	if(isset($location) && $location != ''){
-		$whereQry .= " a.location like :location AND ";
+		$whereQry .= " a.job_location like :location AND ";
 		$qry[':location'] = "%".$location."%";
 	}
 	if(isset($language) && $language != ''){
-		//$whereQry .= " a.language like :language AND ";
-		//$qry[':language'] = "%".$language."%";
+		$tmp = explode(",",$language);
+		$tmpStr = '';
+		foreach($tmp as $v){
+			$tmpStr .= " FIND_IN_SET (".$v.", a.language) > 0 OR ";	
+		}
+		$whereQry .= "(".substr($tmpStr,0,strlen($tmpStr)-3)." ) AND ";
 	}
 	if(isset($salary) && $salary != ''){
 		$whereQry .= " ( $salary BETWEEN a.salaryRangeMin AND a.salaryRangeMax  ) AND ";
 	}
 	if(isset($industry) && $industry){
-		$whereQry .= " b.category_name like :category_name AND ";
-		$qry[":category_name"] = "%".$industry."%";
+		$whereQry .= " b.name like :industry AND ";
+		$qry[":industry"] = "%".$industry."%";
 	}
 	
 	$totalQueryStr = "SELECT *,c.name cmpname,d.name emptype FROM `".JOB_POSTINGS."` a 
@@ -52,11 +56,14 @@ if(isset($limit) && $limit != '' ){
 					  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
 					  WHERE $whereQry 1 = 1 ";
 	
+	
 	$queryStr = "SELECT *,c.name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
 				 INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 				 LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
 				 INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type	
 				 WHERE  $whereQry 1 = 1 ORDER BY job_postings_date desc LIMIT $start,$limit";
+				 
+	//echo $queryStr;
 	
 	$attempt_stmt = $pdo->prepare($queryStr);
 	$attempt_stmt->execute($qry);
@@ -97,16 +104,5 @@ if(isset($limit) && $limit != '' ){
 else{
 	echo json_encode(array("result" => 'Invalid Request'));
 }
-/*
 
-jobTitle: 'Software Engineer',
-                companyName: 'Tech Corp',
-                location: 'New York, USA',
-                salary: '50,000',
-                companyLogo: 'https://static.vecteezy.com/system/resources/previews/020/500/331/original/hyundai-logo-brand-symbol-with-name-blue-design-south-korean-car-automobile-illustration-free-vector.jpg',
-                postedDate: '2 days ago',
-                jobType: 'Full-time',
-                experienceLevel: 'Mid-level',
-                industry: 'Tech'
-				*/
 ?>

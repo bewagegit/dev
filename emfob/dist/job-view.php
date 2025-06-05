@@ -13,7 +13,8 @@ $userid = $_SESSION['user_id'];
 
 
 //Get all group List
-$stmt = $pdo->prepare("SELECT *,(SELECT GROUP_CONCAT(name) FROM `benefits` where FIND_IN_SET (id, a.otherCompensation)) benefits 
+$stmt = $pdo->prepare("SELECT *,(SELECT GROUP_CONCAT(name) FROM `benefits` where FIND_IN_SET (id, a.otherCompensation)) benefits,
+						(SELECT GROUP_CONCAT(languages_name) FROM `".LANGUAGES."` where FIND_IN_SET (id, a.language)) language 
 						FROM `".JOB_POSTINGS."` a
 					   inner join `".USERS."` b on a.posted_by_user_id  = b.user_id
 					   where a.id= ? order by a.id desc ");
@@ -45,15 +46,16 @@ include_once("dashboard-header.php");
                 <div class="col-12">
                     <div class="page-title-box d-flex align-items-center justify-content-between">
                         <h4 class="mb-sm-0">Job View</h4>
-
+						
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Elements</a></li>
                                 <li class="breadcrumb-item active">Support</li>
                             </ol>
                         </div>
-
+						
                     </div>
+					<button class="btn btn-primary" onclick="window.history.back();">Back</button>
                 </div>
             </div>
             <!-- end page title -->
@@ -99,14 +101,15 @@ include_once("dashboard-header.php");
 						<!-- Requirements -->
 						<h5>Requirements</h5>
 						<ul>
+						  <li>Required Skills : <?php echo $jobs[0]['req_skills']?? ''; ?></li>
+						  <li>Preferred Skills : <?php echo $jobs[0]['req_skills']?? ''; ?></li>
 						  <li><?php echo $jobs[0]['education_requirements']?? ''; ?></li>
-						  <li><?php echo $jobs[0]['experience_requirement']?? ''; ?></li>
-						  <li>Good understanding of REST APIs</li>
+						  <li>Min <?php echo $jobs[0]['experience_requirement']?? ''; ?> Year(s)</li>
 						</ul>
 
 						<!-- Company Info -->
-						<h5>About Company</h5>
-						<p>Tech Solutions is a fast-growing software company focused on delivering high-quality digital experiences.</p>
+						<h5>Language</h5>
+						<p><?php echo $jobs[0]['language']?? ''; ?></p>
 					  </div>
 					</div>
 				  </div>

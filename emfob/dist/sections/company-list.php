@@ -19,7 +19,7 @@ $orderQuery = match ($orderby) {
 
 $query = "
     SELECT * 
-    FROM companies 
+    FROM ".COMPANIES." 
     $orderQuery
     LIMIT :offset, :limit
 ";

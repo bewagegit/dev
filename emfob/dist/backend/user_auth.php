@@ -16,16 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $userType = trim($_POST['user_type']); // Get user type from form
 
     try {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? or phone_number = ?) AND user_type = ?");
+        $stmt = $pdo->prepare("SELECT a.*,b.employer_id,b.company_name,b.company_website FROM ".USERS." a left join ".EMPLOYERS." b on a.user_id = b.user_id  WHERE (email = ? or phone_number = ?) AND user_type = ?");
         $stmt->execute([$email, $email, $userType]); // Verify email and user type
         $user = $stmt->fetch();
-
+		
+		
         if ($user) {
             if (password_verify($password, $user['password'])) {
                 // Login successful
                 $_SESSION['user_id'] = $user['user_id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['user_type'] = $user['user_type'];
+				$_SESSION['employer_id'] = $user['employer_id'];
+				$_SESSION['company_name'] = $user['company_name'];
+				$_SESSION['company_website'] = $user['company_website'];
 				
 				//remember me store usertype, username, password in cookie
 				if(isset($_POST["rememberMe"])){
@@ -35,11 +39,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					setcookie ("userType",$userType,time()+ (10 * 365 * 24 * 60 * 60));
 					setcookie ("email",$email,time()+ (10 * 365 * 24 * 60 * 60));
 					setcookie ("passwordhash",$hash,time()+ (10 * 365 * 24 * 60 * 60));
+					setcookie ("employer_id",$user['employer_id'],time()+ (10 * 365 * 24 * 60 * 60));
+					setcookie ("company_name",$user['company_name'],time()+ (10 * 365 * 24 * 60 * 60));
+					setcookie ("company_website",$user['company_website'],time()+ (10 * 365 * 24 * 60 * 60));
 				}
 				else{
 					setcookie ("userType",'');
 					setcookie ("email",'');
 					setcookie ("passwordhash",'');
+					setcookie ("employer_id",'');
+					setcookie ("company_name",'');
+					setcookie ("company_website",'');
 				}
 				
                 // Redirect based on user type

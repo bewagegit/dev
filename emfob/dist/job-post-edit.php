@@ -20,6 +20,8 @@ $employment_type = getAllSelection(EMPLOYMENT_TYPE);
 $job_industry = getAllSelection(JOB_INDUSTRY);
 $job_benefits = getAllSelection(JOB_BENEFITS);
 
+$language = db_select("id,languages_name as name",LANGUAGES);
+
 // Fetch available exams
 try {
     $sql = "SELECT * FROM exams ORDER BY created_at DESC";
@@ -296,9 +298,13 @@ $jobs = $stmt->fetchAll();
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="language" class="form-label">Language :</label>
-															<input type="text" class="form-control" name="language"
-																id="language" value="<?php echo ($jobs[0]['language']) ?? '' ?>"
-																placeholder="Enter Language" required>
+															<select class="form-control" id="language" name="language" multiple required>
+															<?php 
+															$languageIds = explode(",",$jobs[0]['language']);
+															foreach($language as $val){ ?>
+																<option <?php echo (in_array($val['id'],$languageIds))? " selected='selected' ": "" ?> value="<?php echo $val['id']; ?>" ><?php echo $val['name']; ?></option>
+															<?php } ?>
+															</select>
 															<div class="error" id="languageErr"></div>
 														</div>
 														<div class="col-md-6">
@@ -445,6 +451,13 @@ $jobs = $stmt->fetchAll();
 
 <script>
 const choices = new Choices('#enhanced-multiselect', {
+    removeItemButton: true,
+    maxItemCount: 25,
+    searchResultLimit: 25,
+    renderChoiceLimit: 25
+  });
+
+const choices1 = new Choices('#language', {
     removeItemButton: true,
     maxItemCount: 25,
     searchResultLimit: 25,

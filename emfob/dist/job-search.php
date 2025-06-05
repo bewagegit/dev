@@ -8,7 +8,9 @@ include_once("backend/page_authcheck.php");
 $employment_type = getAllSelection(EMPLOYMENT_TYPE);
 $experience_level = getAllSelection(EXPERIENCE_LEVEL);
 $categories = db_select('id,category_name',CATEGORIES);
-$language = db_select('id,languages_name',LANGUAGES,'active = ? ',array(1),'order by id asc');
+$language = db_select('id,languages_name',LANGUAGES,'active = ? ',array(1),'order by id desc');
+
+$job_industry = getAllSelection(JOB_INDUSTRY);
 
 $title = 'Job Search | Emfob'; ?>
 
@@ -131,7 +133,7 @@ $title = 'Job Search | Emfob'; ?>
 	  accent-color: #4caf50; /* For modern browsers */
 	}
 </style>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 
 
 
@@ -176,8 +178,7 @@ $title = 'Job Search | Emfob'; ?>
                                         <form id="filterForm">
                                             <div class="form-group">
                                                 <label for="jobType">Job Type</label>
-                                                <select class="form-control" id="jobType">
-                                                    <option value="">All</option>
+                                                <select class="form-control" id="jobType" multiple >
 													<?php foreach($employment_type as $val){ ?>
 													<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 													<?php } ?>
@@ -187,8 +188,8 @@ $title = 'Job Search | Emfob'; ?>
                                                 <label for="experienceLevel">Experience Level</label>
                                                 <select class="form-control" id="experienceLevel">
                                                     <option value="">All</option>
-                                                    <?php foreach($experience_level as $val){ ?>
-													<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+                                                    <?php for($i=0;$i<50;$i++){ ?>
+													<option value="<?php echo $i ?>"><?php echo $i; ?></option>
 													<?php } ?> 
                                                 </select>
                                             </div>
@@ -199,7 +200,7 @@ $title = 'Job Search | Emfob'; ?>
                                             </div>
 											<div class="form-group">
                                                 <label for="location">Language</label>
-												<select class="form-control" id="language">
+												<select class="form-control" id="language" multiple>
 												<?php foreach($language as $val){ ?>
 													<option value="<?php echo $val['id'] ?>"><?php echo $val['languages_name'] ?></option>
 												<?php } ?>
@@ -212,10 +213,9 @@ $title = 'Job Search | Emfob'; ?>
                                             </div>
                                             <div class="form-group">
                                                 <label for="industry">Industry</label>
-                                                <select class="form-control" id="industry">
-                                                    <option value="">All</option>
-                                                    <?php foreach($categories as $val){ ?>
-													<option value="<?php echo $val['id'] ?>"><?php echo $val['category_name'] ?></option>
+                                                <select class="form-control" id="industry" multiple>
+                                                    <?php foreach($job_industry as $val){ ?>
+													<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 													<?php } ?>
                                                 </select>
                                             </div>
@@ -360,6 +360,8 @@ $title = 'Job Search | Emfob'; ?>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyrKx3qDBUdn7_wwXP08LZ8-nh05M5e7A&libraries=places"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <script>
 	let currentPage;
 	let pageNo = 1;
@@ -368,14 +370,40 @@ $title = 'Job Search | Emfob'; ?>
 	  loadData(1);
 	  // Your DOM manipulation code here
 	  
+	  const choices = new Choices('#language', {
+		removeItemButton: true,
+		maxItemCount: 25,
+		searchResultLimit: 25,
+		renderChoiceLimit: 25
+	  });
+	  
+	  const choices1 = new Choices('#jobType', {
+		removeItemButton: true,
+		maxItemCount: 25,
+		searchResultLimit: 25,
+		renderChoiceLimit: 25
+	  });
+	  
+	  const choices2 = new Choices('#industry', {
+		removeItemButton: true,
+		maxItemCount: 25,
+		searchResultLimit: 25,
+		renderChoiceLimit: 25
+	  });
+	  
+	  
 	});
 	function loadData(pageNo,title='') {
+		
+		const selectLang = document.getElementById("language");
+		const selectedLanguage = Array.from(selectLang.selectedOptions).map(option => option.value);
+		
 		document.getElementById('jobResults').innerHTML = 'Loading..';
 		$('.pagination').html('');
 		currentPage = pageNo;
 		const xhr = new XMLHttpRequest();
 		console.log($('#brightnessValue').val());
-		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&language="+$('#language').val()+"&salary="+$('#brightnessValue').html()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
+		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&language="+selectedLanguage+"&salary="+$('#brightnessValue').html()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
 		xhr.open("GET", "<?php echo BASE_URL; ?>api/jobsearch.php?"+qry+"&limit="+pageNo, true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
@@ -503,6 +531,11 @@ $title = 'Job Search | Emfob'; ?>
 	range.addEventListener('input', () => {
 		valueDisplay.textContent = range.value;
 	});
+	
+	window.addEventListener('popstate', function(event) {
+	  loadData(1);
+	});
+	
 </script>
 
 

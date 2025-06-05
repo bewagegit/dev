@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Check if the email/phone exists in the database
-    $query = "SELECT * FROM users WHERE email = ? OR phone = ?";
+    $query = "SELECT * FROM users left join  WHERE email = ? OR phone = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param('ss', $emailOrPhone, $emailOrPhone);
     $stmt->execute();

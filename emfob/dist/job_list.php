@@ -278,6 +278,10 @@ $jobs = $stmt->fetchAll();
 			  <p id="benefits"><!-- $80,000 - $100,000 / year--></p>
 			</div>
 			<div class="mb-4">
+			  <h5>language</h5>
+			  <p id="language"><!-- $80,000 - $100,000 / year--></p>
+			</div>
+			<div class="mb-4">
 			  <h5>Application Deadline</h5>
 			  <p id="applicationDeadLine"><!-- $80,000 - $100,000 / year--></p>
 			</div>
@@ -345,6 +349,7 @@ function viewJob(id){
 		requirement += '<li>Preferred : '+data[0].pref_skills+'</li>';
 		$("#jobRequirement").html(requirement);
 		$("#benefits").html(data[0].benefits);
+		$("#language").html(data[0].language);
 		$("#jobSalary").html('<li>Salary : ₹ '+data[0].salaryRangeMin + '-'+ data[0].salaryRangeMax +'</li>');
 		$("#applicationDeadLine").html(data[0].applicationDeadLine);
 		$("#job_postings_date").html(data[0].job_postings_date);

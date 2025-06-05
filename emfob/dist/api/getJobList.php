@@ -15,7 +15,8 @@ ini_set("error_reporting",-1);
 extract($_GET);
 
 //Get all group List
-$stmt = $pdo->prepare("SELECT *,(SELECT GROUP_CONCAT(name) FROM `benefits` where FIND_IN_SET (id, a.otherCompensation)) benefits 
+$stmt = $pdo->prepare("SELECT *,(SELECT GROUP_CONCAT(name) FROM `".JOB_BENEFITS."` where FIND_IN_SET (id, a.otherCompensation)) benefits,
+					 (SELECT GROUP_CONCAT(languages_name) FROM `".LANGUAGES."` where FIND_IN_SET (id, a.language)) language  
 						FROM `".JOB_POSTINGS."` a
 					   inner join `".USERS."` b on a.posted_by_user_id  = b.user_id
 					   where a.posted_by_user_id = ? and a.id= ? order by a.id desc LIMIT 1");

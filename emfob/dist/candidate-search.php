@@ -14,13 +14,14 @@ include_once("dashboard-header.php");
 
 // Fetch available exams
 try {
-    $sql = "SELECT * FROM exams ORDER BY created_at DESC";
+    $sql = "SELECT * FROM ".USERS." a inner join ".CANDIDATES_PROFILES." b on a.user_id = b.user_id where a.usertype = 1 or a.usertyp = 4  ORDER BY a.created_at DESC";
     $stmt = $pdo->query($sql);
-    $exams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $jobs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     error_log("Error fetching exams: " . $e->getMessage());
-    $exams = [];
+    $jobs = [];
 }
+
 ?>
 
 <style>
@@ -57,7 +58,7 @@ try {
             <div class="row">
                 <div class="col-12">
                     <div class="page-title-box d-flex align-items-center justify-content-between">
-                        <h4 class="mb-sm-0">Job Post</h4>
+                        <h4 class="mb-sm-0">Candidate Search</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Tests</a></li>
@@ -71,6 +72,70 @@ try {
             <!-- Exams Grid -->
             <div class="row mt-4">
                
+			   <!-- starts -->
+			   <div class="row">
+                    <div class="col-xxl-12">
+						
+                        <div class="card">
+							
+                            <div class="card-header">
+                                <div class="card-icon text-muted"><i class="fas fa-sync-alt fs-14"></i></div>
+                                <h3 class="card-title">Candidate Search</h3>
+                                <div class="card-addon dropdown">
+                                    <button class="btn btn-label-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown"> <i class="fas fa-filter fs-12 align-middle ms-1"></i></button>
+                                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
+                                        <a class="dropdown-item" href="#">
+                                            <div class="dropdown-icon"><i class="fa fa-poll"></i></div>
+                                            <span class="dropdown-content">Today</span>
+                                        </a>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="dropdown-icon"><i class="fa fa-chart-pie"></i></div>
+                                            <span class="dropdown-content">Yesterday</span>
+                                        </a>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="dropdown-icon"><i class="fa fa-chart-line"></i></div>
+                                            <span class="dropdown-content">Week</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table text-nowrap mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Email ID</th>
+                                                <th>Phone No</th>
+                                                <th>User Type</th>
+                                                <th>Full Name</th>
+                                                <th>Company Name</th>
+                                                <th>Job Title</th>
+												<th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+										<?php foreach($jobs as $val){ ?>
+                                            <tr>
+                                                <td class="align-middle"><?php echo $val['email'] ?></td>
+												<td class="align-middle"><?php echo $val['phone_number'] ?></td>
+												<td class="align-middle"><?php echo $val['user_type'] ?></td>
+												<td class="align-middle"><?php echo $val['full_name'] ?></td>
+												<td class="align-middle"><?php echo $val['current_job_title'] ?></td>
+												<td class="align-middle"><?php echo $val['current_job_title'] ?></td>
+												<td class="align-middle">view</td>
+                                            </tr>
+										<?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end row -->
+			   <!-- ends -->
+			   
+			   
             </div>
         </div>
     </div>

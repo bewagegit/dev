@@ -16,7 +16,7 @@ if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
 	$userType = $_COOKIE['userType'];
 	$cookiePassword = $_COOKIE['passwordhash'];
 	
-	$stmt = $pdo->prepare("SELECT * FROM users WHERE (email = ? or phone_number = ?) AND user_type = ?");
+	$stmt = $pdo->prepare("SELECT * FROM ".USERS." a left join ".EMPLOYERS." b on a.user_id = b.user_id  WHERE (email = ? or phone_number = ?) AND user_type = ?");
 	$stmt->execute([$email, $email, $userType]); // Verify email and user type
 	$user = $stmt->fetch();
 	
@@ -30,6 +30,9 @@ if( isset($_COOKIE['email']) && $_COOKIE['email'] != '' &&
 			$_SESSION['user_id'] = $user['user_id'];
 			$_SESSION['email'] = $email;
 			$_SESSION['user_type'] = $userType;
+			$_SESSION['employer_id'] = $user['employer_id'];
+			$_SESSION['company_name'] = $user['company_name'];
+			$_SESSION['company_website'] = $user['company_name'];
 			header('Location: general_dashboard.php');
 		}
 	}

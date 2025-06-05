@@ -6,6 +6,7 @@ include_once("backend/common_functions.php");
 include_once("backend/page_authcheck.php");
 $title = 'Skill Badges | Emfob';
 extract($_GET);	
+
 ?>
 
 <!doctype html>
@@ -19,6 +20,8 @@ $companies = getAllSelection(COMPANIES);
 $employment_type = getAllSelection(EMPLOYMENT_TYPE);
 $job_industry = getAllSelection(JOB_INDUSTRY);
 $job_benefits = getAllSelection(JOB_BENEFITS);
+
+$language = db_select("id,languages_name as name",LANGUAGES);
 
 // Fetch available exams
 try {
@@ -162,15 +165,15 @@ try {
 															<select class="form-control" id="industryDomainName" name="industryDomainName" required>
 																<option value="" disabled selected>Select Industry</option>
 																<?php foreach($job_industry as $val){ ?>
-																<option><?php echo $val['name'] ?></option>
+																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 																<?php } ?>
 															</select>
 															<div class="error" id="industryDomainNameErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="job_type" class="form-label">Job Type <span style='color:red'>*</span> :</label>
-															<select class="form-control" id="jobType" name="jobType" required>
-																<option value="" disabled selected>Select Job Type</option>
+															<select class="form-control" id="jobType" name="jobType" multiple required>
+																<option value="" disabled >Select Job Type</option>
 																<?php foreach($employment_type as $val){ ?>
 																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 																<?php } ?>
@@ -287,9 +290,11 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="language" class="form-label">Language :</label>
-															<input type="text" class="form-control" name="language"
-																id="language"
-																placeholder="Enter Language" required>
+															<select class="form-control" id="language" name="language" multiple required>
+																<?php foreach($language as $val){ ?>
+																<option value="<?php echo $val['id']; ?>" ><?php echo $val['name']; ?></option>
+																<?php } ?>
+															</select>
 															<div class="error" id="languageErr"></div>
 														</div>
 														<div class="col-md-6">
@@ -438,6 +443,12 @@ const choices = new Choices('#enhanced-multiselect', {
     searchResultLimit: 25,
     renderChoiceLimit: 25
   });
+const choices1 = new Choices('#language', {
+    removeItemButton: true,
+    maxItemCount: 25,
+    searchResultLimit: 25,
+    renderChoiceLimit: 25
+  });
 
 
 const input = document.getElementById('jobLocation');
@@ -505,6 +516,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	// Initialize first step
 	showStep(currentStep);
+	
+	
+	const element = document.getElementById('jobType');
+    const choices = new Choices(element, {
+      removeItemButton: true,
+      searchEnabled: true,
+      placeholderValue: 'Select Job Type',
+      noResultsText: 'No Job Type found',
+    });
 });
 
 //validation for page 1 form
@@ -595,12 +615,16 @@ function handleFormSubmit(event) {
 	const select = document.getElementById("enhanced-multiselect");
     const selected = Array.from(select.selectedOptions).map(option => option.value);
 	
+	const selectLang = document.getElementById("language");
+    const selectedLanguage = Array.from(selectLang.selectedOptions).map(option => option.value);
+	
 	//generate forma data
 	let formDataIds = ['jobtitle','industryDomainName','jobType','employmentType','jobLocation','educationRequirements','expRequirements','reqSkills','prefSkills','certifications', 'noticePeriod','jobDescription','shfitTiming','noOfOpenings','applicationDeadLine','jobPostingsDate','language','travelRequirements','salaryRangeMin','salaryRangeMax','incentivesBonus','contactName','contactEmail','contactPhone','ScreeningQuestions']
 	
 	for(var i=0;i<formDataIds.length;i++){
 		formData.append(formDataIds[i], document.getElementById(formDataIds[i]).value);
 	}	
+	formData.append('language',selectedLanguage);
 	formData.append('benefits',selected);	
 	console.log(formData);
 
