@@ -16,7 +16,7 @@ include_once("dashboard-header.php");
 $userid = $_SESSION['user_id'];
 
 //page 1 form
-$companies = getAllSelection(COMPANIES);
+$companies = db_select("employer_id,company_name as name",EMPLOYERS);
 $employment_type = getAllSelection(EMPLOYMENT_TYPE);
 $job_industry = getAllSelection(JOB_INDUSTRY);
 $job_benefits = getAllSelection(JOB_BENEFITS);
@@ -63,6 +63,7 @@ try {
     }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+
 
 <div id="overlay"></div>
 
