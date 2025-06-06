@@ -21,7 +21,16 @@ $company_details = $stmt->fetchAll();
 
 $job_industry = getAllSelection(JOB_INDUSTRY);
 
-//print_r($company_details);
+$company_profile_details = [];
+
+if(!$_SESSION['employer_id'] == ''){
+	//check already company details entered
+	$stmt = $pdo->prepare("SELECT * FROM ".COMPANIES." a WHERE employer_id = ? ");
+	$stmt->execute([$_SESSION['employer_id']]); // Verify email and user type
+	$company_profile_details = $stmt->fetchAll();
+}
+//print_r($company_profile_details);
+
 ?>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
@@ -135,13 +144,27 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
+									
                             <div class="card-header">
-                                <h4>Company Profile</h4>
+                                <h4>Company Profile </h4>
                             </div>
+							
+							<div class="d-flex justify-content-end">
+								<a href="javascript:void(0);" onclick="createUser()" class="me-3">Create Sub User</a>
+								<a href="javascript:void(0);" onclick="createAdmin()" class="me-3">Create Admin Name</a>
+							</div>
+							
                             <div class="card-body">
                                 <div class="row">
                                     <!-- Stepper -->
                                     <div class="col-md-3">
+										<?php if( isset($company_profile_details[0]['logo']) && $company_profile_details[0]['logo']){ ?>
+										<div class="d-flex align-items-center">
+											<div class="row mb-3">
+												<img src="<?php echo BASE_URL_ADMIN."backend/".$company_profile_details[0]['logo'] ?>" alt="Course" class="rounded mr-3">
+											</div>
+										</div>
+										<?php } ?>
                                         <ul class="list-group" id="stepper">
                                             <li class="list-group-item active" id="step-1" data-step="0">
                                                 <div class="d-flex align-items-center">
@@ -162,6 +185,7 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
                                                 </div>
                                             </li>
                                         </ul>
+										
                                     </div>
 
                                     <!-- Form Section -->
@@ -172,19 +196,27 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 												<!-- Personal Information -->
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="fullName" class="form-label">Company Name :</label>
+														<label for="fullName" class="form-label">
+														<i class="bi bi-building"></i>
+														Company Name :</label>
 														<?php echo $company_details[0]['company_name'];  ?>
 														<br/>
-														<label for="fullName" class="form-label">Website :</label>
+														<label for="fullName" class="form-label">
+														<i class="bi bi-globe"></i> Website :</label>
 														<?php echo $company_details[0]['company_website'];  ?>
 														<br/>
-														<label for="fullName" class="form-label">Phone No :</label>
+														<label for="fullName" class="form-label">
+														<i class="bi bi-telephone"></i>
+														Phone No :</label>
 														<?php echo $company_details[0]['phone_number'];  ?>
+														<br/>
+														<label for="fullName" class="form-label"> <i class="bi bi-envelope"></i> Email ID :</label>
+														<?php echo $_SESSION['email'];  ?>
 													</div>
 													<div class="col-md-6">
 														<label for="branch_address" class="form-label">Branch Address <span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="branch_address" rows="3"
-																placeholder="Enter Company Branch Address"></textarea>
+																placeholder="Enter Company Branch Address"><?php echo $company_profile_details[0]['branch_address']?? "";  ?></textarea>
 														<div class="error" id="branch_addressErr"></div>
 													</div>
 													
@@ -193,13 +225,13 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 													<div class="col-md-6">
 														<label for="secondary_branch_address" class="form-label">Secondary Branch Location:</label>
 														<textarea class="form-control" id="secondary_branch_address" rows="3"
-																placeholder="Enter Secondary Branch Location"></textarea>
+																placeholder="Enter Secondary Branch Location"><?php echo $company_profile_details[0]['secondary_branch_address']?? "";  ?></textarea>
 														<div class="error" id=""></div>
 													</div>
 													<div class="col-md-6">
 														<label for="overiew_aboutus" class="form-label">Overview / AboutUs<span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="overiew_aboutus" rows="3"
-																placeholder="Enter Overview / AboutUs"></textarea>
+																placeholder="Enter Overview / AboutUs"><?php echo $company_profile_details[0]['overiew_aboutus']?? '';  ?></textarea>
 														<div class="error" id="overiew_aboutusErr"></div>
 													</div>
 												</div>
@@ -207,13 +239,13 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 													<div class="col-md-6">
 														<label for="description" class="form-label">Company Description<span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="description" rows="3"
-																placeholder="Enter Company Description"></textarea>
+																placeholder="Enter Company Description"><?php echo $company_profile_details[0]['description']?? '';  ?></textarea>
 														<div class="error" id="descriptionErr"></div>
 													</div>
 													<div class="col-md-6">
 															<label for="interview_venue" class="form-label">Interview Venue: <span style='color:red'>*</span>:</label>
 															<textarea class="form-control" id="interview_venue" rows="3"
-																	placeholder="Enter Interview Venue"></textarea>
+																	placeholder="Enter Interview Venue"><?php echo $company_profile_details[0]['interview_venue']?? '';  ?></textarea>
 															<div class="error" id="interview_venueErr"></div>
 													</div>
 													
@@ -227,14 +259,14 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 														<select class="form-control" id="industryDomainName" name="industryDomainName" required>
 																<option value="" disabled selected>Select Industry</option>
 																<?php foreach($job_industry as $val){ ?>
-																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+																<option <?php echo ($company_profile_details[0]['industry_domain']?? '' ==  $val['id'])? 'selected':''; ?> value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
 																<?php } ?>
 														</select>
 														<div class="error" id="industryDomainNameErr"></div>
 													</div>
 													<div class="col-md-6">
 														<label for="no_of_employees" class="form-label">No. of Employees: <span style='color:red'>*</span>:</label>
-														<input type="text" class="form-control" id="no_of_employees" value=""
+														<input type="text" class="form-control" id="no_of_employees" value="<?php echo ($company_profile_details[0]['no_of_employees'])?? '0'; ?>"
 															placeholder="Enter No. of Employees" required>
 														<div class="error" id="no_of_employeesErr"></div>
 													</div>
@@ -242,20 +274,20 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 												<div class="row mb-3">
 													<div class="col-md-6">
 														<label for="year_of_establishment" class="form-label">Year of Establishment :</label>
-														<input type="text" class="form-control" id="year_of_establishment" value=""
+														<input type="text" class="form-control" id="year_of_establishment" value="<?php echo ($company_profile_details[0]['year_of_establishment'])?? '0'; ?>"
 															placeholder="Enter No. of Establishment" required>
 														<div class="error" id="year_of_establishmentErr"></div>
 													</div>
 													<div class="col-md-6">
 														<label for="gst_no" class="form-label">GST No.:</label>
-														<input type="text" class="form-control" id="gst_no" maxlength= "15" value=""
+														<input type="text" class="form-control" id="gst_no" maxlength= "15" value="<?php echo ($company_profile_details[0]['gst_no'])?? '0'; ?>"
 															placeholder="Enter GST No." required>															
 														<div class="error" id="gst_noErr"></div>
 													</div>
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="company_logo" class="form-label">Logo: <span style='color:red'>*</span>:</label>
+														<label for="company_logo" class="form-label">Logo : </label>
 														<input type="file" class="form-control" id="company_logo">
 														<div class="error" id="company_logoErr"></div>
 													</div>
@@ -272,9 +304,9 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 								
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="branch_location_map" class="form-label">Branch Location Map :</label>
-															<textarea class="form-control" id="branch_location_map" rows="3"
-																	placeholder="Enter Branch Location Map"></textarea>
+															<label for="branch_location_map" class="form-label"><i class="bi bi-geo-alt"></i>Branch Location Map :</label>
+															<textarea class="form-control" id="branch_location_map"  rows="3"
+																	placeholder="Enter Branch Location Map"><?php echo ($company_profile_details[0]['branch_location_map'])?? ''; ?></textarea>
 															<div class="error" id="branch_location_mapErr"></div>
 														</div>
 														<div class="col-md-6">
@@ -282,53 +314,51 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 																class="form-label">
 																<a href="#" class="text-dark"><i class="bi bi-linkedin"></i></a> LinkedIn URL :</label>
 															<textarea class="form-control" id="linkedin_url" rows="3"
-																placeholder="Enter LinkedIn URL"></textarea>
+																placeholder="Enter LinkedIn URL"><?php echo ($company_profile_details[0]['linkedin_url'])?? ''; ?></textarea>
 															<div class="error" id="linkedin_urlErr"></div>
 														</div>
 														<div class="col-md-6">
-															<label for="degreeDetails" class="form-label">
+															<label for="instagram_url" class="form-label">
 															<a href="#" class="text-danger me-3"><i class="bi bi-instagram"></i></a> Instagram URL:</label>
-															<textarea class="form-control" id="degreeDetails" rows="3"
-																placeholder="Enter Instagram URL"></textarea>
+															<textarea class="form-control" id="instagram_url" rows="3"
+																placeholder="Enter Instagram URL"><?php echo ($company_profile_details[0]['instagram_url'])?? ''; ?></textarea>
 															<div class="error" id="graduationYearErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="google_business_page" class="form-label">
 															<a href="#" class="text-danger me-3"><i class="fab fa-google"></i></a> Google Business Page Link:</label>
 															<textarea class="form-control" id="google_business_page" rows="3"
-																placeholder="Enter Google Business Page Link"></textarea>
+																placeholder="Enter Google Business Page Link"><?php echo ($company_profile_details[0]['google_business_page'])?? ''; ?></textarea>
 															<div class="error" id="google_business_pageErr"></div>
 														</div>
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="degreeDetails" class="form-label">
+															<label for="facebookUrl" class="form-label">
 															<a href="#" class="text-primary me-3"><i class="bi bi-facebook"></i></a>
 															Facebook URL:</label>
 															<textarea class="form-control" id="facebookUrl" rows="3"
-																placeholder="Enter Facebook URL"></textarea>
+																placeholder="Enter Facebook URL"><?php echo ($company_profile_details[0]['facebook_url'])?? ''; ?></textarea>
 															<div class="error" id="facebookUrlErr"></div>
 														</div>
 														<div class="col-md-6">
-															<label for="degreeDetails" class="form-label">Office Tour Video URL:</label>
+															<label for="officeTourVideo" class="form-label">Office Tour Video URL:</label>
 															<textarea class="form-control" id="officeTourVideo" rows="3"
-																placeholder="Enter Facebook URL"></textarea>
+																placeholder="Enter Facebook URL"><?php echo ($company_profile_details[0]['officeTourVideo'])?? ''; ?></textarea>
 															<div class="error" id="facebookUrlErr"></div>
 														</div>
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="degreeDetails" class="form-label">Other URL:</label>
+															<label for="otherUrl" class="form-label">Other URL:</label>
 															<a style="float:right"  href="javascript:addOtherUrl()"><i class="bi-plus-square"></i></a>
-															<textarea class="form-control" id="otherUrl" rows="3"
-																placeholder="Enter Other URL"></textarea>
+															<textarea class="form-control otherUrl" id="otherUrl"  rows="3"
+																placeholder="Enter Other URL"><?php echo ($company_profile_details[0]['other_media_url'])?? ''; ?></textarea>
 															<div class="error" id="otherUrlErr"></div>
 														</div>
 														<div id="addOtherUrlDiv">
 														</div>
 													</div>
-
-
 													<!-- Navigation Buttons -->
 													<div class="d-flex justify-content-between">
                                                     <button type="button" class="btn btn-secondary"
@@ -354,6 +384,48 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
+	
+	
+	<!-- Modal HTML -->
+	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="modalTitle">Create User</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  
+			 <!-- starts  -->
+				 <div class="container my-5">
+					<div class="card shadow-lg">
+					  <div class="card-body">
+						
+						<div class="mb-4">
+							<label for="email_address" class="form-label">Email Address <span style='color:red'>*</span>:</label>
+							<input type="email" class="form-control" id="email_address" value="" placeholder="Email Address" required>
+							<div class="error" id="email_addressErr"></div>
+						</div>
+						<div class="mb-4">
+							<label for="phone_no" class="form-label">Phone No <span style='color:red'>*</span>:</label>
+							<input type="number" maxlength="15" class="form-control" id="phone_no" value="" placeholder="Phone No." required>
+							<div class="error" id="phone_noErr"></div>
+						</div>
+						
+						<div class="modal-footer">
+							<button type="button" onclick="createSaveUser()" class="btn btn-primary">Save</button>
+						</div>
+						
+					  </div>
+					</div>
+				  </div>
+			 <!-- ends -->
+		</div>
+	  </div>
+	</div>
+	
+	
+	
+	
 
     <footer class="footer">
         <div class="container-fluid">
@@ -399,15 +471,49 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 <script src="<?php echo BASE_URL_ADMIN ?>assets/libs/node-waves/waves.min.js"></script>
 
 <script src="<?php echo BASE_URL_ADMIN ?>assets/js/app.js"></script>
+<script src="<?php echo BASE_URL ?>js/common_validation.js"></script>
 <!-- jQuery Validation Plugin -->
-
+	<?php 
+		$other_media_url = explode("##@##",($company_profile_details[0]['other_media_url']?? '') );
+		$tmpOtherMedia = [];
+		$i = 0;
+		foreach($other_media_url as $val){
+			if($val != ''){
+				$tmpOtherMedia[] = $val;
+			}
+			$i++;
+		}
+	?>
 <script>
+	var mediaURL = <?php echo json_encode($tmpOtherMedia); ?>;
+	
+	addOtherUrlEdit(mediaURL);
 	var addOtherUrlId = 0;
+	console.log(mediaURL.length);
+	function addOtherUrlEdit(mediaURL){
+		var addOtherUrlId = 0;
+		for(var i=0;i<mediaURL.length;i++){
+			if(i == 0){
+				document.getElementById("otherUrl").value = mediaURL[i];
+			}
+			else{
+				var html = `<div class="col-md-6" id="otherUrl${addOtherUrlId}">
+						<label for="addOtherUrl" class="form-label">Other URL:</label>
+						<a style="float:right" href="javascript:removeOtherUrl(${addOtherUrlId})"><i class="bi bi-trash"></i></a>
+						<textarea class="form-control otherUrl"  rows="3"
+							placeholder="Enter Other URL">${mediaURL[i]}</textarea>
+					</div>`;
+				document.getElementById("addOtherUrlDiv").insertAdjacentHTML("beforeend",html);
+			}
+			addOtherUrlId++;
+		}
+	}
+	
 	function addOtherUrl(){
 		var html = `<div class="col-md-6" id="otherUrl${addOtherUrlId}">
-						<label for="degreeDetails" class="form-label">Other URL:</label>
-						<a style="float:right"  href="javascript:removeOtherUrl(${addOtherUrlId})"><i class="bi bi-trash"></i></a>
-						<textarea class="form-control"  rows="3"
+						<label for="addOtherUrl" class="form-label">Other URL:</label>
+						<a style="float:right" href="javascript:removeOtherUrl(${addOtherUrlId})"><i class="bi bi-trash"></i></a>
+						<textarea class="form-control otherUrl"  rows="3"
 							placeholder="Enter Other URL"></textarea>
 					</div>`;
 		document.getElementById("addOtherUrlDiv").insertAdjacentHTML("beforeend",html);
@@ -424,8 +530,7 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 						"description" 	  : "Descrption",
 						"interview_venue" : "Interview Venue",
 						"industryDomainName" : "Industry Domain",
-						"no_of_employees" : "No. of Employees",
-						"company_logo" : "Company Logo"
+						"no_of_employees" : "No. of Employees"
 						};
 						
 		clearHtmlError(array1);		
@@ -492,10 +597,7 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
         });
 
 		document.getElementById('submitForm').addEventListener('click', () => {
-			console.log("handle form submit");
-			if(!page2Validation()){
-				handleFormSubmit();
-			}
+			handleFormSubmit();
         });        
         // Initialize first step
         showStep(currentStep);
@@ -507,15 +609,20 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 <script>
     // Add this JavaScript code after your HTML form
 	
-	
 	$(document).ready(function(){
 		var restrictNo = '#contactNumber,#emergencyContactNumber';
 		//restrict only number 
 		//restrictNumbers(restrictNo);
 	});
 	
-
+	
 	function handleFormSubmit(event) {
+		var otherUrl = '';
+		$(".otherUrl").each(function(){
+			if($(this).val() != ''){
+				otherUrl += $(this).val()+"##@##";
+			}
+		});
 		
 		// Create FormData object
 		const formData = new FormData();
@@ -533,11 +640,11 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 		formData.append('gst_no', document.getElementById('gst_no').value);
 		formData.append('branch_location_map', document.getElementById('branch_location_map').value);
 		formData.append('linkedin_url', document.getElementById('linkedin_url').value);
-		formData.append('degreeDetails', document.getElementById('degreeDetails').value);
+		formData.append('instagram_url', document.getElementById('instagram_url').value);
 		formData.append('google_business_page', document.getElementById('google_business_page').value);
 		formData.append('facebookUrl', document.getElementById('facebookUrl').value);
 		formData.append('officeTourVideo', document.getElementById('officeTourVideo').value);
-		formData.append('otherUrl', document.getElementById('otherUrl').value);
+		formData.append('otherUrl', otherUrl);
 		
 		// Handle file uploads
 		const company_logo = document.getElementById('company_logo').files[0];
@@ -551,6 +658,7 @@ $job_industry = getAllSelection(JOB_INDUSTRY);
 		})
 		.then(response => response.json())
 		.then(data => {
+			//window.location.href = "<?php echo BASE_URL ?>company_dashboard.php";
 		  console.log('Success:', data);
 		})
 		.catch(error => {
@@ -593,6 +701,68 @@ function chkValidInput(array,type){
 			}
 		}
 	};
+}
+
+
+function createUser(){
+	// Get the modal element
+	const myModalEl = document.getElementById('myModal');
+  
+	// Create a new Bootstrap modal instance
+	const myModal = new bootstrap.Modal(myModalEl);
+	myModal.show(); 
+}
+
+function createAdmin(){
+	
+}
+
+function createSaveUser(){
+	const array1 = {
+					"email_address":"Email Address",
+					"phone_no" : "Phone No"
+					};
+					
+	clearHtmlError(array1);
+	chkValidInput(array1,0);
+	
+	
+	const array2 = { "email_address" : "Email Address"};
+	chkValidInput(array2,3);
+	
+	const array3 = { "phone_no" : "Phone No"};
+	chkValidInput(array3,1);
+	
+	var validation = 0;
+	$('.error').each(function(index, element) {
+		if(element.innerHTML != ''){
+			validation = 1;
+		}
+	});
+	
+	var emailAddress = document.getElementById('email_address').value;
+	var phone_no = document.getElementById('phone_no').value;
+	
+	const formData = new FormData();
+	// Personal Information
+	formData.append('emailAddress', document.getElementById('email_address').value);
+	formData.append('phone_no', document.getElementById('phone_no').value);
+	
+	if(!validation){
+		fetch('<?php echo BASE_URL ?>api/saveCreateUser.php', {
+		  method: 'POST',
+		  body: formData
+		})
+		.then(response => response.json())
+		.then(data => {
+		  console.log('Success:', data);
+		})
+		.catch(error => {
+		  console.error('Error:', error);
+		});
+	}
+	
+	return validation;	
 }
 
 </script>

@@ -50,16 +50,18 @@ if(isset($limit) && $limit != '' ){
 		$qry[":industry"] = "%".$industry."%";
 	}
 	
-	$totalQueryStr = "SELECT *,c.name cmpname,d.name emptype FROM `".JOB_POSTINGS."` a 
+	$totalQueryStr = "SELECT *,e.company_name cmpname,d.name emptype FROM `".JOB_POSTINGS."` a 
 					  INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 					  LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
+					  LEFT JOIN `".EMPLOYERS."` e on e.employer_id = a.company_id
 					  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
 					  WHERE $whereQry 1 = 1 ";
 	
 	
-	$queryStr = "SELECT *,c.name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
+	$queryStr = "SELECT *,e.company_name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
 				 INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 				 LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
+				 LEFT JOIN `".EMPLOYERS."` e on e.employer_id = a.company_id
 				 INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type	
 				 WHERE  $whereQry 1 = 1 ORDER BY job_postings_date desc LIMIT $start,$limit";
 				 

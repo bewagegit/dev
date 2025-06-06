@@ -13,6 +13,9 @@ define("PASSWORD","");
 //Password Hash key
 define("PASSWORDHASHKEY","bewage@123");
 
+
+define("CREATEUSERPASSWORDDEFAULT","bewage@123");
+
 //From email address
 define("EMAILADDRESS","fromemailbewage@gmail.com");
 
@@ -66,6 +69,8 @@ define("MENU_ITEMS","menu_items");
 //Job Postings
 define("JOB_INDUSTRY","job_industry");
 define("JOB_BENEFITS","benefits");
+
+
 
 //start the session variable 
 @session_start();
