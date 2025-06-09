@@ -14,6 +14,9 @@ define("PASSWORD","");
 define("PASSWORDHASHKEY","bewage@123");
 
 
+define("MAXSIZE",1 * 1024 * 1024);
+
+
 define("CREATEUSERPASSWORDDEFAULT","bewage@123");
 
 //From email address

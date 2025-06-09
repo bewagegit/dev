@@ -1,0 +1,138 @@
+body{
+        background-color: #f8f9fa;
+    }
+
+#searchInput {}
+
+/* Styling for the Job Cards */
+.job-card {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	background-color: #fff;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	padding: 15px;
+}
+
+.job-card:hover {
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Flexbox layout to align the logo and content */
+.job-card .logo {
+	width: 100px;
+	height: 100px;
+	object-fit: cover;
+	margin-right: 20px;
+	border-radius: 8px;
+}
+
+.job-card-content {
+	flex-grow: 1;
+}
+
+.job-card h5 {
+	font-weight: bold;
+	margin: 0;
+	font-size: 1.2rem;
+}
+
+.job-card p {
+	margin: 5px 0;
+	color: #6c757d;
+}
+
+.job-card small {
+	font-size: 0.9rem;
+	color: #adb5bd;
+}
+
+.job-card .btn {
+	font-size: 0.875rem;
+	padding: 5px 12px;
+	text-align: center;
+}
+
+/* Filter section */
+.filter-section {
+	background-color: #fff;
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+}
+
+.filter-section h5 {
+	font-weight: 600;
+}
+
+.form-group label {
+	font-weight: 800;
+}
+
+.form-group select,
+.form-group input {
+	border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+	.job-card {
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.job-card img {
+		margin-bottom: 15px;
+	}
+}
+
+/* Card layout styling */
+.card {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+	background-color: #fff;
+	margin-bottom: 20px;
+}
+
+.card-body {
+	padding: 20px;
+}
+
+.pagination {
+	margin-top: 20px;
+}
+
+.pagination .page-link {
+	border-radius: 50%;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #4caf50; /* For modern browsers */
+}
+
+.job-card {
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+}
+
+.job-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.job-company {
+  color: #6c757d;
+}
+
+.badge-salary {
+  background-color: #e9ecef;
+  color: #212529;
+}

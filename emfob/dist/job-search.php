@@ -17,122 +17,7 @@ $title = 'Job Search | Emfob'; ?>
 <!doctype html>
 
 <?php include_once("dashboard-header.php"); ?>
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-
-    #searchInput {}
-
-    /* Styling for the Job Cards */
-    .job-card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        background-color: #fff;
-        margin-bottom: 10px;
-        margin-top: 10px;
-        display: flex;
-        align-items: center;
-        padding: 15px;
-    }
-
-    .job-card:hover {
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Flexbox layout to align the logo and content */
-    .job-card .logo {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        margin-right: 20px;
-        border-radius: 8px;
-    }
-
-    .job-card-content {
-        flex-grow: 1;
-    }
-
-    .job-card h5 {
-        font-weight: bold;
-        margin: 0;
-        font-size: 1.2rem;
-    }
-
-    .job-card p {
-        margin: 5px 0;
-        color: #6c757d;
-    }
-
-    .job-card small {
-        font-size: 0.9rem;
-        color: #adb5bd;
-    }
-
-    .job-card .btn {
-        font-size: 0.875rem;
-        padding: 5px 12px;
-        text-align: center;
-    }
-
-    /* Filter section */
-    .filter-section {
-        background-color: #fff;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    }
-
-    .filter-section h5 {
-        font-weight: 600;
-    }
-
-    .form-group label {
-        font-weight: 800;
-    }
-
-    .form-group select,
-    .form-group input {
-        border-radius: 4px;
-    }
-
-    @media (max-width: 768px) {
-        .job-card {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .job-card img {
-            margin-bottom: 15px;
-        }
-    }
-
-    /* Card layout styling */
-    .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        background-color: #fff;
-        margin-bottom: 20px;
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-
-    .pagination {
-        margin-top: 20px;
-    }
-
-    .pagination .page-link {
-        border-radius: 50%;
-    }
-	
-	input[type="range"] {
-	  width: 100%;
-	  accent-color: #4caf50; /* For modern browsers */
-	}
-</style>
+<link rel="stylesheet" href="<?php echo BASE_URL."assets/css/job-search.css" ?>" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 
 
@@ -167,7 +52,7 @@ $title = 'Job Search | Emfob'; ?>
             <!-- Main Content Starts Here-->
             <div class="row">
                 <!-- Left Side - Search and Filters -->
-                <div class="col-lg-9">
+                <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
                             <div class="row">
@@ -266,9 +151,33 @@ $title = 'Job Search | Emfob'; ?>
                         </div>
                     </div>
                 </div>
+				<!-- Right-side Ad Section -->
+				<div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+								 <!-- Job Card 1 -->
+								 
 
-                <!-- Right-side Ad Section -->
-                <div class="col-lg-3" style="position: sticky; top: 0;">
+									<!-- Right: Job Detail View -->
+								  <div class="col-md-8 job-detail p-4" id="jobDetail">
+									<h4>Frontend Developer</h4>
+									<p><strong>Company:</strong> ABC Tech Solutions</p>
+									<p><strong>Location:</strong> Bengaluru, India</p>
+									<p><strong>Salary:</strong> ₹8 - ₹12 LPA</p>
+									<p><strong>Type:</strong> Full Time</p>
+									<p><strong>Description:</strong> We are looking for a skilled frontend developer experienced in React, JavaScript, and modern web development techniques. Should be able to write clean, maintainable code.</p>
+									<button class="btn btn-primary">Apply Now</button>
+								  </div>
+								  <!-- ends -->
+							
+							</div>
+						</div>
+					</div>
+				</div>
+
+                
+                <!--<div class="col-lg-3" style="position: sticky; top: 0;">
                     <div class="card">
                         <div class="card-body text-center">
                             <h5 class="card-title">Buy Yamaha FZ @ Rs 9999/-</h5>
@@ -281,7 +190,7 @@ $title = 'Job Search | Emfob'; ?>
                                 class="img-fluid" alt="Ad Image">
                         </div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
         <!-- Main Content Ends Here -->

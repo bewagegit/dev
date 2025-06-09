@@ -10,17 +10,28 @@ $title = 'Dashboard | Emfob';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$userDetailsResult = getUserDetails('user_id,email,phone_number',USERS,'user_id = ?',array($_SESSION['user_id']));
-foreach($userDetailsResult as $val){
-	$userDetails= $val;
-}
-
-$department = db_select("id,category_name as name",CATEGORIES);
 
 include_once("dashboard-header.php");
 
+//Get all group List
+$stmt = $pdo->prepare("SELECT * FROM ".CONSULTANCIES." a left join ".USERS." b on b.user_id  = a.user_id  WHERE a.user_id = ? ");
+		
+$stmt->execute([$_SESSION['user_id']]); // Verify email and user type
+$company_details = $stmt->fetchAll();
+
+$job_industry = getAllSelection(JOB_INDUSTRY);
+
+$company_profile_details = [];
+
+if(!$_SESSION['user_id'] == ''){
+	//check already company details entered
+	$stmt = $pdo->prepare("SELECT * FROM ".CONSULTANCIES." a WHERE user_id = ? ");
+	$stmt->execute([$_SESSION['user_id']]); // Verify email and user type
+	$company_profile_details = $stmt->fetchAll();
+}
 ?>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <style>
     #stepper .step-number {
         font-weight: bold;
@@ -48,9 +59,7 @@ include_once("dashboard-header.php");
         font-size: 18px;
         color: #007bff;
     }
-	
-	
-	
+
 	#tag-container {
 	  display: flex;
 	  flex-wrap: wrap;
@@ -117,7 +126,7 @@ include_once("dashboard-header.php");
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
                                 <li class="breadcrumb-item"><a href="javascript: void(0);">Elements</a></li>
-                                <li class="breadcrumb-item active">Profile page</li>
+                                <li class="breadcrumb-item active">Consultancy page</li>
                             </ol>
                         </div>
 
@@ -127,94 +136,219 @@ include_once("dashboard-header.php");
             <!-- end page title -->
 
             <!-- Main Content Starts Here-->
-            <div class="container mt-5">
+            <div class="container " style="margin-left: 0px;">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
+									
                             <div class="card-header">
-                                <h4>Consultancy Profile</h4>
+                                <h4>Consultancy Profile </h4>
                             </div>
+							<div class="d-flex justify-content-end">
+								<a href="javascript:void(0);" onclick="createUser()" class="me-3">Create Sub User</a>
+								<?php if( isset($company_details[0]['is_admin']) && $company_details[0]['is_admin'] == 1){ ?>
+								<span style='color:red;margin-right: 20px;'>Marked as Admin</span>
+								<?php }else{ ?>
+								<a href="javascript:void(0);" onclick="markAsAdmin()" class="me-3">Mark as Admin</a>
+								<?php } ?>
+									
+							</div>
+							
                             <div class="card-body">
                                 <div class="row">
                                     <!-- Stepper -->
                                     <div class="col-md-3">
+										<?php if( isset($company_profile_details[0]['logo']) && $company_profile_details[0]['logo']){ ?>
+										<div class="d-flex align-items-center">
+											<div class="row mb-3">
+												<img src="<?php echo BASE_URL_ADMIN."backend/".$company_profile_details[0]['logo'] ?>" height="100" width="300" alt="Course" class="rounded mr-3">
+											</div>
+										</div>
+										<?php } ?>
                                         <ul class="list-group" id="stepper">
                                             <li class="list-group-item active" id="step-1" data-step="0">
                                                 <div class="d-flex align-items-center">
+                                                    <div class="step-number">Step 1</div>
                                                     <div class="step-label">
-                                                        <strong>Consultancy Information</strong><br>
-                                                        <small>Details about Consultancy</small>
+                                                        <strong>Consultancy Profile</strong><br>
+                                                        <small>Details About Consultancy</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item" id="step-2" data-step="1">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="step-number">Step 2</div>
+                                                    <div class="step-label">
+                                                        <strong>Social Media Link</strong><br>
+                                                        <small>List of Social Media Links</small>
                                                     </div>
                                                 </div>
                                             </li>
                                         </ul>
+										
                                     </div>
 
                                     <!-- Form Section -->
                                     <div class="col-md-9">
 										<form id="form_step_1" enctype="multipart/form-data">
                                             <!-- Step 1: Personal Information -->
-											<div class="form-step" >
+											<div class="form-step" style="display: none;">
 												<!-- Personal Information -->
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="firstName" class="form-label">First Name <span style='color:red'>*</span>:</label>
-														<input type="text" class="form-control" id="firstName"
-															placeholder="Enter Your First Name" required>
-															<div class="error" id="firstNameErr"></div>
+														<label for="fullName" class="form-label">
+														<i class="bi bi-building"></i>
+														Consultancy Name :</label>
+														<?php echo $company_details[0]['consultancy_name'] ?? '';  ?>
+														<br/>
+														<label for="fullName" class="form-label">
+														<i class="bi bi-globe"></i> Website :</label>
+														<?php echo $company_details[0]['consultancy_website']?? '';  ?>
+														<br/>
+														<label for="fullName" class="form-label">
+														<i class="bi bi-telephone"></i>
+														Phone No :</label>
+														<?php echo $company_details[0]['phone_number']?? '';  ?>
+														<br/>
+														<label for="fullName" class="form-label"> <i class="bi bi-envelope"></i> Email ID :</label>
+														<?php echo $_SESSION['email'];  ?>
 													</div>
 													<div class="col-md-6">
-														<label for="lastName" class="form-label">Last Name <span style='color:red'>*</span>:</label>
-														<input type="text" class="form-control" id="lastName"
-															placeholder="Enter Your Last Name" required>
-														<div class="error" id="lastNameErr"></div>
+														<label for="branch_address" class="form-label">Branch Address <span style='color:red'>*</span>:</label>
+														<textarea class="form-control" id="branch_address" rows="3"
+																placeholder="Enter Company Branch Address"><?php echo $company_profile_details[0]['branch_address']?? "";  ?></textarea>
+														<div class="error" id="branch_addressErr"></div>
 													</div>
-													
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="dob" class="form-label">Designation <span style='color:red'>*</span>:</label>
-														<input type="text" class="form-control" id="desgination"
-															placeholder="Enter Your Designation" required>
-														<div class="error" id="desginationErr"></div>
+														<label for="secondary_branch_address" class="form-label">Secondary Branch Location:</label>
+														<textarea class="form-control" id="secondary_branch_address" rows="3"
+																placeholder="Enter Secondary Branch Location"><?php echo $company_profile_details[0]['secondary_branch_address']?? "";  ?></textarea>
+														<div class="error" id=""></div>
 													</div>
 													<div class="col-md-6">
-														<label for="nationality" class="form-label">Department <span style='color:red'>*</span> :</label>
-														<select class="form-control" id="department" required>
-															<option value="" disabled selected>Select Department
-															</option>
-															<?php foreach($department as $val){ ?>
-															<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
-															<?php } ?>
-														</select>
-														<div class="error" id="departmentErr"></div>
+														<label for="overiew_aboutus" class="form-label">Overview / AboutUs <span style='color:red'>*</span>:</label>
+														<textarea class="form-control" id="overiew_aboutus" rows="3"
+																placeholder="Enter Overview / AboutUs"><?php echo $company_profile_details[0]['overiew_aboutus']?? '';  ?></textarea>
+														<div class="error" id="overiew_aboutusErr"></div>
 													</div>
-													
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="contactNumber" class="form-label">Contact
-															Number :</label>
-															<br/>
-															<?php echo $userDetails['phone_number'] ?>	
+														<label for="description" class="form-label">Company Description <span style='color:red'>*</span>:</label>
+														<textarea class="form-control" id="description" rows="3"
+																placeholder="Enter Company Description"><?php echo $company_profile_details[0]['description']?? '';  ?></textarea>
+														<div class="error" id="descriptionErr"></div>
 													</div>
 													<div class="col-md-6">
-														<label for="emailAddress" class="form-label">Email
-															Address :</label>
-															<br/>
-															<?php echo $userDetails['email'] ?>
+														<label for="no_of_employees" class="form-label">No. of Employees <span style='color:red'>*</span>:</label>
+														<input type="text" class="form-control" id="no_of_employees" value="<?php echo ($company_profile_details[0]['no_of_employees'])?? '0'; ?>"
+															placeholder="Enter No. of Employees" required>
+														<div class="error" id="no_of_employeesErr"></div>
 													</div>
 												</div>
-												<!-- Navigation Buttons -->
-												<div class="d-flex justify-content-between">
-													<button type="button" class="btn btn-primary"
-														id="nextStep1">Save</button>
+												<div class="row mb-3">
+													<div class="col-md-6">
+														<label for="year_of_establishment" class="form-label">Year of Establishment :</label>
+														<input type="text" class="form-control" id="year_of_establishment" value="<?php echo ($company_profile_details[0]['year_of_establishment'])?? '0'; ?>"
+															placeholder="Enter No. of Establishment" required>
+														<div class="error" id="year_of_establishmentErr"></div>
+													</div>
+													<div class="col-md-6">
+														<label for="gst_no" class="form-label">GST No.:</label>
+														<input type="text" class="form-control" id="gst_no" maxlength= "15" value="<?php echo ($company_profile_details[0]['gst_no'])?? '0'; ?>"
+															placeholder="Enter GST No." required>															
+														<div class="error" id="gst_noErr"></div>
+													</div>
+												</div>
+												<div class="row mb-3">
+													<div class="col-md-6">
+														<label for="company_logo" class="form-label">Logo (.jpg, .png, .gif) : </label>
+														<input type="file" accept=".jpg,.jpeg,.png,.gif" class="form-control" id="company_logo">
+														<div class="error" id="company_logoErr"></div>
+													</div>
+												</div>
+												<div class="d-flex justify-content-between" style="float:right">
+													<button type="button" class="btn btn-primary" 
+														id="nextStep1">Next</button>
 												</div>
 											</div>
-
-
+										
+											<!-- Step 2: Education & Certifications -->
+												<div class="form-step" id="form-step-2" style="display: none;">
+													<!-- Educational Qualifications -->
+								
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="branch_location_map" class="form-label"><i class="bi bi-geo-alt"></i>Branch Location Map :</label>
+															<textarea class="form-control" id="branch_location_map"  rows="3"
+																	placeholder="Enter Branch Location Map"><?php echo ($company_profile_details[0]['branch_location_map'])?? ''; ?></textarea>
+															<div class="error" id="branch_location_mapErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="linkedin_url"
+																class="form-label">
+																<img src="<?php echo BASE_URL."assets/images/icons8-linkedin-48.png" ?>" height="21" width="21" alt="linkedin url" class="rounded mr-3">
+																LinkedIn URL :</label>
+															<textarea class="form-control" id="linkedin_url" rows="3"
+																placeholder="Enter LinkedIn URL"><?php echo ($company_profile_details[0]['linkedin_url'])?? ''; ?></textarea>
+															<div class="error" id="linkedin_urlErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="instagram_url" class="form-label">
+															<a href="#" class="text-danger me-3"><i class="bi bi-instagram"></i></a> Instagram URL:</label>
+															<textarea class="form-control" id="instagram_url" rows="3"
+																placeholder="Enter Instagram URL"><?php echo ($company_profile_details[0]['instagram_url'])?? ''; ?></textarea>
+															<div class="error" id="graduationYearErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="google_business_page" class="form-label">
+															<a href="#" class="text-danger me-3"><i class="fab fa-google"></i></a> Google Business Page Link:</label>
+															<textarea class="form-control" id="google_business_page" rows="3"
+																placeholder="Enter Google Business Page Link"><?php echo ($company_profile_details[0]['google_business_page'])?? ''; ?></textarea>
+															<div class="error" id="google_business_pageErr"></div>
+														</div>
+													</div>
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="facebookUrl" class="form-label">
+															<img src="<?php echo BASE_URL."assets/images/icons8-facebook-48.png" ?>" height="21" width="21" alt="facebook url" class="rounded mr-3">
+															Facebook URL:</label>
+															<textarea class="form-control" id="facebookUrl" rows="3"
+																placeholder="Enter Facebook URL"><?php echo ($company_profile_details[0]['facebook_url'])?? ''; ?></textarea>
+															<div class="error" id="facebookUrlErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="youtubeTourVideo" class="form-label">
+															<img src="<?php echo BASE_URL."assets/images/icons8-youtube-48.png" ?>" height="21" width="21" alt="youtube url" class="rounded mr-3">
+															Youtube URL:</label>
+															<textarea class="form-control" id="youtube_url" rows="3"
+																placeholder="Enter Youtube URL"><?php echo ($company_profile_details[0]['youtube_url'])?? ''; ?></textarea>
+															<div class="error" id="youtubeUrlErr"></div>
+														</div>
+													</div>
+													<div class="row mb-3">
+														<div class="col-md-6">
+															<label for="otherUrl" class="form-label">Other URL:</label>
+															<a style="float:right"  href="javascript:addOtherUrl()"><i class="bi-plus-square"></i></a>
+															<textarea class="form-control otherUrl" id="otherUrl"  rows="3"
+																placeholder="Enter Other URL"><?php echo ($company_profile_details[0]['other_media_url'])?? ''; ?></textarea>
+															<div class="error" id="otherUrlErr"></div>
+														</div>
+														<div id="addOtherUrlDiv">
+														</div>
+													</div>
+													<!-- Navigation Buttons -->
+													<div class="d-flex justify-content-between">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        id="prevStep1">Previous</button>
+                                                    <button type="button" class="btn btn-success" id="submitForm">Submit
+                                                        Application</button>
+                                                </div>
+												</div>
+                                            <!-- #region -->
 										</form>
-
                                     </div>
                                 </div>
                             </div>
@@ -230,6 +364,48 @@ include_once("dashboard-header.php");
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
+	
+	
+	<!-- Modal HTML -->
+	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<h5 class="modal-title" id="modalTitle">Create User</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  
+			 <!-- starts  -->
+				 <div class="container my-5">
+					<div class="card shadow-lg">
+					  <div class="card-body">
+						
+						<div class="mb-4">
+							<label for="email_address" class="form-label">Email Address <span style='color:red'>*</span>:</label>
+							<input type="email" class="form-control" id="email_address" value="" placeholder="Email Address" required>
+							<div class="error" id="email_addressErr"></div>
+						</div>
+						<div class="mb-4">
+							<label for="phone_no" class="form-label">Phone No <span style='color:red'>*</span>:</label>
+							<input type="number" maxlength="15" class="form-control" id="phone_no" value="" placeholder="Phone No." required>
+							<div class="error" id="phone_noErr"></div>
+						</div>
+						<div class="" id="resultCreateUser"></div>
+						<div class="modal-footer">
+							<button type="button" onclick="createSaveUser()" class="btn btn-primary">Save</button>
+						</div>
+						
+					  </div>
+					</div>
+				  </div>
+			 <!-- ends -->
+		</div>
+	  </div>
+	</div>
+	
+	
+	
+	
 
     <footer class="footer">
         <div class="container-fluid">
@@ -275,11 +451,90 @@ include_once("dashboard-header.php");
 <script src="<?php echo BASE_URL_ADMIN ?>assets/libs/node-waves/waves.min.js"></script>
 
 <script src="<?php echo BASE_URL_ADMIN ?>assets/js/app.js"></script>
+<script src="<?php echo BASE_URL ?>js/common_validation.js"></script>
 <!-- jQuery Validation Plugin -->
-
-<script src="<?php echo BASE_URL ?>js/common_functions.js"></script>
-
+	<?php 
+	$tmpOtherMedia = [];
+	if(isset($company_profile_details[0]['other_media_url']) &&  $company_profile_details[0]['other_media_url'] != ''){
+		$other_media_url = explode("##@##",($company_profile_details[0]['other_media_url']?? '') );
+		$i = 0;
+		foreach($other_media_url as $val){
+			if($val != ''){
+				$tmpOtherMedia[] = $val;
+			}
+			$i++;
+		}
+	}
+	?>
 <script>
+	var mediaURL = <?php echo json_encode($tmpOtherMedia); ?>;
+	
+	addOtherUrlEdit(mediaURL);
+	var addOtherUrlId = 0;
+	console.log(mediaURL.length);
+	function addOtherUrlEdit(mediaURL){
+		var addOtherUrlId = 0;
+		for(var i=0;i<mediaURL.length;i++){
+			if(i == 0){
+				document.getElementById("otherUrl").value = mediaURL[i];
+			}
+			else{
+				var html = `<div class="col-md-6" id="otherUrl${addOtherUrlId}">
+						<label for="addOtherUrl" class="form-label">Other URL:</label>
+						<a style="float:right" href="javascript:removeOtherUrl(${addOtherUrlId})"><i class="bi bi-trash"></i></a>
+						<textarea class="form-control otherUrl"  rows="3"
+							placeholder="Enter Other URL">${mediaURL[i]}</textarea>
+					</div>`;
+				document.getElementById("addOtherUrlDiv").insertAdjacentHTML("beforeend",html);
+			}
+			addOtherUrlId++;
+		}
+	}
+	
+	function addOtherUrl(){
+		var html = `<div class="col-md-6" id="otherUrl${addOtherUrlId}">
+						<label for="addOtherUrl" class="form-label">Other URL:</label>
+						<a style="float:right" href="javascript:removeOtherUrl(${addOtherUrlId})"><i class="bi bi-trash"></i></a>
+						<textarea class="form-control otherUrl"  rows="3"
+							placeholder="Enter Other URL"></textarea>
+					</div>`;
+		document.getElementById("addOtherUrlDiv").insertAdjacentHTML("beforeend",html);
+		addOtherUrlId++;
+	}
+	function removeOtherUrl(id){
+		document.getElementById("otherUrl"+id).remove();
+	}
+	//validation for page 1 form
+	function page1Validation(){
+		const array1 = {
+						"branch_address" : "Branch Address",
+						"overiew_aboutus" : "Overiew Aboutus",
+						"description" 	  : "Descrption",
+						"no_of_employees" : "No. of Employees"
+						};
+						
+		clearHtmlError(array1);		
+		chkValidInput(array1,0);
+		
+		var validation = 0;
+		$('.error').each(function(index, element) {
+			if(element.innerHTML != ''){
+				validation = 1;
+			}
+		});
+		
+		return validation;
+	}
+	function page2Validation(){
+		var validation = 0;
+		$('.error').each(function(index, element) {
+			if(element.innerHTML != ''){
+				validation = 1;
+			}
+		});
+		return validation;
+	}
+
 
     document.addEventListener('DOMContentLoaded', function () {
         const steps = document.querySelectorAll('.form-step');
@@ -311,11 +566,21 @@ include_once("dashboard-header.php");
         // Next buttons
         document.getElementById('nextStep1').addEventListener('click', () => {
 			if(!page1Validation()){
-				handleFormSubmit();
+				currentStep++;
+				showStep(currentStep);
 			}
         });
+		
+		document.getElementById('prevStep1').addEventListener('click', () => {
+            currentStep--;
+            showStep(currentStep);
+        });
 
-       
+		document.getElementById('submitForm').addEventListener('click', () => {
+			handleFormSubmit();
+        });        
+        // Initialize first step
+        showStep(currentStep);
     });
 
 
@@ -323,99 +588,202 @@ include_once("dashboard-header.php");
 
 <script>
     // Add this JavaScript code after your HTML form
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const candidateForm = document.getElementById('candidateForm');
-
-        // Function to handle form submission
-        async function handleFormSubmit(event) {
-			console.log(1);
-            event.preventDefault();
-			
-			const form = document.getElementById('form_step_1');
-            // Create FormData object
-            const formData = new FormData(form);
-
-            // Add all form fields to FormData
-            // Personal Information
-            formData.append('firstName', document.getElementById('firstName').value);
-            formData.append('lastName', document.getElementById('lastName').value);
-            formData.append('desgination', document.getElementById('desgination').value);
-            formData.append('department', document.getElementById('department').value);
-
-
-            try {
-                const response = await fetch('../dist/backend/save-company-profile.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    alert('Profile saved successfully!');
-                    // Redirect or show success message
-                } else {
-                    throw new Error('Failed to save profile');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to save profile. Please try again.');
-            }
-        }
-
-        // Add form submit event listener
-        //candidateForm.addEventListener('submit', handleFormSubmit);
-    });
 	
-	
-	//validation for page 1 form
-	function page1Validation(){
-		const array1 = {
-						"firstName":"Full Name",
-						"lastName":"Last Name",
-						"desgination" : "Designation",
-						"department" : "Department"
-						};
-						
-		clearHtmlError(array1);
-		chkValidInput(array1,0);
-		
-		var validation = 0;
-		$('.error').each(function(index, element) {
-			if(element.innerHTML != ''){
-				validation = 1;
-			}
-		});
-		
-		return validation;
-	}
+	$(document).ready(function(){
+		var restrictNo = '#contactNumber,#emergencyContactNumber';
+		//restrict only number 
+		//restrictNumbers(restrictNo);
+	});
 	
 	
 	function handleFormSubmit(event) {
+		var otherUrl = '';
+		$(".otherUrl").each(function(){
+			if($(this).val() != ''){
+				otherUrl += $(this).val()+"##@##";
+			}
+		});
 		
 		// Create FormData object
 		const formData = new FormData();
 		
+		// Add all form fields to FormData
 		// Personal Information
-		formData.append('firstName', document.getElementById('firstName').value);
-		formData.append('lastName', document.getElementById('lastName').value);
-		formData.append('desgination', document.getElementById('desgination').value);
-		formData.append('department', document.getElementById('department').value);
+		formData.append('branch_address', document.getElementById('branch_address').value);
+		formData.append('secondary_branch_address', document.getElementById('secondary_branch_address').value);
+		formData.append('overiew_aboutus', document.getElementById('overiew_aboutus').value);
+		formData.append('description', document.getElementById('description').value);
+		formData.append('no_of_employees', document.getElementById('no_of_employees').value);
+		formData.append('year_of_establishment', document.getElementById('year_of_establishment').value);
+		formData.append('gst_no', document.getElementById('gst_no').value);
+		formData.append('branch_location_map', document.getElementById('branch_location_map').value);
+		formData.append('linkedin_url', document.getElementById('linkedin_url').value);
+		formData.append('instagram_url', document.getElementById('instagram_url').value);
+		formData.append('google_business_page', document.getElementById('google_business_page').value);
+		formData.append('facebookUrl', document.getElementById('facebookUrl').value);
+		formData.append('youtube_url', document.getElementById('youtube_url').value);
+		formData.append('otherUrl', otherUrl);
 		
+		// Handle file uploads
+		const company_logo = document.getElementById('company_logo').files[0];
+		if (company_logo) {
+			formData.append('company_logo', company_logo);
+		}
 		
-		fetch('<?php echo BASE_URL_ADMIN ?>backend/save-company-profile.php', {
+		fetch('<?php echo BASE_URL_ADMIN ?>backend/save-consultancy-profile-details.php', {
 		  method: 'POST',
 		  body: formData
 		})
 		.then(response => response.json())
 		.then(data => {
-		  console.log('Success:', data);
+			if(data.success == false){
+				alert(data.error);
+			}
+			else{
+				alert("Company details updated successfully.");
+				window.location.href = "<?php echo BASE_URL ?>consultancy_dashboard.php";
+			}
 		})
 		.catch(error => {
 		  console.error('Error:', error);
 		});
 
 	}
+	
+	
+	document.getElementById('company_logo').addEventListener('change', function () {
+		const file = document.getElementById('company_logo').files[0];
+		const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+		if (file && !allowedTypes.includes(file.type)) {
+			alert("Only JPG, PNG, and GIF images are allowed.");
+			this.value = ''; // Clear the input
+		}
+	});
+	
+function clearHtmlError(array){
+	
+	$('.error').each(function(index, element) {
+		element.innerHTML = '';
+	})
+}
+
+	
+//1 :  number, 2  : valid url,  3 : valid email
+function chkValidInput(array,type){
+	for (var obj in array) {
+		var tmp = document.getElementById(obj).value;
+		
+		if(type == 0){
+			if(tmp == ''){
+				document.getElementById(obj+"Err").innerHTML = 'Please enter '+array[obj];
+			}
+		}
+		if(type == 1){
+			if(tmp != '' && isNaN(tmp) ){
+				document.getElementById(obj+"Err").innerHTML = 'Please enter valid '+array[obj];
+			}
+		}
+		else if(type == 2){
+			if(tmp != '' && !isValidURL(tmp) ){
+				document.getElementById(obj+"Err").innerHTML = 'Please enter valid '+array[obj];
+			}
+		}
+		else if(type == 3){
+			if(tmp != '' && !isValidEmail(tmp) ){
+				document.getElementById(obj+"Err").innerHTML = 'Please enter valid '+array[obj];
+			}
+		}
+	};
+}
+
+
+function createUser(){
+	// Get the modal element
+	const myModalEl = document.getElementById('myModal');
+  
+	// Create a new Bootstrap modal instance
+	const myModal = new bootstrap.Modal(myModalEl);
+	myModal.show(); 
+}
+
+function createAdmin(){
+	
+}
+
+function createSaveUser(){
+	const array1 = {
+					"email_address":"Email Address",
+					"phone_no" : "Phone No"
+					};
+					
+	clearHtmlError(array1);
+	chkValidInput(array1,0);
+	
+	
+	const array2 = { "email_address" : "Email Address"};
+	chkValidInput(array2,3);
+	
+	const array3 = { "phone_no" : "Phone No"};
+	chkValidInput(array3,1);
+	
+	var validation = 0;
+	$('.error').each(function(index, element) {
+		if(element.innerHTML != ''){
+			validation = 1;
+		}
+	});
+	
+	var emailAddress = document.getElementById('email_address').value;
+	var phone_no = document.getElementById('phone_no').value;
+	
+	const formData = new FormData();
+	// Personal Information
+	formData.append('emailAddress', document.getElementById('email_address').value);
+	formData.append('phone_no', document.getElementById('phone_no').value);
+	
+	if(!validation){
+		fetch('<?php echo BASE_URL ?>api/saveCreateUser.php', {
+		  method: 'POST',
+		  body: formData
+		})
+		.then(response => response.json())
+		.then(data => {
+			$("#resultCreateUser").show();
+			console.log('Success:', data);
+			if(data.error == 1){
+				$("#resultCreateUser").addClass('error');
+			}
+			else{
+				$("#resultCreateUser").addClass('text-primary');
+			}
+			$("#resultCreateUser").html(data.result); 
+			$("#resultCreateUser").fadeOut(2000);
+		})
+		.catch(error => {
+		  console.error('Error:', error);
+		});
+	}
+	
+	return validation;	
+}
+
+function markAsAdmin(){
+	let result = confirm("Are you sure want to mark as Admin?");
+	if (result) {
+		fetch('<?php echo BASE_URL ?>api/markAsAdmin.php', {
+			  method: 'POST'
+			})
+			.then(response => response.json())
+			.then(data => {
+				alert("Marked as admin")
+				window.location.reload
+			})
+			.catch(error => {
+			  console.error('Error:', error);
+			});
+	}
+}
 
 </script>
 

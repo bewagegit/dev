@@ -61,9 +61,7 @@ if(!$_SESSION['employer_id'] == ''){
         font-size: 18px;
         color: #007bff;
     }
-	
-	
-	
+
 	#tag-container {
 	  display: flex;
 	  flex-wrap: wrap;
@@ -148,10 +146,14 @@ if(!$_SESSION['employer_id'] == ''){
                             <div class="card-header">
                                 <h4>Company Profile </h4>
                             </div>
-							
 							<div class="d-flex justify-content-end">
 								<a href="javascript:void(0);" onclick="createUser()" class="me-3">Create Sub User</a>
-								<a href="javascript:void(0);" onclick="createAdmin()" class="me-3">Create Admin Name</a>
+								<?php if( isset($company_details[0]['is_admin']) && $company_details[0]['is_admin'] == 1){ ?>
+								<span style='color:red;margin-right: 20px;'>Marked as Admin</span>
+								<?php }else{ ?>
+								<a href="javascript:void(0);" onclick="markAsAdmin()" class="me-3">Mark as Admin</a>
+								<?php } ?>
+									
 							</div>
 							
                             <div class="card-body">
@@ -287,8 +289,8 @@ if(!$_SESSION['employer_id'] == ''){
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="company_logo" class="form-label">Logo : </label>
-														<input type="file" class="form-control" id="company_logo">
+														<label for="company_logo" class="form-label">Logo (.jpg, .png, .gif) : </label>
+														<input type="file" accept=".jpg,.jpeg,.png,.gif" class="form-control" id="company_logo">
 														<div class="error" id="company_logoErr"></div>
 													</div>
 												</div>
@@ -312,7 +314,8 @@ if(!$_SESSION['employer_id'] == ''){
 														<div class="col-md-6">
 															<label for="linkedin_url"
 																class="form-label">
-																<a href="#" class="text-dark"><i class="bi bi-linkedin"></i></a> LinkedIn URL :</label>
+																<img src="<?php echo BASE_URL."assets/images/icons8-linkedin-48.png" ?>" height="21" width="21" alt="linkedin url" class="rounded mr-3">
+																LinkedIn URL :</label>
 															<textarea class="form-control" id="linkedin_url" rows="3"
 																placeholder="Enter LinkedIn URL"><?php echo ($company_profile_details[0]['linkedin_url'])?? ''; ?></textarea>
 															<div class="error" id="linkedin_urlErr"></div>
@@ -335,7 +338,7 @@ if(!$_SESSION['employer_id'] == ''){
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="facebookUrl" class="form-label">
-															<a href="#" class="text-primary me-3"><i class="bi bi-facebook"></i></a>
+															<img src="<?php echo BASE_URL."assets/images/icons8-facebook-48.png" ?>" height="21" width="21" alt="facebook url" class="rounded mr-3">
 															Facebook URL:</label>
 															<textarea class="form-control" id="facebookUrl" rows="3"
 																placeholder="Enter Facebook URL"><?php echo ($company_profile_details[0]['facebook_url'])?? ''; ?></textarea>
@@ -355,6 +358,14 @@ if(!$_SESSION['employer_id'] == ''){
 															<textarea class="form-control otherUrl" id="otherUrl"  rows="3"
 																placeholder="Enter Other URL"><?php echo ($company_profile_details[0]['other_media_url'])?? ''; ?></textarea>
 															<div class="error" id="otherUrlErr"></div>
+														</div>
+														<div class="col-md-6">
+															<label for="youtubeTourVideo" class="form-label">
+															<img src="<?php echo BASE_URL."assets/images/icons8-youtube-48.png" ?>" height="21" width="21" alt="youtube url" class="rounded mr-3">
+															Youtube URL:</label>
+															<textarea class="form-control" id="youtube_url" rows="3"
+																placeholder="Enter Youtube URL"><?php echo ($company_profile_details[0]['youtube_url'])?? ''; ?></textarea>
+															<div class="error" id="youtubeUrlErr"></div>
 														</div>
 														<div id="addOtherUrlDiv">
 														</div>
@@ -410,7 +421,7 @@ if(!$_SESSION['employer_id'] == ''){
 							<input type="number" maxlength="15" class="form-control" id="phone_no" value="" placeholder="Phone No." required>
 							<div class="error" id="phone_noErr"></div>
 						</div>
-						
+						<div class="" id="resultCreateUser"></div>
 						<div class="modal-footer">
 							<button type="button" onclick="createSaveUser()" class="btn btn-primary">Save</button>
 						</div>
@@ -526,7 +537,7 @@ if(!$_SESSION['employer_id'] == ''){
 	function page1Validation(){
 		const array1 = {
 						"branch_address" : "Branch Address",
-						"overiew_aboutus" : "Overiew Aboutus",
+						"overiew_aboutus" : "Overview Aboutus",
 						"description" 	  : "Descrption",
 						"interview_venue" : "Interview Venue",
 						"industryDomainName" : "Industry Domain",
@@ -644,6 +655,7 @@ if(!$_SESSION['employer_id'] == ''){
 		formData.append('google_business_page', document.getElementById('google_business_page').value);
 		formData.append('facebookUrl', document.getElementById('facebookUrl').value);
 		formData.append('officeTourVideo', document.getElementById('officeTourVideo').value);
+		formData.append('youtube_url', document.getElementById('youtube_url').value);
 		formData.append('otherUrl', otherUrl);
 		
 		// Handle file uploads
@@ -658,14 +670,25 @@ if(!$_SESSION['employer_id'] == ''){
 		})
 		.then(response => response.json())
 		.then(data => {
-			//window.location.href = "<?php echo BASE_URL ?>company_dashboard.php";
-		  console.log('Success:', data);
+			alert("Company details updated successfully.");
+			window.location.href = "<?php echo BASE_URL ?>company_dashboard.php";
 		})
 		.catch(error => {
 		  console.error('Error:', error);
 		});
 
 	}
+	
+	
+	document.getElementById('company_logo').addEventListener('change', function () {
+		const file = document.getElementById('company_logo').files[0];
+		const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+		if (file && !allowedTypes.includes(file.type)) {
+			alert("Only JPG, PNG, and GIF images are allowed.");
+			this.value = ''; // Clear the input
+		}
+	});
 	
 function clearHtmlError(array){
 	
@@ -755,7 +778,16 @@ function createSaveUser(){
 		})
 		.then(response => response.json())
 		.then(data => {
-		  console.log('Success:', data);
+			$("#resultCreateUser").show();
+			console.log('Success:', data);
+			if(data.error == 1){
+				$("#resultCreateUser").addClass('error');
+			}
+			else{
+				$("#resultCreateUser").addClass('text-primary');
+			}
+			$("#resultCreateUser").html(data.result); 
+			$("#resultCreateUser").fadeOut(2000);
 		})
 		.catch(error => {
 		  console.error('Error:', error);
@@ -763,6 +795,22 @@ function createSaveUser(){
 	}
 	
 	return validation;	
+}
+
+function markAsAdmin(){
+	let result = confirm("Are you sure want to mark as Admin?");
+	if (result) {
+		fetch('<?php echo BASE_URL ?>api/markAsAdmin.php', {
+			  method: 'POST'
+			})
+			.then(response => response.json())
+			.then(data => {
+				alert("Marked as admin")
+			})
+			.catch(error => {
+			  console.error('Error:', error);
+			});
+	}
 }
 
 </script>

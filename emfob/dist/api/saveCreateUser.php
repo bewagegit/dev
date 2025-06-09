@@ -15,14 +15,14 @@ extract($_POST);
 // Check the phone number is already exist
 $result = db_select("phone_number",USERS," phone_number= ? ",array($phone_no));
 if(count($result) >= 1){
-	echo json_encode(array("result"=> "Phone number is already exist"));
+	echo json_encode(array("error"=> "1","result"=> "Phone number already exist"));
 	exit();
 }
 
 // Check the email is already exist
 $result = db_select("email",USERS," email= ? ",array($emailAddress));
 if(count($result) >= 1){
-	echo json_encode(array("result"=> "Email address is already exist"));
+	echo json_encode(array("error"=> "1","result"=> "Email address already exist"));
 	exit();
 }
 
@@ -43,34 +43,38 @@ if(count($result) >= 1){
             ':password' => $hashedPassword,
             ':user_type' => 2 //Creating the user for company type
         ]);
-
+		
         // Get the inserted user ID
         $user_id = $pdo->lastInsertId();
 		
 		//Get all group List
-		$stmt = $pdo->prepare("SELECT * FROM ".EMPLOYERS." a left join ".USERS." b on b.user_id  = a.user_id  WHERE employer_id = ? ");
+		$stmt1 = $pdo->prepare("SELECT * FROM ".EMPLOYERS." a left join ".USERS." b on b.user_id  = a.user_id  WHERE employer_id = ? ");
 				
-		$stmt->execute([$_SESSION['employer_id']]); // Verify email and user type
-		$company_details = $stmt->fetchAll();
+		$stmt1->execute([$_SESSION['employer_id']]); // Verify email and user type
+		$company_details = $stmt1->fetchAll();
 		
 		$companyName = $company_details[0]['company_name'];
 		$companyWebsite = $company_details[0]['company_website'];
 		
-		$sql = "INSERT INTO employers (user_id, company_name, company_website) VALUES (:user_id, :company_name, :company_website)";
-		$stmt = $pdo->prepare($sql);
-		$stmt->execute([
+		$sql2 = "INSERT INTO employers (user_id, company_name, company_website) VALUES (:user_id, :company_name, :company_website)";
+		$stmt2 = $pdo->prepare($sql2);
+		$stmt2->execute([
 			':user_id' => $user_id,
 			':company_name' => $companyName,
 			':company_website' => $companyWebsite
 		]);
-		echo json_encode(array("result"=> "User Created Succcessfully"));
+		$employer_id = $pdo->lastInsertId();
+		echo json_encode(array("error"=> "0","result"=> "User Created Succcessfully"));
+		
+		$pdo->commit();
  }
  catch (PDOException $e) {
-	// Rollback the transaction in case of an error
+	echo "rollbck";
+	//Rollback the transaction in case of an error
 	$pdo->rollBack();
 	// Log and display the error message
-	error_log("Error: " . $e->getMessage());
+	//error_log("Error: " . $e->getMessage());
 	print_r($e);
-	echo "An error occurred during the registration process.";
+	echo json_encode(array("error"=> "1","result"=> "An error occurred during the registration process."));
  }	
 ?>

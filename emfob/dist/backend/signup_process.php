@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (isset($_POST['consultancy_name']) && isset($_POST['consultancy_website'])) {
                     $consultancyName = $_POST['consultancy_name'];
                     $consultancyWebsite = $_POST['consultancy_website'];
-                    $sql = "INSERT INTO consultancies (user_id, name, website_link) VALUES (:user_id, :name, :website_link)";
+                    $sql = "INSERT INTO ".CONSULTANCIES." (user_id, consultancy_name, consultancy_website) VALUES (:user_id, :name, :website_link)";
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute([
                         ':user_id' => $user_id,
