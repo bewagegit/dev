@@ -57,7 +57,7 @@ $title = 'Job Search | Emfob'; ?>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Filter Section -->
-                                <div class="col-lg-3 mb-4" style="position: sticky; top: 0; z-index: 100;">
+                                <div class="col-lg-4 mb-4" style="position: sticky; top: 0; z-index: 100;">
                                     <div class="filter-section">
                                         <h5>Filters</h5>
                                         <form id="filterForm">
@@ -115,7 +115,7 @@ $title = 'Job Search | Emfob'; ?>
                                 </div>
 
                                 <!-- Job Listings Section -->
-                                <div class="col-lg-9">
+                                <div class="col-lg-8">
                                     <div style="position: sticky; top: 0; background: white; z-index: 100;">
                                         <div class="form-group d-flex">
                                             <input type="text" class="form-control" id="searchInput"
@@ -125,7 +125,7 @@ $title = 'Job Search | Emfob'; ?>
                                         </div>
                                     </div>
                                     <div id="jobResults" class="row"
-                                        style="height: 70vh; overflow-y: scroll; position: relative; padding-top: 20px;">
+                                        style="overflow-y: scroll; position: relative; padding-top: 20px;">
                                         <div class="job-item"
                                             style="position: absolute; width: 100%; transition: transform 0.5s ease;">
                                             <!-- Job items will be appended here -->
@@ -151,46 +151,38 @@ $title = 'Job Search | Emfob'; ?>
                         </div>
                     </div>
                 </div>
+				
 				<!-- Right-side Ad Section -->
-				<div class="col-lg-6">
-                    <div class="card">
+				<div class="col-lg-6 ">
+                    <div class="card position-fixed">
                         <div class="card-body">
-                            <div class="row">
+                            <div class="row " >
 								 <!-- Job Card 1 -->
-								 
-
+									<div class="job-card p-3">
+										<img src="http://localhost/emfob-admin/dist/assets/images/users/avatar-3.png" alt="Company Logo" height="100" width="100" class="jobCardLogo">
+										<div class="job-card-content">
+											<h5 class="jobTitle">Interior Site Supervisor (Chennai)</h5>
+											<p class="mb-0"><span class="cmpName">Bewage Technologies Private Limited</span> - <span class="cmpLocation">Sholinganallur, Semmancheri, Chennai, Semmanjeri, Tamil Nadu, India<span></p>
+											<p class="text-muted mb-0" class="cmpSalary">2000 - 25000 per month</p>
+											<small class="text-muted" class="jobDate">2025-06-02</small>
+										</div>
+									</div>
 									<!-- Right: Job Detail View -->
-								  <div class="col-md-8 job-detail p-4" id="jobDetail">
-									<h4>Frontend Developer</h4>
-									<p><strong>Company:</strong> ABC Tech Solutions</p>
-									<p><strong>Location:</strong> Bengaluru, India</p>
-									<p><strong>Salary:</strong> ₹8 - ₹12 LPA</p>
-									<p><strong>Type:</strong> Full Time</p>
-									<p><strong>Description:</strong> We are looking for a skilled frontend developer experienced in React, JavaScript, and modern web development techniques. Should be able to write clean, maintainable code.</p>
-									<button class="btn btn-primary">Apply Now</button>
-								  </div>
+									<div class="col-md-8 job-detail p-4" id="jobDetail">
+										<h4 class="jobTitle">Frontend Developer</h4>
+										<p><strong>Company:</strong> <span class="cmpName">ABC Tech Solutions</span></p>
+										<p><strong>Location:</strong><span class="cmpLocation">Bengaluru, India</span></p>
+										<p><strong>Salary:</strong><span class="cmpSalary"> ₹8 - ₹12 LPA</span></p>
+										<p><strong>Type:</strong><span class="cmpType"> Full Time<span></p>
+										<p><strong>Description:</strong><span class="jobDescription"> We are looking for a skilled frontend developer experienced in React, JavaScript, and modern web development techniques. Should be able to write clean, maintainable code.<span></p>
+										<button class="btn btn-primary">Apply Now</button>
+									</div>
 								  <!-- ends -->
-							
 							</div>
 						</div>
 					</div>
 				</div>
-
-                
-                <!--<div class="col-lg-3" style="position: sticky; top: 0;">
-                    <div class="card">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Buy Yamaha FZ @ Rs 9999/-</h5>
-                            <p class="card-text">No cost EMI. Low Down Payment</p>
-                            <img src="https://img.indianautosblog.com/2018/01/Bajaj-Auto-Insurance-offer-banner.jpg"
-                                class="img-fluid mb-3" alt="Ad Image">
-                            <h5 class="card-title">Need Home Loan?</h5>
-                            <p class="card-text">Get SBI Home Loan @ 9.07%</p>
-                            <img src="https://5.imimg.com/data5/SELLER/Default/2022/12/VE/IG/SG/18660198/sbi-home-loan-500x500.jpg"
-                                class="img-fluid" alt="Ad Image">
-                        </div>
-                    </div>
-                </div>-->
+				
             </div>
         </div>
         <!-- Main Content Ends Here -->
@@ -244,21 +236,34 @@ $title = 'Job Search | Emfob'; ?>
 <script id="jobTemplate" type="text/template">
     <div class="col-md-12">
         <div class="job-card p-3">
-            <img src="{{companyLogo}}" alt="Company Logo" class="logo">
+            <!--<img src="{{companyLogo}}" alt="Company Logo" class="logo">-->
             <div class="job-card-content">
-                <h5>{{jobTitle}}</h5>
-                <p class="mb-0">{{companyName}} - {{location}}</p>
-                <p class="text-muted mb-0">{{salary}} per month</p>
-                <small class="text-muted">{{postedDate}}</small>
+			
+				{{newlyAddedTag}}
+				<button class="btn btn-outline-secondary btn-sm jobtags " id="urgentlyTag">Urgently Hiring</button>
+				<i class="bi bi-three-dots-vertical"></i>
+                <h5><a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')">{{jobTitle}}</a></h5>
+                <p class="mb-0">{{companyName}}</p>
+				<p class="mb-0">{{location}}</p>
+				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags salaryTag">{{salary}} per month</button>&nbsp;&nbsp;
+				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags jobTypeTag">{{jobType}}</button> &nbsp;&nbsp;
+				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags jobTypeTag">{{jobShift}} Shift</button>
+				<div style="margin-top:5px"><div>
+				<img src="<?php echo BASE_URL."assets/images/next.png" ?>" /> Easily Apply
+				<ul class="cardDescription">
+					<li>{{job_description}}</li>
+				<ul>
+                <small class="float-end">{{postedDate}}</small>
             </div>
-            <div>
-            <div class="text-center mb-4">
-                                <button class="btn btn-info btn-lg rounded-pill" onclick="easyApply()" style="width: 200px;">
-                                    <i class="fas fa-paper-plane"></i> Easy Apply
-                                </button>
-                            </div>
-                <a href="<?php echo BASE_URL ?>/job-view.php?job_id={{jobid}}" class="btn btn-outline-success rounded-pill">View Details</a>
-            </div>
+            <!--
+			<div>
+				<div class="text-center mb-4">
+									<button class="btn btn-info btn-lg rounded-pill" onclick="easyApply()" style="width: 200px;">
+										<i class="fas fa-paper-plane"></i> Easy Apply
+									</button>
+				 </div>
+					<a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')" class="btn btn-outline-success rounded-pill">View Details</a>
+				</div>-->
         </div>
     </div>
 </script>
@@ -355,14 +360,20 @@ $title = 'Job Search | Emfob'; ?>
             $('#jobResults').append('<p>No jobs found.</p>');
         } else {
             paginatedJobs.forEach(function (job) {
+				const date = new Date(job.postedDate);
+				const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
                 const jobTemplate = $('#jobTemplate').html()
 					.replace('{{jobid}}', job.jobid)
                     .replace('{{jobTitle}}', job.jobTitle)
                     .replace('{{companyName}}', job.companyName)
                     .replace('{{location}}', job.location)
+					.replace('{{job_description}}', job.job_description.slice(0, 100))
                     .replace('{{salary}}', job.salary)
+					.replace('{{jobType}}', job.jobType)
+					.replace('{{jobShift}}', job.jobShift)
                     .replace('{{companyLogo}}', '<?php echo BASE_URL_ADMIN; ?>'+job.companyLogo)
-                    .replace('{{postedDate}}', job.postedDate);
+					.replace('{{newlyAddedTag}}',formatTimeAgo(formattedDate,1))
+                    .replace('{{postedDate}}', formatTimeAgo(formattedDate) );
 
                 $('#jobResults').append(jobTemplate);
             });
@@ -444,6 +455,52 @@ $title = 'Job Search | Emfob'; ?>
 	window.addEventListener('popstate', function(event) {
 	  loadData(1);
 	});
+	
+	function viewJobDetails(jobid){
+		fetch("<?php echo BASE_URL; ?>api/getJobViewById.php?job_id="+jobid)
+		  .then(response => response.json())
+		  .then(data => {
+			  console.log(data);
+			  $(".jobTitle").html(data[0]['job_title']);
+			  $(".cmpName").html(data[0]['company_name']);
+			  $(".cmpLocation").html(data[0]['job_location']);
+			  $(".cmpSalary").html(data[0]['salaryRangeMin'] + "-" + data[0]['salaryRangeMax']+" per month");
+			  $(".jobDate").html(data[0]['job_postings_date']);
+			  $(".cmpType").html(data[0]['name']);
+			  $(".jobDescription").html(data[0]['jobDescription']);
+			  $(".jobCardLogo").attr('src', "<?php echo BASE_URL_ADMIN; ?>backend/"+data[0]['logo']);
+			//console.log(data); // Do something with the response
+		  })
+		  .catch(error => {
+			console.error("Error:", error);
+		  });
+	}
+	function formatTimeAgo(date,isTags  = 0) {
+		const now = new Date();
+		const past = new Date(date);
+		const diff = (now - past) / 1000; // in seconds
+
+		const minute = 60;
+		const hour = 60 * minute;
+		const day = 24 * hour;
+		const week = 7 * day;
+		const month = 30 * day;
+		
+		if(isTags == 0){ 
+			if (diff < 60) return 'just now';
+			if (diff < hour) return `${Math.floor(diff / minute)} minute(s) ago`;
+			if (diff < day) return `${Math.floor(diff / hour)} hour(s) ago`;
+			if (diff < week) return `${Math.floor(diff / day)} day(s) ago`;
+			if (diff < month) return `${Math.floor(diff / week)} week(s) ago`;
+			return `${Math.floor(diff / month)} month(s) ago`;
+		}
+		else{
+			if (diff < 60) return 'New';
+			if (diff < hour) return `New`;
+			if (diff < day) return `New`;
+		}
+		return '';
+	}
 	
 </script>
 

@@ -256,7 +256,7 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-12">
 															<label for="jobDescription" class="form-label">Job Description / Summary <span style='color:red'>*</span>:</label>
-															<textarea class="form-control" id="jobDescription" rows="7"  name="jobDescription" maxlength="1000"
+															<textarea class="form-control" id="jobDescription" rows="7"  name="jobDescription" 
 															placeholder="Job Description / Summary"></textarea>
 															<div class="error" id="jobDescriptionErr"></div>
 														</div>												

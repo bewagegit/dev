@@ -6,18 +6,20 @@ body{
 
 /* Styling for the Job Cards */
 .job-card {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	border-radius: 8px;
+	/*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+	border: 1px solid #d4d2d0;
+    box-shadow: none;
+	border-radius: 5px;
 	background-color: #fff;
-	margin-bottom: 10px;
-	margin-top: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
 	display: flex;
 	align-items: center;
 	padding: 15px;
 }
 
 .job-card:hover {
-	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+	/*box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);*/
 }
 
 /* Flexbox layout to align the logo and content */
@@ -36,12 +38,13 @@ body{
 .job-card h5 {
 	font-weight: bold;
 	margin: 0;
-	font-size: 1.2rem;
+	font-size: 1.5rem;
 }
 
 .job-card p {
 	margin: 5px 0;
 	color: #6c757d;
+	font-size: 14px;
 }
 
 .job-card small {
@@ -112,27 +115,11 @@ input[type="range"] {
   width: 100%;
   accent-color: #4caf50; /* For modern browsers */
 }
-
-.job-card {
-  border-radius: 1rem;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  transition: 0.3s ease;
-}
-
-.job-card:hover {
-  transform: translateY(-5px);
-}
-
-.job-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.job-company {
-  color: #6c757d;
-}
-
-.badge-salary {
-  background-color: #e9ecef;
-  color: #212529;
-}
+.job-card-content a{color:black}
+.job-card-content a:hover{text-decoration:underline !important}
+.jobtags{color: #9d2b6b;padding: 3px 6px !important;border-color: #d4d2d0;}
+#urgentlyTag{border:0px;font-weight: bold;}
+.salaryTag {background-color: #f3f2f1;font-weight: bold;}
+.jobCardTags{color: black;font-weight: bold;}
+.quickViewJob{position: fixed;bottom: 235px;padding: 10px;}
+.cardDescription li{display: list-item;}

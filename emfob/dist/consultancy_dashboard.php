@@ -214,7 +214,7 @@ if(!$_SESSION['user_id'] == ''){
 														<?php echo $_SESSION['email'];  ?>
 													</div>
 													<div class="col-md-6">
-														<label for="branch_address" class="form-label">Branch Address <span style='color:red'>*</span>:</label>
+														<label for="branch_address" class="form-label">Branch Address<span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="branch_address" rows="3"
 																placeholder="Enter Company Branch Address"><?php echo $company_profile_details[0]['branch_address']?? "";  ?></textarea>
 														<div class="error" id="branch_addressErr"></div>
@@ -228,7 +228,7 @@ if(!$_SESSION['user_id'] == ''){
 														<div class="error" id=""></div>
 													</div>
 													<div class="col-md-6">
-														<label for="overiew_aboutus" class="form-label">Overview / AboutUs <span style='color:red'>*</span>:</label>
+														<label for="overiew_aboutus" class="form-label">Overview / AboutUs<span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="overiew_aboutus" rows="3"
 																placeholder="Enter Overview / AboutUs"><?php echo $company_profile_details[0]['overiew_aboutus']?? '';  ?></textarea>
 														<div class="error" id="overiew_aboutusErr"></div>
@@ -236,13 +236,13 @@ if(!$_SESSION['user_id'] == ''){
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="description" class="form-label">Company Description <span style='color:red'>*</span>:</label>
+														<label for="description" class="form-label">Company Description<span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="description" rows="3"
 																placeholder="Enter Company Description"><?php echo $company_profile_details[0]['description']?? '';  ?></textarea>
 														<div class="error" id="descriptionErr"></div>
 													</div>
 													<div class="col-md-6">
-														<label for="no_of_employees" class="form-label">No. of Employees <span style='color:red'>*</span>:</label>
+														<label for="no_of_employees" class="form-label">No. of Employees<span style='color:red'>*</span>:</label>
 														<input type="text" class="form-control" id="no_of_employees" value="<?php echo ($company_profile_details[0]['no_of_employees'])?? '0'; ?>"
 															placeholder="Enter No. of Employees" required>
 														<div class="error" id="no_of_employeesErr"></div>
@@ -250,7 +250,7 @@ if(!$_SESSION['user_id'] == ''){
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="year_of_establishment" class="form-label">Year of Establishment :</label>
+														<label for="year_of_establishment" class="form-label">Year of Establishment:</label>
 														<input type="text" class="form-control" id="year_of_establishment" value="<?php echo ($company_profile_details[0]['year_of_establishment'])?? '0'; ?>"
 															placeholder="Enter No. of Establishment" required>
 														<div class="error" id="year_of_establishmentErr"></div>
@@ -264,7 +264,7 @@ if(!$_SESSION['user_id'] == ''){
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="company_logo" class="form-label">Logo (.jpg, .png, .gif) : </label>
+														<label for="company_logo" class="form-label">Logo (.jpg, .png, .gif):</label>
 														<input type="file" accept=".jpg,.jpeg,.png,.gif" class="form-control" id="company_logo">
 														<div class="error" id="company_logoErr"></div>
 													</div>
@@ -281,7 +281,7 @@ if(!$_SESSION['user_id'] == ''){
 								
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="branch_location_map" class="form-label"><i class="bi bi-geo-alt"></i>Branch Location Map :</label>
+															<label for="branch_location_map" class="form-label"><i class="bi bi-geo-alt"></i>Branch Location Map:</label>
 															<textarea class="form-control" id="branch_location_map"  rows="3"
 																	placeholder="Enter Branch Location Map"><?php echo ($company_profile_details[0]['branch_location_map'])?? ''; ?></textarea>
 															<div class="error" id="branch_location_mapErr"></div>
@@ -297,14 +297,14 @@ if(!$_SESSION['user_id'] == ''){
 														</div>
 														<div class="col-md-6">
 															<label for="instagram_url" class="form-label">
-															<a href="#" class="text-danger me-3"><i class="bi bi-instagram"></i></a> Instagram URL:</label>
+															<img src="<?php echo BASE_URL."assets/images/instagram.png" ?>" height="18" width="18"  /> Instagram URL:</label>
 															<textarea class="form-control" id="instagram_url" rows="3"
 																placeholder="Enter Instagram URL"><?php echo ($company_profile_details[0]['instagram_url'])?? ''; ?></textarea>
 															<div class="error" id="graduationYearErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="google_business_page" class="form-label">
-															<a href="#" class="text-danger me-3"><i class="fab fa-google"></i></a> Google Business Page Link:</label>
+															<img src="<?php echo BASE_URL."assets/images/google_icon.png" ?>" height="18" width="18"  /> Google Business Page Link:</label>
 															<textarea class="form-control" id="google_business_page" rows="3"
 																placeholder="Enter Google Business Page Link"><?php echo ($company_profile_details[0]['google_business_page'])?? ''; ?></textarea>
 															<div class="error" id="google_business_pageErr"></div>

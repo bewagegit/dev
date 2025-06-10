@@ -138,7 +138,7 @@ if(!$_SESSION['employer_id'] == ''){
             <!-- end page title -->
 
             <!-- Main Content Starts Here-->
-            <div class="container mt-5">
+            <div class="container" style="margin-left: 0px;">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
@@ -212,11 +212,11 @@ if(!$_SESSION['employer_id'] == ''){
 														Phone No :</label>
 														<?php echo $company_details[0]['phone_number'];  ?>
 														<br/>
-														<label for="fullName" class="form-label"> <i class="bi bi-envelope"></i> Email ID :</label>
+														<label for="fullName" class="form-label"> <i class="bi bi-envelope"></i> Email ID:</label>
 														<?php echo $_SESSION['email'];  ?>
 													</div>
 													<div class="col-md-6">
-														<label for="branch_address" class="form-label">Branch Address <span style='color:red'>*</span>:</label>
+														<label for="branch_address" class="form-label">Branch Address<span style='color:red'>*</span>:</label>
 														<textarea class="form-control" id="branch_address" rows="3"
 																placeholder="Enter Company Branch Address"><?php echo $company_profile_details[0]['branch_address']?? "";  ?></textarea>
 														<div class="error" id="branch_addressErr"></div>
@@ -245,7 +245,7 @@ if(!$_SESSION['employer_id'] == ''){
 														<div class="error" id="descriptionErr"></div>
 													</div>
 													<div class="col-md-6">
-															<label for="interview_venue" class="form-label">Interview Venue: <span style='color:red'>*</span>:</label>
+															<label for="interview_venue" class="form-label">Interview Venue:</label>
 															<textarea class="form-control" id="interview_venue" rows="3"
 																	placeholder="Enter Interview Venue"><?php echo $company_profile_details[0]['interview_venue']?? '';  ?></textarea>
 															<div class="error" id="interview_venueErr"></div>
@@ -255,8 +255,7 @@ if(!$_SESSION['employer_id'] == ''){
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="industry_domain" class="form-label">Industry & Domain Name: 
-														<span style='color:red'>*</span>:
+														<label for="industry_domain" class="form-label">Industry & Domain Name<span style='color:red'>*</span>:
 														</label>
 														<select class="form-control" id="industryDomainName" name="industryDomainName" required>
 																<option value="" disabled selected>Select Industry</option>
@@ -267,29 +266,29 @@ if(!$_SESSION['employer_id'] == ''){
 														<div class="error" id="industryDomainNameErr"></div>
 													</div>
 													<div class="col-md-6">
-														<label for="no_of_employees" class="form-label">No. of Employees: <span style='color:red'>*</span>:</label>
-														<input type="text" class="form-control" id="no_of_employees" value="<?php echo ($company_profile_details[0]['no_of_employees'])?? '0'; ?>"
+														<label for="no_of_employees" class="form-label">No. of Employees<span style='color:red'>*</span>:</label>
+														<input type="text" class="form-control" id="no_of_employees" value="<?php echo ($company_profile_details[0]['no_of_employees'])?? ''; ?>"
 															placeholder="Enter No. of Employees" required>
 														<div class="error" id="no_of_employeesErr"></div>
 													</div>
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="year_of_establishment" class="form-label">Year of Establishment :</label>
-														<input type="text" class="form-control" id="year_of_establishment" value="<?php echo ($company_profile_details[0]['year_of_establishment'])?? '0'; ?>"
+														<label for="year_of_establishment" class="form-label">Year of Establishment:</label>
+														<input type="text" class="form-control" id="year_of_establishment" value="<?php echo ($company_profile_details[0]['year_of_establishment'])?? ''; ?>"
 															placeholder="Enter No. of Establishment" required>
 														<div class="error" id="year_of_establishmentErr"></div>
 													</div>
 													<div class="col-md-6">
 														<label for="gst_no" class="form-label">GST No.:</label>
-														<input type="text" class="form-control" id="gst_no" maxlength= "15" value="<?php echo ($company_profile_details[0]['gst_no'])?? '0'; ?>"
+														<input type="text" class="form-control" id="gst_no" maxlength= "15" value="<?php echo ($company_profile_details[0]['gst_no'])?? ''; ?>"
 															placeholder="Enter GST No." required>															
 														<div class="error" id="gst_noErr"></div>
 													</div>
 												</div>
 												<div class="row mb-3">
 													<div class="col-md-6">
-														<label for="company_logo" class="form-label">Logo (.jpg, .png, .gif) : </label>
+														<label for="company_logo" class="form-label">Logo (.jpg, .png, .gif): </label>
 														<input type="file" accept=".jpg,.jpeg,.png,.gif" class="form-control" id="company_logo">
 														<div class="error" id="company_logoErr"></div>
 													</div>
@@ -322,14 +321,14 @@ if(!$_SESSION['employer_id'] == ''){
 														</div>
 														<div class="col-md-6">
 															<label for="instagram_url" class="form-label">
-															<a href="#" class="text-danger me-3"><i class="bi bi-instagram"></i></a> Instagram URL:</label>
+															<img src="<?php echo BASE_URL."assets/images/instagram.png" ?>" height="18" width="18"  /> Instagram URL:</label>
 															<textarea class="form-control" id="instagram_url" rows="3"
 																placeholder="Enter Instagram URL"><?php echo ($company_profile_details[0]['instagram_url'])?? ''; ?></textarea>
 															<div class="error" id="graduationYearErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="google_business_page" class="form-label">
-															<a href="#" class="text-danger me-3"><i class="fab fa-google"></i></a> Google Business Page Link:</label>
+															<img src="<?php echo BASE_URL."assets/images/google_icon.png" ?>" height="18" width="18"  /> Google Business Page Link:</label>
 															<textarea class="form-control" id="google_business_page" rows="3"
 																placeholder="Enter Google Business Page Link"><?php echo ($company_profile_details[0]['google_business_page'])?? ''; ?></textarea>
 															<div class="error" id="google_business_pageErr"></div>
@@ -539,7 +538,6 @@ if(!$_SESSION['employer_id'] == ''){
 						"branch_address" : "Branch Address",
 						"overiew_aboutus" : "Overview Aboutus",
 						"description" 	  : "Descrption",
-						"interview_venue" : "Interview Venue",
 						"industryDomainName" : "Industry Domain",
 						"no_of_employees" : "No. of Employees"
 						};

@@ -89,7 +89,9 @@ if(isset($limit) && $limit != '' ){
                 'companyLogo' =>  $val['logo'],
                 'postedDate' => $val['job_postings_date'],
                 'jobType' => $val['emptype'],
+				'jobShift' => $val['shift_timing'],
                 'experienceLevel' => $val['experience_requirement'],
+				'job_description' => $val['job_description'],
                 'industry' => $val['cmpname']);
 	}
 	if(count($result) >= 1){
