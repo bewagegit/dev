@@ -44,7 +44,8 @@ body{
 .job-card p {
 	margin: 5px 0;
 	color: #6c757d;
-	font-size: 14px;
+	font-size: 15px;
+	
 }
 
 .job-card small {
@@ -118,8 +119,15 @@ input[type="range"] {
 .job-card-content a{color:black}
 .job-card-content a:hover{text-decoration:underline !important}
 .jobtags{color: #9d2b6b;padding: 3px 6px !important;border-color: #d4d2d0;}
-#urgentlyTag{border:0px;font-weight: bold;}
+#urgentlyTag{border:0px;font-weight: bold;margin: 0px -5px;cursor:pointer;border: 1px solid;}
 .salaryTag {background-color: #f3f2f1;font-weight: bold;}
 .jobCardTags{color: black;font-weight: bold;}
 .quickViewJob{position: fixed;bottom: 235px;padding: 10px;}
 .cardDescription li{display: list-item;}
+.postingTags{margin-top: -22px;margin-right: -22px;height: 64px;}
+.cardDescription{font-size: 15px;}
+#urgentlyTag:hover{color: #9d2b6b !important; text-decoration: none;background-color: #fff;cursor:pointer;}
+.jobSearchExp{padding: 15px;border-color: #ddd;}
+.choices{border-color: #e5edf0;}
+.cardselected .job-card{border-color:#a4b4cf}
+.postedDate{color:#eb6c0e !important}

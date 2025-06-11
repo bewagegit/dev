@@ -57,53 +57,16 @@ $title = 'Job Search | Emfob'; ?>
                         <div class="card-body">
                             <div class="row">
                                 <!-- Filter Section -->
-                                <div class="col-lg-4 mb-4" style="position: sticky; top: 0; z-index: 100;">
+                                <!--<div class="col-lg-4 mb-4" style="position: sticky; top: 0; z-index: 100;">
                                     <div class="filter-section">
                                         <h5>Filters</h5>
                                         <form id="filterForm">
-                                            <div class="form-group">
-                                                <label for="jobType">Job Type</label>
-                                                <select class="form-control" id="jobType" multiple >
-													<?php foreach($employment_type as $val){ ?>
-													<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
-													<?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="experienceLevel">Experience Level</label>
-                                                <select class="form-control" id="experienceLevel">
-                                                    <option value="">All</option>
-                                                    <?php for($i=0;$i<50;$i++){ ?>
-													<option value="<?php echo $i ?>"><?php echo $i; ?></option>
-													<?php } ?> 
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="location">Location</label>
-                                                <input type="text" class="form-control" id="location"
-                                                    placeholder="Enter location">
-                                            </div>
-											<div class="form-group">
-                                                <label for="location">Language</label>
-												<select class="form-control" id="language" multiple>
-												<?php foreach($language as $val){ ?>
-													<option value="<?php echo $val['id'] ?>"><?php echo $val['languages_name'] ?></option>
-												<?php } ?>
-												</select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="salaryRange">Salary Range</label>
-												<span id="brightnessValue">10000</span></label>
-												<input type="range" id="range" min="0" step="1000" max="300000" value="10000">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="industry">Industry</label>
-                                                <select class="form-control" id="industry" multiple>
-                                                    <?php foreach($job_industry as $val){ ?>
-													<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
-													<?php } ?>
-                                                </select>
-                                            </div>
+                                            
+                                            
+                                           
+											
+                                            
+                                            
                                             <button type="button" class="btn btn-primary btn-block"
                                                 onclick="loadData(1)">Apply Filters
                                             </button>
@@ -112,18 +75,98 @@ $title = 'Job Search | Emfob'; ?>
                                             </button>
                                         </form>
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <!-- Job Listings Section -->
-                                <div class="col-lg-8">
-                                    <div style="position: sticky; top: 0; background: white; z-index: 100;">
-                                        <div class="form-group d-flex">
-                                            <input type="text" class="form-control" id="searchInput"
-                                                placeholder="Search for a job">
-                                            <button class="btn btn-primary ml-2" onclick="loadData(1,'title')">Search
-                                                Job</button>
-                                        </div>
-                                    </div>
+                                <div class="col-lg-12">
+								
+									<div class="col-lg-12">
+										<div style="position: sticky; top: 0; background: white; z-index: 100;">
+											<div class="row mb-3">
+												<div class="col-md-3">
+													<div class="form-group">
+															<label for="jobType">Job Type</label>
+															<select class="form-control jobsearchinput" id="jobType" multiple >
+																<?php foreach($employment_type as $val){ ?>
+																<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+																<?php } ?>
+															</select>
+													</div>
+												</div>
+												<div class="col-md-3">
+													<div class="form-group">
+														<label for="location">Location</label>
+														<input type="text" class="form-control jobSearchExp" id="location"
+															placeholder="Enter location">
+													</div>
+												</div>
+												
+												<div class="col-md-4">
+													<div class="form-group">
+														<label for="location">Language</label>
+														<select class="form-control jobsearchinput" id="language" multiple>
+														<?php foreach($language as $val){ ?>
+															<option value="<?php echo $val['id'] ?>"><?php echo $val['languages_name'] ?></option>
+														<?php } ?>
+														</select>
+													</div>
+												</div>
+												<div class="col-md-2">
+													<div class="form-group">
+														<label for="experienceLevel">Experience Level</label>
+														<select class="form-control jobSearchExp" id="experienceLevel">
+															<option value="">All</option>
+															<?php for($i=0;$i<50;$i++){ ?>
+															<option value="<?php echo $i ?>"><?php echo $i; ?></option>
+															<?php } ?> 
+														</select>
+													</div>
+												</div>
+												
+											</div>
+											<div class="row mb-3">
+
+												
+											</div>
+											<div class="row mb-3">
+												<div class="col-md-5">
+													<div class="form-group">
+														<label for="industry">Industry</label>
+														<select class="form-control jobsearchinput" id="industry" multiple>
+															<?php foreach($job_industry as $val){ ?>
+															<option value="<?php echo $val['id'] ?>"><?php echo $val['name'] ?></option>
+															<?php } ?>
+														</select>
+													</div>
+												</div>
+												
+												<div class="col-md-3">
+													<div class="form-group">
+														<label for="experienceLevel">Job Title</label>
+														<input type="text" class="form-control jobSearchExp" id="searchInput"
+														placeholder="Search for a job">
+													</div>
+												</div>
+												
+												<div class="col-md-3">
+													<div class="form-group">
+															<label for="salaryRange">Salary Range</label>
+															<span id="brightnessValue">10000</span></label>
+															<input type="range" id="range" min="0" step="1000" max="300000" value="10000">
+													</div>
+												</div>
+											</div>
+											<br/>
+											<div class="form-group d-flex">
+												<button class="btn btn-primary ml-2" onclick="loadData(1,'title')">Search Job</button>&nbsp;&nbsp;
+												<button type="button" class="btn btn-primary btn-block"
+													onclick="clearFilters()">Clear Filters
+												</button>
+											</div>
+										</div>
+									</div>
+									
+									
                                     <div id="jobResults" class="row"
                                         style="overflow-y: scroll; position: relative; padding-top: 20px;">
                                         <div class="job-item"
@@ -131,7 +174,6 @@ $title = 'Job Search | Emfob'; ?>
                                             <!-- Job items will be appended here -->
                                         </div>
                                     </div>
-
                                     <!-- Pagination -->
                                     <nav aria-label="Job results pagination">
                                         <ul class="pagination justify-content-center mt-4" style="display:none">
@@ -156,29 +198,102 @@ $title = 'Job Search | Emfob'; ?>
 				<div class="col-lg-6 ">
                     <div class="card position-fixed">
                         <div class="card-body">
-                            <div class="row " >
-								 <!-- Job Card 1 -->
+							<img src="<?php echo BASE_URL."assets/images/close.png" ?>" alt="Company Logo" height="20" width="20" class="float-end">
+							
+							<div class="row">
+								
+								<div class="job-card rounded-top">
+								  
+								  <ul class="list-unstyled mb-0">
+									  <li><h5 class="card-title">Senior Frontend Developer</h5></li>
+									  <li><strong>Experience:</strong> 3–6 years</li>
+									  <li><strong>Job Type:</strong> Full-Time</li>
+									  <li><strong>Posted:</strong> 2 days ago</li>
+								  </ul> 
+								</div>
+								
+								<div class="card mb-4 text-white p-4 rounded-top">
+								  <div class="card-body">
+									<h5 class="card-title">Job Summary</h5>
+									<ul class="list-unstyled mb-0">
+									  <li><strong>Salary:</strong> ₹12L - ₹18L / year</li>
+									  <li><strong>Experience:</strong> 3–6 years</li>
+									  <li><strong>Job Type:</strong> Full-Time</li>
+									  <li><strong>Posted:</strong> 2 days ago</li>
+									</ul>
+								  </div>
+								</div>
+								
+								<div class="card mb-4">
+								  <div class="card-body">
+									<h5 class="card-title">Job Summary</h5>
+									<ul class="list-unstyled mb-0">
+									  <li><strong>Salary:</strong> ₹12L - ₹18L / year</li>
+									  <li><strong>Experience:</strong> 3–6 years</li>
+									  <li><strong>Job Type:</strong> Full-Time</li>
+									  <li><strong>Posted:</strong> 2 days ago</li>
+									</ul>
+								  </div>
+								</div>
+								
+								
+								<div class="card mb-4">
+								  <div class="card-body">
+									<h5 class="card-title">Job Description</h5>
+									<p>We are looking for a skilled frontend developer with experience in React, JavaScript, and modern UI/UX principles...</p>
+								  </div>
+								</div>
+								
+							</div>
+						
+							
+							
+							<!--
+							<br/>
+                            <div class="row" >
+								 <!-- Job Card 1 
 									<div class="job-card p-3">
-										<img src="http://localhost/emfob-admin/dist/assets/images/users/avatar-3.png" alt="Company Logo" height="100" width="100" class="jobCardLogo">
 										<div class="job-card-content">
-											<h5 class="jobTitle">Interior Site Supervisor (Chennai)</h5>
-											<p class="mb-0"><span class="cmpName">Bewage Technologies Private Limited</span> - <span class="cmpLocation">Sholinganallur, Semmancheri, Chennai, Semmanjeri, Tamil Nadu, India<span></p>
-											<p class="text-muted mb-0" class="cmpSalary">2000 - 25000 per month</p>
-											<small class="text-muted" class="jobDate">2025-06-02</small>
+											<h5 class="jobTitle"></h5>
+											<p class="text-muted mb-0"><span class="jobDetail"></span></p>
+											<p class="text-muted mb-0"><span class="cmpName"></span></p>
+											<p class="text-muted mb-0"><span class="cmpLocation"></span></p>
+											<p><span class="cmpSalary"></span></p>
+											<button class="btn btn-lg btn-info waves-effect waves-light">Apply Now</button>&nbsp;&nbsp;&nbsp;&nbsp;
+											<img src="<?php echo BASE_URL."assets/images/save-instagram.png" ?>" alt="Company Logo" height="20" width="20">&nbsp;&nbsp;&nbsp;&nbsp;
+											<img src="<?php echo BASE_URL."assets/images/link.png" ?>" alt="Company Logo" height="20" width="20">
+											<small class="text-muted" class="jobDate"></small>
 										</div>
 									</div>
-									<!-- Right: Job Detail View -->
+									<div class="job-card p-3">
+										<div class="job-card-content">
+											<h5 class="jobTitle"></h5>
+											<p class="text-muted mb-0"><span class="jobDetail"></span></p>
+											<p class="text-muted mb-0"><span class="cmpName"></span></p>
+											<p class="text-muted mb-0"><span class="cmpLocation"></span></p>
+											<p><span class="cmpSalary"></span></p>
+											<button class="btn btn-lg btn-info waves-effect waves-light">Apply Now</button>&nbsp;&nbsp;&nbsp;&nbsp;
+											<img src="<?php echo BASE_URL."assets/images/save-instagram.png" ?>" alt="Company Logo" height="20" width="20">&nbsp;&nbsp;&nbsp;&nbsp;
+											<img src="<?php echo BASE_URL."assets/images/link.png" ?>" alt="Company Logo" height="20" width="20">
+											<small class="text-muted" class="jobDate"></small>
+										</div>
+									</div>
+									<!-- Right: Job Detail View 
 									<div class="col-md-8 job-detail p-4" id="jobDetail">
 										<h4 class="jobTitle">Frontend Developer</h4>
-										<p><strong>Company:</strong> <span class="cmpName">ABC Tech Solutions</span></p>
-										<p><strong>Location:</strong><span class="cmpLocation">Bengaluru, India</span></p>
-										<p><strong>Salary:</strong><span class="cmpSalary"> ₹8 - ₹12 LPA</span></p>
-										<p><strong>Type:</strong><span class="cmpType"> Full Time<span></p>
-										<p><strong>Description:</strong><span class="jobDescription"> We are looking for a skilled frontend developer experienced in React, JavaScript, and modern web development techniques. Should be able to write clean, maintainable code.<span></p>
+										<p><strong>Company:</strong> <span class="cmpName" class="jobDescription"></span></p>
+										<p><strong>Location:</strong><span class="cmpLocation" class="jobDescription"></span></p>
+										<p><strong>Salary:</strong><span class="cmpSalary" class="jobDescription"></span></p>
+										<p><strong>Type:</strong><span class="cmpType" class="jobDescription"><span></p>
+										<p><strong>Description:</strong><span class="jobDescription">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy<span></p>
 										<button class="btn btn-primary">Apply Now</button>
 									</div>
-								  <!-- ends -->
-							</div>
+								  <!-- ends 
+							</div> 
+							-->
+							
+							
+							
 						</div>
 					</div>
 				</div>
@@ -234,38 +349,46 @@ $title = 'Job Search | Emfob'; ?>
 
 <!-- Template for Job Cards -->
 <script id="jobTemplate" type="text/template">
-    <div class="col-md-12">
+    <div class="col-md-12 cards" id="jobcards{{jobCardIds}}">
         <div class="job-card p-3">
-            <!--<img src="{{companyLogo}}" alt="Company Logo" class="logo">-->
-            <div class="job-card-content">
-			
+            <div class="job-card-content text-start">
+				<img src="<?php echo BASE_URL."assets/images/direct_hiring-icon1.png" ?>" class="postingTags float-end" />
 				{{newlyAddedTag}}
-				<button class="btn btn-outline-secondary btn-sm jobtags " id="urgentlyTag">Urgently Hiring</button>
+				{{urgentlyHiring}}
 				<i class="bi bi-three-dots-vertical"></i>
                 <h5><a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')">{{jobTitle}}</a></h5>
-                <p class="mb-0">{{companyName}}</p>
+                <p class="mb-0">{{companyName}}<img src="<?php echo BASE_URL."assets/images/shield.png" ?>" /></p>
 				<p class="mb-0">{{location}}</p>
 				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags salaryTag">{{salary}} per month</button>&nbsp;&nbsp;
 				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags jobTypeTag">{{jobType}}</button> &nbsp;&nbsp;
 				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags jobTypeTag">{{jobShift}} Shift</button>
-				<div style="margin-top:5px"><div>
-				<img src="<?php echo BASE_URL."assets/images/next.png" ?>" /> Easily Apply
-				<ul class="cardDescription">
-					<li>{{job_description}}</li>
-				<ul>
-                <small class="float-end">{{postedDate}}</small>
-            </div>
-            <!--
-			<div>
-				<div class="text-center mb-4">
-									<button class="btn btn-info btn-lg rounded-pill" onclick="easyApply()" style="width: 200px;">
-										<i class="fas fa-paper-plane"></i> Easy Apply
-									</button>
-				 </div>
-					<a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')" class="btn btn-outline-success rounded-pill">View Details</a>
-				</div>-->
-        </div>
-    </div>
+				<div style="margin-top:5px">
+					<div>
+						<div class="mb-4">
+							<button class="btn btn-info btn-lg rounded-pill" onclick="viewJobDetails('{{jobidEasy}}')" style="width: 110px;margin-top: 10px;">
+								<i class="fas fa-paper-plane"></i> Easy Apply
+							</button>
+						</div>
+						<ul class="cardDescription ">
+							<li>{{job_description}}</li>
+							<li>Required : {{req_skills}}</li>
+							<li>Min : {{experienceLevel}} Year(s)</li>
+						<ul>
+						<small class="float-end postedDate">{{postedDate}}</small>
+					</div>
+					<!--
+					<div>
+						<div class="text-center mb-4">
+											<button class="btn btn-info btn-lg rounded-pill" onclick="easyApply()" style="width: 200px;">
+												<i class="fas fa-paper-plane"></i> Easy Apply
+											</button>
+						 </div>
+						<a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')" class="btn btn-outline-success rounded-pill">View Details</a>
+					</div>-->
+				</div>
+			</div>
+		</div>
+	</div>
 </script>
 
 <!-- JavaScript (Bootstrap and jQuery) -->
@@ -362,18 +485,33 @@ $title = 'Job Search | Emfob'; ?>
             paginatedJobs.forEach(function (job) {
 				const date = new Date(job.postedDate);
 				const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+				var urgentlyHiring = `<button class="btn btn-outline-secondary btn-sm jobtags" id="urgentlyTag">Immediate Hiring</button>`
+				var location = job.location.split(",");
+				var locationStr = '';
+				if(typeof(location[location.length-2]) != 'undefined'){
+					locationStr += location[location.length-2]+",";
+				}
+				if(typeof(location[location.length-1]) != 'undefined'){
+					locationStr += location[location.length-1]+",";
+				}
                 const jobTemplate = $('#jobTemplate').html()
 					.replace('{{jobid}}', job.jobid)
+					.replace('{{jobidEasy}}', job.jobid)
+					.replace('{{jobCardIds}}', job.jobid)
                     .replace('{{jobTitle}}', job.jobTitle)
                     .replace('{{companyName}}', job.companyName)
-                    .replace('{{location}}', job.location)
+                    .replace('{{location}}', locationStr.slice(0,locationStr.length-1) )
 					.replace('{{job_description}}', job.job_description.slice(0, 100))
                     .replace('{{salary}}', job.salary)
 					.replace('{{jobType}}', job.jobType)
 					.replace('{{jobShift}}', job.jobShift)
+					.replace('{{req_skills}}', job.req_skills)
+					.replace('{{experienceLevel}}', job.experienceLevel)
                     .replace('{{companyLogo}}', '<?php echo BASE_URL_ADMIN; ?>'+job.companyLogo)
 					.replace('{{newlyAddedTag}}',formatTimeAgo(formattedDate,1))
+					.replace('{{urgentlyHiring}}', ((job.is_urgently_hiring)? urgentlyHiring:'') )
                     .replace('{{postedDate}}', formatTimeAgo(formattedDate) );
+
 
                 $('#jobResults').append(jobTemplate);
             });
@@ -457,6 +595,8 @@ $title = 'Job Search | Emfob'; ?>
 	});
 	
 	function viewJobDetails(jobid){
+		$(".cards").removeClass("cardselected");
+		$("#jobcards"+jobid).addClass("cardselected");
 		fetch("<?php echo BASE_URL; ?>api/getJobViewById.php?job_id="+jobid)
 		  .then(response => response.json())
 		  .then(data => {
@@ -464,7 +604,7 @@ $title = 'Job Search | Emfob'; ?>
 			  $(".jobTitle").html(data[0]['job_title']);
 			  $(".cmpName").html(data[0]['company_name']);
 			  $(".cmpLocation").html(data[0]['job_location']);
-			  $(".cmpSalary").html(data[0]['salaryRangeMin'] + "-" + data[0]['salaryRangeMax']+" per month");
+			  $(".cmpSalary").html("₹" + parseInt(data[0]['salaryRangeMin']).toLocaleString() + " - " + "₹" + parseInt(data[0]['salaryRangeMax']).toLocaleString() +" per month");
 			  $(".jobDate").html(data[0]['job_postings_date']);
 			  $(".cmpType").html(data[0]['name']);
 			  $(".jobDescription").html(data[0]['jobDescription']);
@@ -503,11 +643,6 @@ $title = 'Job Search | Emfob'; ?>
 	}
 	
 </script>
-
-
-
-
-
 
 <script src="<?php echo BASE_URL_ADMIN; ?>assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
 

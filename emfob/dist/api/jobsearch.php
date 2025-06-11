@@ -50,7 +50,7 @@ if(isset($limit) && $limit != '' ){
 		$qry[":industry"] = "%".$industry."%";
 	}
 	
-	$totalQueryStr = "SELECT *,e.company_name cmpname,d.name emptype FROM `".JOB_POSTINGS."` a 
+	$totalQueryStr = "SELECT 1 FROM `".JOB_POSTINGS."` a 
 					  INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 					  LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
 					  LEFT JOIN `".EMPLOYERS."` e on e.employer_id = a.company_id
@@ -58,7 +58,7 @@ if(isset($limit) && $limit != '' ){
 					  WHERE $whereQry 1 = 1 ";
 	
 	
-	$queryStr = "SELECT *,e.company_name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
+	$queryStr = "SELECT *,e.is_verfied,a.is_urgently_hiring,e.company_name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
 				 INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 				 LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
 				 LEFT JOIN `".EMPLOYERS."` e on e.employer_id = a.company_id
@@ -85,13 +85,16 @@ if(isset($limit) && $limit != '' ){
 				'jobTitle' => $val['job_title'],
                 'companyName' => $val['cmpname'],
                 'location'  => $val['job_location'],
-                'salary' => $val['salaryRangeMin']." - ".$val['salaryRangeMax'],
+                'salary' => "₹ ".number_format($val['salaryRangeMin'])." - ₹ ".number_format($val['salaryRangeMax']),
                 'companyLogo' =>  $val['logo'],
                 'postedDate' => $val['job_postings_date'],
                 'jobType' => $val['emptype'],
 				'jobShift' => $val['shift_timing'],
-                'experienceLevel' => $val['experience_requirement'],
 				'job_description' => $val['job_description'],
+				'req_skills' => $val['req_skills'],
+				'experienceLevel' => $val['experience_requirement'],
+				'is_verfied' => $val['is_verfied'],
+				'is_urgently_hiring' => $val['is_urgently_hiring'],
                 'industry' => $val['cmpname']);
 	}
 	if(count($result) >= 1){
