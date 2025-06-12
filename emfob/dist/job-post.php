@@ -279,12 +279,12 @@ try {
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="preferredJobTitle" class="form-label">Application Deadline <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="applicationDeadLine" min="0" name="applicationDeadLine" required>
+															<input type="date" class="form-control" id="applicationDeadLine" min="" name="applicationDeadLine" required>
 															<div class="error" id="applicationDeadLineErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="preferredJobLocation" class="form-label">Job Posting Date<span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="jobPostingsDate" min="0" name="jobPostingsDate" required>
+															<input type="date" class="form-control" id="jobPostingsDate" min="" name="jobPostingsDate" required>
 															<div class="error" id="jobPostingsDateErr"></div>
 														</div>
 													</div>
@@ -308,13 +308,13 @@ try {
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="salaryRange" class="form-label">Salary (Monthly)
+															<label for="salaryRange" class="form-label">Salary (Monthly) <span style='color:red'>*</span>:</label>
 															₹ <input type="number" class="form-control" min="0" step="500"  id="salaryRangeMin" name="salaryRangeMin"
 																placeholder="Min">
 															<div class="error" id="salaryRangeMinErr"></div>
 														</div>
 														<div class="col-md-6">
-															<label for="salaryRange" class="form-label">Salary (Monthly)
+															<label for="salaryRange" class="form-label">Salary (Monthly) <span style='color:red'>*</span>:</label>
 															₹ <input type="number" class="form-control" min="0" step="500"   id="salaryRangeMax" name="salaryRangeMax"
 																placeholder="Max">
 															<div class="error" id="salaryRangeMaxErr"></div>
@@ -650,6 +650,10 @@ function handleFormSubmit(event) {
 	});
 	
 }
+
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('applicationDeadLine').setAttribute('min', today);
+document.getElementById('jobPostingsDate').setAttribute('min', today);
 
 
 </script>

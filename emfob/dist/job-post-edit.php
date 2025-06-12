@@ -15,7 +15,7 @@ include_once("dashboard-header.php");
 $userid = $_SESSION['user_id'];
 
 //page 1 form
-$companies = getAllSelection(COMPANIES);
+//$companies = getAllSelection(COMPANIES);
 $employment_type = getAllSelection(EMPLOYMENT_TYPE);
 $job_industry = getAllSelection(JOB_INDUSTRY);
 $job_benefits = getAllSelection(JOB_BENEFITS);
@@ -286,12 +286,12 @@ $jobs = $stmt->fetchAll();
 													<div class="row mb-3">
 														<div class="col-md-6">
 															<label for="preferredJobTitle" class="form-label">Application Deadline <span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="applicationDeadLine" min="0" name="applicationDeadLine" value="<?php echo ($jobs[0]['applicationDeadLine']) ?? '' ?>" required>
+															<input type="date" class="form-control" id="applicationDeadLine" min="" name="applicationDeadLine" value="<?php echo ($jobs[0]['applicationDeadLine']) ?? '' ?>" required>
 															<div class="error" id="applicationDeadLineErr"></div>
 														</div>
 														<div class="col-md-6">
 															<label for="preferredJobLocation" class="form-label">Job Posting Date<span style='color:red'>*</span>:</label>
-															<input type="date" class="form-control" id="jobPostingsDate" min="0" name="jobPostingsDate" value="<?php echo ($jobs[0]['job_postings_date']) ?? '' ?>" required>
+															<input type="date" class="form-control" id="jobPostingsDate" min="" name="jobPostingsDate" value="<?php echo ($jobs[0]['job_postings_date']) ?? '' ?>" required>
 															<div class="error" id="jobPostingsDateErr"></div>
 														</div>
 													</div>
@@ -317,13 +317,13 @@ $jobs = $stmt->fetchAll();
 													</div>
 													<div class="row mb-3">
 														<div class="col-md-6">
-															<label for="salaryRange" class="form-label">Salary (Monthly) 
+															<label for="salaryRange" class="form-label">Salary (Monthly) <span style='color:red'>*</span>:</label>
 															₹ <input type="number" class="form-control" min="0" step="500"  id="salaryRangeMin" name="salaryRangeMin" value="<?php echo ($jobs[0]['salaryRangeMin']) ?? '' ?>"
 																placeholder="Min">
 															<div class="error" id="salaryRangeMinErr"></div>
 														</div>
 														<div class="col-md-6">
-															<label for="salaryRange" class="form-label">Salary (Monthly)
+															<label for="salaryRange" class="form-label">Salary (Monthly) <span style='color:red'>*</span>:</label>
 															₹ <input type="number" class="form-control" min="0" step="500"   id="salaryRangeMax" name="salaryRangeMax" value="<?php echo ($jobs[0]['salaryRangeMax']) ?? '' ?>"
 																placeholder="Max">
 															<div class="error" id="salaryRangeMaxErr"></div>
@@ -651,6 +651,7 @@ function handleFormSubmit(event) {
 	});
 	
 }
+
 
 
 </script>

@@ -24,6 +24,6 @@ $stmt->execute($params);
 
 echo json_encode([
 		'success' => true,
-		'message' => 'Previous compnay details saved successfully'
+		'message' => 'Previous company details saved successfully'
 	]);
 ?>

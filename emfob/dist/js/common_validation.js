@@ -74,3 +74,25 @@ function isValidEmail(email) {
 	const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	return pattern.test(email);
 }
+
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('applicationDeadLine').setAttribute('min', today);
+document.getElementById('jobPostingsDate').setAttribute('min', today);
+
+
+document.getElementById('applicationDeadLine').addEventListener('input', function () {
+    if (this.value < today) {
+      this.value = '';
+      errorSpan.style.display = 'inline';
+    } else {
+      errorSpan.style.display = 'none';
+    }
+  });
+  document.getElementById('applicationDeadLine').addEventListener('input', function () {
+    if (this.value < today) {
+      this.value = '';
+      errorSpan.style.display = 'inline';
+    } else {
+      errorSpan.style.display = 'none';
+    }
+  });

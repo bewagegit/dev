@@ -20,8 +20,8 @@ if(isset($limit) && $limit != '' ){
 	$limit *= 10;
 	$start = $limit-10;
 	if(isset($title) &&  $title != ''){
-		$whereQry .= " a.job_title like :title AND ";
-		$qry[':title'] = "%".$title."%";
+		$whereQry .= " a.job_title like '%$title%' AND ";
+		//$qry[':title'] = 
 	}
 	if(isset($job_type) &&  $job_type != ''){
 		$whereQry .= " a.job_type IN(".$job_type.") AND ";
@@ -51,19 +51,19 @@ if(isset($limit) && $limit != '' ){
 	}
 	
 	$totalQueryStr = "SELECT 1 FROM `".JOB_POSTINGS."` a 
-					  INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
+					  LEFT JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 					  LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
 					  LEFT JOIN `".EMPLOYERS."` e on e.employer_id = a.company_id
 					  INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type
-					  WHERE $whereQry 1 = 1 ";
+					  WHERE $whereQry  (CURRENT_DATE between job_postings_date and applicationDeadLine)  and 1 = 1 ";
 	
 	
 	$queryStr = "SELECT *,e.is_verfied,a.is_urgently_hiring,e.company_name cmpname,d.name emptype,a.id jobid FROM `".JOB_POSTINGS."` a 
-				 INNER JOIN `".JOB_INDUSTRY."` b on b.id = a.id
+				 LEFT JOIN `".JOB_INDUSTRY."` b on b.id = a.id
 				 LEFT JOIN `".COMPANIES."` c on c.id = a.company_id
 				 LEFT JOIN `".EMPLOYERS."` e on e.employer_id = a.company_id
-				 INNER JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type	
-				 WHERE  $whereQry 1 = 1 ORDER BY job_postings_date desc LIMIT $start,$limit";
+				 LEFT JOIN `".EMPLOYMENT_TYPE."` d on d.id = a.job_type	
+				 WHERE  $whereQry (CURRENT_DATE between job_postings_date and applicationDeadLine) and 1 = 1 ORDER BY job_postings_date desc LIMIT $start,$limit";
 				 
 	//echo $queryStr;
 	

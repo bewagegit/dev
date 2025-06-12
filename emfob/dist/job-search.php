@@ -19,6 +19,7 @@ $title = 'Job Search | Emfob'; ?>
 <?php include_once("dashboard-header.php"); ?>
 <link rel="stylesheet" href="<?php echo BASE_URL."assets/css/job-search.css" ?>" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 
 
@@ -79,9 +80,17 @@ $title = 'Job Search | Emfob'; ?>
 
                                 <!-- Job Listings Section -->
                                 <div class="col-lg-12">
-								
 									<div class="col-lg-12">
 										<div style="position: sticky; top: 0; background: white; z-index: 100;">
+											<div class="row mb-3">
+												<div class="col-md-12">
+													<div class="form-group">
+														<label for="experienceLevel">Job Title</label>
+														<input type="text" class="form-control jobSearchExp" id="searchInput"
+														placeholder="Search for a Job Title">
+													</div>
+												</div>
+											</div>
 											<div class="row mb-3">
 												<div class="col-md-3">
 													<div class="form-group">
@@ -122,11 +131,6 @@ $title = 'Job Search | Emfob'; ?>
 														</select>
 													</div>
 												</div>
-												
-											</div>
-											<div class="row mb-3">
-
-												
 											</div>
 											<div class="row mb-3">
 												<div class="col-md-5">
@@ -139,15 +143,7 @@ $title = 'Job Search | Emfob'; ?>
 														</select>
 													</div>
 												</div>
-												
-												<div class="col-md-3">
-													<div class="form-group">
-														<label for="experienceLevel">Job Title</label>
-														<input type="text" class="form-control jobSearchExp" id="searchInput"
-														placeholder="Search for a job">
-													</div>
-												</div>
-												
+											
 												<div class="col-md-3">
 													<div class="form-group">
 															<label for="salaryRange">Salary Range</label>
@@ -165,7 +161,6 @@ $title = 'Job Search | Emfob'; ?>
 											</div>
 										</div>
 									</div>
-									
 									
                                     <div id="jobResults" class="row"
                                         style="overflow-y: scroll; position: relative; padding-top: 20px;">
@@ -195,106 +190,10 @@ $title = 'Job Search | Emfob'; ?>
                 </div>
 				
 				<!-- Right-side Ad Section -->
-				<div class="col-lg-6 ">
-                    <div class="card position-fixed">
-                        <div class="card-body">
-							<img src="<?php echo BASE_URL."assets/images/close.png" ?>" alt="Company Logo" height="20" width="20" class="float-end">
-							
-							<div class="row">
-								
-								<div class="job-card rounded-top">
-								  
-								  <ul class="list-unstyled mb-0">
-									  <li><h5 class="card-title">Senior Frontend Developer</h5></li>
-									  <li><strong>Experience:</strong> 3–6 years</li>
-									  <li><strong>Job Type:</strong> Full-Time</li>
-									  <li><strong>Posted:</strong> 2 days ago</li>
-								  </ul> 
-								</div>
-								
-								<div class="card mb-4 text-white p-4 rounded-top">
-								  <div class="card-body">
-									<h5 class="card-title">Job Summary</h5>
-									<ul class="list-unstyled mb-0">
-									  <li><strong>Salary:</strong> ₹12L - ₹18L / year</li>
-									  <li><strong>Experience:</strong> 3–6 years</li>
-									  <li><strong>Job Type:</strong> Full-Time</li>
-									  <li><strong>Posted:</strong> 2 days ago</li>
-									</ul>
-								  </div>
-								</div>
-								
-								<div class="card mb-4">
-								  <div class="card-body">
-									<h5 class="card-title">Job Summary</h5>
-									<ul class="list-unstyled mb-0">
-									  <li><strong>Salary:</strong> ₹12L - ₹18L / year</li>
-									  <li><strong>Experience:</strong> 3–6 years</li>
-									  <li><strong>Job Type:</strong> Full-Time</li>
-									  <li><strong>Posted:</strong> 2 days ago</li>
-									</ul>
-								  </div>
-								</div>
-								
-								
-								<div class="card mb-4">
-								  <div class="card-body">
-									<h5 class="card-title">Job Description</h5>
-									<p>We are looking for a skilled frontend developer with experience in React, JavaScript, and modern UI/UX principles...</p>
-								  </div>
-								</div>
-								
-							</div>
+				<div class="col-lg-6">
+                    <div class="card col-lg-6 position-fixed" id="quickviewpage">
 						
-							
-							
-							<!--
-							<br/>
-                            <div class="row" >
-								 <!-- Job Card 1 
-									<div class="job-card p-3">
-										<div class="job-card-content">
-											<h5 class="jobTitle"></h5>
-											<p class="text-muted mb-0"><span class="jobDetail"></span></p>
-											<p class="text-muted mb-0"><span class="cmpName"></span></p>
-											<p class="text-muted mb-0"><span class="cmpLocation"></span></p>
-											<p><span class="cmpSalary"></span></p>
-											<button class="btn btn-lg btn-info waves-effect waves-light">Apply Now</button>&nbsp;&nbsp;&nbsp;&nbsp;
-											<img src="<?php echo BASE_URL."assets/images/save-instagram.png" ?>" alt="Company Logo" height="20" width="20">&nbsp;&nbsp;&nbsp;&nbsp;
-											<img src="<?php echo BASE_URL."assets/images/link.png" ?>" alt="Company Logo" height="20" width="20">
-											<small class="text-muted" class="jobDate"></small>
-										</div>
-									</div>
-									<div class="job-card p-3">
-										<div class="job-card-content">
-											<h5 class="jobTitle"></h5>
-											<p class="text-muted mb-0"><span class="jobDetail"></span></p>
-											<p class="text-muted mb-0"><span class="cmpName"></span></p>
-											<p class="text-muted mb-0"><span class="cmpLocation"></span></p>
-											<p><span class="cmpSalary"></span></p>
-											<button class="btn btn-lg btn-info waves-effect waves-light">Apply Now</button>&nbsp;&nbsp;&nbsp;&nbsp;
-											<img src="<?php echo BASE_URL."assets/images/save-instagram.png" ?>" alt="Company Logo" height="20" width="20">&nbsp;&nbsp;&nbsp;&nbsp;
-											<img src="<?php echo BASE_URL."assets/images/link.png" ?>" alt="Company Logo" height="20" width="20">
-											<small class="text-muted" class="jobDate"></small>
-										</div>
-									</div>
-									<!-- Right: Job Detail View 
-									<div class="col-md-8 job-detail p-4" id="jobDetail">
-										<h4 class="jobTitle">Frontend Developer</h4>
-										<p><strong>Company:</strong> <span class="cmpName" class="jobDescription"></span></p>
-										<p><strong>Location:</strong><span class="cmpLocation" class="jobDescription"></span></p>
-										<p><strong>Salary:</strong><span class="cmpSalary" class="jobDescription"></span></p>
-										<p><strong>Type:</strong><span class="cmpType" class="jobDescription"><span></p>
-										<p><strong>Description:</strong><span class="jobDescription">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy<span></p>
-										<button class="btn btn-primary">Apply Now</button>
-									</div>
-								  <!-- ends 
-							</div> 
-							-->
-							
-							
-							
-						</div>
+
 					</div>
 				</div>
 				
@@ -353,11 +252,11 @@ $title = 'Job Search | Emfob'; ?>
         <div class="job-card p-3">
             <div class="job-card-content text-start">
 				<img src="<?php echo BASE_URL."assets/images/direct_hiring-icon1.png" ?>" class="postingTags float-end" />
-				{{newlyAddedTag}}
+				{{newlyAddedTag}}&nbsp;&nbsp;&nbsp;
 				{{urgentlyHiring}}
 				<i class="bi bi-three-dots-vertical"></i>
                 <h5><a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')">{{jobTitle}}</a></h5>
-                <p class="mb-0">{{companyName}}<img src="<?php echo BASE_URL."assets/images/shield.png" ?>" /></p>
+                <p class="mb-0">{{companyName}}<img src="<?php echo BASE_URL."assets/images/shield.png" ?>" data-bs-toggle="tooltip" title="This is Verified" /></p>
 				<p class="mb-0">{{location}}</p>
 				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags salaryTag">{{salary}} per month</button>&nbsp;&nbsp;
 				<button class="btn btn-outline-secondary btn-sm jobtags jobCardTags jobTypeTag">{{jobType}}</button> &nbsp;&nbsp;
@@ -365,7 +264,8 @@ $title = 'Job Search | Emfob'; ?>
 				<div style="margin-top:5px">
 					<div>
 						<div class="mb-4">
-							<button class="btn btn-info btn-lg rounded-pill" onclick="viewJobDetails('{{jobidEasy}}')" style="width: 110px;margin-top: 10px;">
+							<button class="btn btn-info btn-lg rounded-pill" onclick="viewJobDetails('{{jobidEasy}}')" 
+									style="width: 110px;margin-top: 10px;font-size: 12px;">
 								<i class="fas fa-paper-plane"></i> Easy Apply
 							</button>
 						</div>
@@ -597,19 +497,15 @@ $title = 'Job Search | Emfob'; ?>
 	function viewJobDetails(jobid){
 		$(".cards").removeClass("cardselected");
 		$("#jobcards"+jobid).addClass("cardselected");
-		fetch("<?php echo BASE_URL; ?>api/getJobViewById.php?job_id="+jobid)
-		  .then(response => response.json())
+		fetch("<?php echo BASE_URL; ?>api/quickviewjobbyid.php?job_id="+jobid)
+		  .then(response => {
+			  if (!response.ok) {
+				throw new Error("Network response was not ok");
+			  }
+			  return response.text(); // Parse as plain text
+		  })
 		  .then(data => {
-			  console.log(data);
-			  $(".jobTitle").html(data[0]['job_title']);
-			  $(".cmpName").html(data[0]['company_name']);
-			  $(".cmpLocation").html(data[0]['job_location']);
-			  $(".cmpSalary").html("₹" + parseInt(data[0]['salaryRangeMin']).toLocaleString() + " - " + "₹" + parseInt(data[0]['salaryRangeMax']).toLocaleString() +" per month");
-			  $(".jobDate").html(data[0]['job_postings_date']);
-			  $(".cmpType").html(data[0]['name']);
-			  $(".jobDescription").html(data[0]['jobDescription']);
-			  $(".jobCardLogo").attr('src', "<?php echo BASE_URL_ADMIN; ?>backend/"+data[0]['logo']);
-			//console.log(data); // Do something with the response
+			  $("#quickviewpage").html(data);
 		  })
 		  .catch(error => {
 			console.error("Error:", error);
@@ -627,7 +523,7 @@ $title = 'Job Search | Emfob'; ?>
 		const month = 30 * day;
 		
 		if(isTags == 0){ 
-			if (diff < 60) return 'just now';
+			if (diff < 60) return 'Just now';
 			if (diff < hour) return `${Math.floor(diff / minute)} minute(s) ago`;
 			if (diff < day) return `${Math.floor(diff / hour)} hour(s) ago`;
 			if (diff < week) return `${Math.floor(diff / day)} day(s) ago`;
@@ -635,9 +531,9 @@ $title = 'Job Search | Emfob'; ?>
 			return `${Math.floor(diff / month)} month(s) ago`;
 		}
 		else{
-			if (diff < 60) return 'New';
-			if (diff < hour) return `New`;
-			if (diff < day) return `New`;
+			if (diff < 60) return '<button class="btn btn-outline-secondary btn-sm jobtags" id="urgentlyTag">New</button>';
+			if (diff < hour) return `<button class="btn btn-outline-secondary btn-sm jobtags" id="urgentlyTag">New</button>`;
+			if (diff < day) return `<button class="btn btn-outline-secondary btn-sm jobtags" id="urgentlyTag">New</button>`;
 		}
 		return '';
 	}
