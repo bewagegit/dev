@@ -20,9 +20,8 @@ $title = 'Job Search | Emfob'; ?>
 <link rel="stylesheet" href="<?php echo BASE_URL."assets/css/job-search.css" ?>" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
-
-
+<!-- noUiSlider CSS -->
+<link href="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.css" rel="stylesheet">
 
 <!-- ============================================================== -->
 <!-- Start right Content here -->
@@ -145,12 +144,16 @@ $title = 'Job Search | Emfob'; ?>
 												</div>
 											
 												<div class="col-md-3">
-													<div class="form-group">
-															<label for="salaryRange">Salary Range</label>
-															<span id="brightnessValue">10000</span></label>
-															<input type="range" id="range" min="0" step="1000" max="300000" value="10000">
+													<div style="max-width: 400px; margin: 20px auto;">
+													  <label><strong>Salary Range:</strong></label>
+													  <div id="salarySlider" style="max-width: 400px; margin: 10px auto;"></div>
+													  <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+														<span>Min: ₹<span id="minSalary">20000</span></span>
+														<span>Max: ₹<span id="maxSalary">80000</span></span>
+													  </div>
 													</div>
 												</div>
+												
 											</div>
 											<br/>
 											<div class="form-group d-flex">
@@ -191,9 +194,7 @@ $title = 'Job Search | Emfob'; ?>
 				
 				<!-- Right-side Ad Section -->
 				<div class="col-lg-6">
-                    <div class="card col-lg-6 position-fixed" id="quickviewpage">
-						
-
+                    <div class="card col-lg-5 position-fixed" id="quickviewpage">
 					</div>
 				</div>
 				
@@ -254,7 +255,7 @@ $title = 'Job Search | Emfob'; ?>
 				<img src="<?php echo BASE_URL."assets/images/direct_hiring-icon1.png" ?>" class="postingTags float-end" />
 				{{newlyAddedTag}}&nbsp;&nbsp;&nbsp;
 				{{urgentlyHiring}}
-				<i class="bi bi-three-dots-vertical"></i>
+				<i class="bi bi-three-dots-vertical float-end shareIcon" ></i>
                 <h5><a href="javascript:void(0);" onclick="viewJobDetails('{{jobid}}')">{{jobTitle}}</a></h5>
                 <p class="mb-0">{{companyName}}<img src="<?php echo BASE_URL."assets/images/shield.png" ?>" data-bs-toggle="tooltip" title="This is Verified" /></p>
 				<p class="mb-0">{{location}}</p>
@@ -298,6 +299,8 @@ $title = 'Job Search | Emfob'; ?>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyrKx3qDBUdn7_wwXP08LZ8-nh05M5e7A&libraries=places"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<!-- noUiSlider JS -->
+<script src="https://cdn.jsdelivr.net/npm/nouislider@15.7.0/dist/nouislider.min.js"></script>
 
 <script>
 	let currentPage;
@@ -331,6 +334,8 @@ $title = 'Job Search | Emfob'; ?>
 	  
 	});
 	function loadData(pageNo,title='') {
+		var minSal = minSalary.textContent;
+		var maxSal = maxSalary.textContent;
 		
 		const selectLang = document.getElementById("language");
 		const selectedLanguage = Array.from(selectLang.selectedOptions).map(option => option.value);
@@ -339,8 +344,8 @@ $title = 'Job Search | Emfob'; ?>
 		$('.pagination').html('');
 		currentPage = pageNo;
 		const xhr = new XMLHttpRequest();
-		console.log($('#brightnessValue').val());
-		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&language="+selectedLanguage+"&salary="+$('#brightnessValue').html()+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val();
+		const qry = "job_type="+$('#jobType').val()+"&exp_level="+$('#experienceLevel').val()+"&location="+$('#location').val()+"&language="+selectedLanguage+"&industry="+$('#industry').val()+"&title="+$('#searchInput').val()+"&salmin="+minSal+"&salmax="+maxSal;
+		
 		xhr.open("GET", "<?php echo BASE_URL; ?>api/jobsearch.php?"+qry+"&limit="+pageNo, true);
 		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
@@ -435,7 +440,6 @@ $title = 'Job Search | Emfob'; ?>
     }
 
     function updatePagination(totalPages) {
-		console.log(currentPage);
         let paginationHTML = '';
 
         // Previous Button
@@ -482,13 +486,6 @@ $title = 'Job Search | Emfob'; ?>
 	const input = document.getElementById('location');
 	const autocomplete = new google.maps.places.Autocomplete(input)
 	
-	
-	const range = document.getElementById('range');
-	const valueDisplay = document.getElementById('brightnessValue');
-
-	range.addEventListener('input', () => {
-		valueDisplay.textContent = range.value;
-	});
 	
 	window.addEventListener('popstate', function(event) {
 	  loadData(1);
@@ -537,6 +534,31 @@ $title = 'Job Search | Emfob'; ?>
 		}
 		return '';
 	}
+	
+	
+	const salarySlider = document.getElementById('salarySlider');
+
+	  noUiSlider.create(salarySlider, {
+		start: [20000, 80000],
+		connect: true,
+		range: {
+		  'min': 5000,
+		  'max': 100000
+		},
+		step: 1000,
+		format: {
+		  to: value => Math.round(value),
+		  from: value => Number(value)
+		}
+	  });
+
+	  const minSalary = document.getElementById('minSalary');
+	  const maxSalary = document.getElementById('maxSalary');
+
+	  salarySlider.noUiSlider.on('update', function (values) {
+		minSalary.textContent = values[0];
+		maxSalary.textContent = values[1];
+	  });
 	
 </script>
 

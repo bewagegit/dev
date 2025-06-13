@@ -43,7 +43,7 @@ if(isset($limit) && $limit != '' ){
 		$whereQry .= "(".substr($tmpStr,0,strlen($tmpStr)-3)." ) AND ";
 	}
 	if(isset($salary) && $salary != ''){
-		$whereQry .= " ( $salary BETWEEN a.salaryRangeMin AND a.salaryRangeMax  ) AND ";
+		$whereQry .= " ( ($salmin BETWEEN a.salaryRangeMin AND a.salaryRangeMax)  AND ($salmax BETWEEN a.salaryRangeMin AND a.salaryRangeMax) ) AND ";
 	}
 	if(isset($industry) && $industry){
 		$whereQry .= " b.name like :industry AND ";
@@ -109,7 +109,7 @@ if(isset($limit) && $limit != '' ){
 	}
 }
 else{
-	echo json_encode(array("result" => 'Invalid Request'));
+	echo json_encode(array("result" => 'Invalid Request',"data"=>''));
 }
 
 ?>
